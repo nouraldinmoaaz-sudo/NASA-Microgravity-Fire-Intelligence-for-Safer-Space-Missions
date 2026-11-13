@@ -1,137 +1,174 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PYRE-SI | رحلة إنقاذ رواد الفضاء والأرض - NASA Space Apps</title>
+  <title>PYRE-SI | NASA Physical Sciences Informatics Interactive Mission Platform</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
     body {
-      font-family: 'Cairo', sans-serif;
-      background-color: #050811;
-      color: #f1f5f9;
+      font-family: 'Inter', sans-serif;
+      background-color: #f8fafc;
+      color: #0f172a;
       scroll-behavior: smooth;
     }
-    .mono { font-family: 'JetBrains Mono', monospace; }
-    .glass {
-      background: rgba(15, 23, 42, 0.85);
-      border: 1px solid rgba(56, 189, 248, 0.22);
-      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.55);
-      backdrop-filter: blur(14px);
+    .card-surface {
+      background-color: #ffffff;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
     }
-    .hero-bg {
-      background: radial-gradient(circle at 20% 20%, rgba(239, 68, 68, 0.18), transparent 45%),
-                  radial-gradient(circle at 80% 30%, rgba(14, 165, 233, 0.2), transparent 50%),
-                  linear-gradient(180deg, #050811 0%, #0f172a 100%);
+    .step-pill.active {
+      background-color: #2563eb;
+      color: #ffffff;
+      border-color: #2563eb;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
     }
-    .chapter-badge {
-      background: linear-gradient(90deg, rgba(14, 165, 233, 0.2), rgba(244, 63, 94, 0.2));
-      border: 1px solid rgba(56, 189, 248, 0.4);
+    .zone-box.active {
+      border-color: #2563eb;
+      background-color: #eff6ff;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
     }
-    input[type="range"] { accent-color: #38bdf8; }
-    @keyframes pulseRed {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5); }
-      50% { box-shadow: 0 0 25px 6px rgba(239, 68, 68, 0.35); }
+    input[type="range"] {
+      accent-color: #2563eb;
     }
-    .alarm-box { animation: pulseRed 2.5s infinite; }
   </style>
 </head>
-<body class="min-h-screen hero-bg">
+<body class="min-h-screen">
 
-  <!-- ================= شريط التنقل القصصي العلوي ================= -->
-  <nav class="sticky top-0 z-50 glass border-b border-slate-800 px-4 py-3">
-    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+  <!-- ================= TOP STICKY NAVIGATION & 5-MINUTE JOURNEY BAR ================= -->
+  <header class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-slate-200 px-4 py-3">
+    <div class="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-3">
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-500 to-sky-500 flex items-center justify-center font-black text-white text-lg shadow-lg">
-          🔥
+        <div class="px-3 py-1.5 rounded-lg bg-blue-600 text-white font-black text-xs tracking-wider uppercase">
+          PYRE-SI
         </div>
         <div>
-          <div class="flex items-center gap-2">
-            <span class="text-xs font-black tracking-wider text-sky-400 mono">NASA PSI STORY-ENGINE</span>
-            <span class="text-[10px] px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40 font-bold">24 تجربة فضائية موثقة</span>
-          </div>
-          <h1 class="text-sm md:text-base font-black text-white">PYRE-SI: حكاية النار من مدار الفضاء إلى القمر والأرض</h1>
+          <h1 class="text-sm md:text-base font-extrabold text-slate-900">
+            NASA Space Fire Intelligence and Smart Astronaut Chip
+          </h1>
+          <p class="text-xs text-slate-500">
+            Interactive Storytelling, Live GPS Chip Telemetry, and 24 NASA Combustion Experiments
+          </p>
         </div>
       </div>
 
-      <!-- روابط فصول القصة -->
-      <div class="flex flex-wrap items-center gap-1.5 text-xs font-bold">
-        <a href="#ch-story" class="px-3 py-1.5 rounded-lg bg-slate-800/90 hover:bg-rose-600 text-slate-200 transition">🚨 1. سيناريو الإنذار</a>
-        <a href="#ch-media" class="px-3 py-1.5 rounded-lg bg-slate-800/90 hover:bg-sky-600 text-slate-200 transition">🎬 2. الفيديو والصور</a>
-        <a href="#ch-finder" class="px-3 py-1.5 rounded-lg bg-slate-800/90 hover:bg-sky-600 text-slate-200 transition">🔍 3. مستكشف الـ 24 تجربة</a>
-        <a href="#ch-compare" class="px-3 py-1.5 rounded-lg bg-slate-800/90 hover:bg-amber-600 text-slate-200 transition">📊 4. المقارنة والجرافات</a>
-        <a href="#ch-ai" class="px-3 py-1.5 rounded-lg bg-slate-800/90 hover:bg-emerald-600 text-slate-200 transition">🤖 5. المساعد الذكي الناطق</a>
-        <a href="#ch-earth" class="px-3 py-1.5 rounded-lg bg-slate-800/90 hover:bg-purple-600 text-slate-200 transition">🌍 6. أثر الأرض</a>
-        <button onclick="exportDatasetCSV()" class="px-3 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 transition">
-          📥 داتا الـ 24 تجربة (CSV)
+      <!-- 5-Step Journey Navigation -->
+      <nav class="flex flex-wrap items-center gap-1.5 text-xs font-semibold">
+        <button onclick="goToSection('step-story')" id="nav-step-story" class="step-pill active px-3 py-1.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 transition">
+          1. Mission Story
         </button>
-      </div>
+        <button onclick="goToSection('step-chip')" id="nav-step-chip" class="step-pill px-3 py-1.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 transition">
+          2. Smart GPS Chip
+        </button>
+        <button onclick="goToSection('step-finder')" id="nav-step-finder" class="step-pill px-3 py-1.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 transition">
+          3. Experiment Finder
+        </button>
+        <button onclick="goToSection('step-compare')" id="nav-step-compare" class="step-pill px-3 py-1.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 transition">
+          4. Visual Comparison
+        </button>
+        <button onclick="goToSection('step-advisor')" id="nav-step-advisor" class="step-pill px-3 py-1.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 transition">
+          5. AI Advisor and Earth Impact
+        </button>
+        <button onclick="exportFullDatasetCSV()" class="px-3 py-1.5 rounded-lg border border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-bold transition">
+          Download Dataset CSV
+        </button>
+      </nav>
     </div>
-  </nav>
+  </header>
 
-  <main class="max-w-7xl mx-auto p-4 md:p-6 space-y-12">
+  <main class="max-w-7xl mx-auto p-4 md:p-6 space-y-8">
 
     <!-- =======================================================================
-         الفصل الأول: القصة الإنسانية ومحاكاة قرار قائد المركبة (STORYTELLING HOOK)
+         STEP 1: INTERACTIVE OPENING STORY (CURIOSITY HOOK)
          ======================================================================= -->
-    <section id="ch-story" class="glass rounded-3xl p-6 md:p-8 alarm-box border-rose-500/50">
+    <section id="step-story" class="card-surface rounded-3xl p-6 md:p-8">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
         <div class="lg:col-span-7 space-y-4">
-          <span class="px-3 py-1 rounded-full text-xs font-bold chapter-badge text-rose-300 inline-block">
-            الفصل الأول // القصة التفاعلية: الساعة 03:14 صباحاً بتوقيت القمر
-          </span>
-          <h2 class="text-2xl md:text-4xl font-black text-white leading-snug">
-            تخيل أنك قائد مهمة <span class="text-sky-400">Artemis</span> على القمر.. وفجأة انطلق إنذار الحريق! 🚨
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-bold uppercase tracking-wide">
+            Interactive Opening Story // Chapter One
+          </div>
+          <h2 id="story-headline" class="text-2xl md:text-3xl font-black text-slate-900 leading-tight">
+            Why Does a Flame That Dies on Earth Become Deadly Inside a Lunar Base?
           </h2>
-          <p class="text-slate-300 text-sm md:text-base leading-relaxed">
-            أنت وفريقك داخل مسكن قمري مغلق. الهواء حولكم يحتوي على <strong>34% أكسجين</strong> لكي تتنفسوا بسهولة تحت ضغط منخفض (<strong>56.5 kPa</strong>). شرارة كهربائية صغيرة أشعلت نافذة الأكريليك (PMMA). في محطة الفضاء الدولية ($0g$) كان الرواد يطفئون مراوح التهوية فتنطفئ النار وحدها.. <strong>ولكنك الآن في جاذبية القمر ($1/6g$)! ماذا ستفعل في أول 10 ثوانٍ لإنقاذ طاقمك؟</strong>
+          <p id="story-body" class="text-sm md:text-base text-slate-600 leading-relaxed">
+            Imagine you are an astronaut inside a Lunar habitat. Outside is a vacuum. Inside, engineers lowered the Cabin Pressure and raised the Oxygen Percentage so your crew can breathe comfortably. Suddenly, an overheating wire sparks against an acrylic window panel. What happens next defies everyday intuition.
           </p>
 
-          <!-- أزرار القرار التفاعلي (Interactive Decision Game) -->
-          <div class="pt-2 space-y-3">
-            <div class="text-xs font-bold text-amber-300">👇 اتخذ قرارك الآن كقائد للمهمة وجرب بنفسك:</div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <button onclick="makeCommanderDecision('wrong')" class="p-4 rounded-2xl bg-slate-900 hover:bg-rose-950/70 border border-slate-700 hover:border-rose-400 text-right transition group">
-                <div class="font-black text-rose-400 text-sm group-hover:translate-x-[-4px] transition">❌ القرار أ: إغلاق مراوح التهوية فقط</div>
-                <div class="text-xs text-slate-400 mt-1">"افصلوا مراوح الهواء فوراً مثلما نفعل في محطة الفضاء الدولية وانتظروا انطفاء النار!"</div>
+          <!-- Interactive 3-Stage Story Progression Buttons -->
+          <div class="pt-2">
+            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+              Click Through the 3 Story Moments to See Why NASA Built 24 Space Fire Experiments:
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <button onclick="playStoryBeat(1)" id="beat-btn-1" class="p-3.5 rounded-2xl border-2 border-blue-600 bg-blue-50/60 text-left transition">
+                <div class="text-xs font-extrabold text-blue-700 uppercase">Moment One</div>
+                <div class="text-sm font-bold text-slate-900 mt-0.5">The Zero Gravity Illusion</div>
+                <div class="text-xs text-slate-500 mt-1">How fire behaves on the Space Station</div>
               </button>
 
-              <button onclick="makeCommanderDecision('right')" class="p-4 rounded-2xl bg-slate-900 hover:bg-emerald-950/70 border border-slate-700 hover:border-emerald-400 text-right transition group">
-                <div class="font-black text-emerald-400 text-sm group-hover:translate-x-[-4px] transition">✅ القرار ب: بروتوكول PYRE-SI الذكي</div>
-                <div class="text-xs text-slate-400 mt-1">"أطلقوا رذاذ الماء الدقيق (20 ميكرون) واخفضوا الأكسجين تحت 13.5% مع تنقية غاز CO!"</div>
+              <button onclick="playStoryBeat(2)" id="beat-btn-2" class="p-3.5 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-left transition">
+                <div class="text-xs font-extrabold text-amber-700 uppercase">Moment Two</div>
+                <div class="text-sm font-bold text-slate-900 mt-0.5">The Lunar Gravity Trap</div>
+                <div class="text-xs text-slate-500 mt-1">Why partial gravity feeds the flame</div>
+              </button>
+
+              <button onclick="playStoryBeat(3)" id="beat-btn-3" class="p-3.5 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-left transition">
+                <div class="text-xs font-extrabold text-emerald-700 uppercase">Moment Three</div>
+                <div class="text-sm font-bold text-slate-900 mt-0.5">The Smart Chip Solution</div>
+                <div class="text-xs text-slate-500 mt-1">Turning NASA data into live survival</div>
               </button>
             </div>
+          </div>
 
-            <!-- نتيجة القرار التفاعلي -->
-            <div id="decision-feedback" class="p-4 rounded-2xl bg-slate-950/90 border border-slate-800 text-xs leading-relaxed text-slate-200">
-              💡 <strong>اضغط على أحد القرارين بالأعلى</strong> لترى ما تقوله بيانات تجارب ناسا (BASS-II و Saffire و Fine Water Mist) عن مصير مركبتك!
-            </div>
+          <!-- Dynamic Story Insight Box -->
+          <div id="story-insight-box" class="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs md:text-sm text-slate-700 leading-relaxed">
+            <strong>Moment One Active (Zero Gravity on the Space Station):</strong> In Zero Gravity, hot air does not rise because there is no buoyancy. A flame forms a quiet blue sphere that slowly chokes on its own exhaust gases. If you switch off the ventilation fan in Zero Gravity, the fire usually extinguishes itself. Click <strong>Moment Two</strong> above to see what changes on the Moon.
+          </div>
+
+          <div class="pt-1 flex flex-wrap gap-3">
+            <button onclick="goToSection('step-chip')" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-600/20 transition">
+              Launch Smart Astronaut Chip Simulator
+            </button>
+            <button onclick="goToSection('step-finder')" class="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs border border-slate-300 transition">
+              Explore All 24 NASA Experiments
+            </button>
           </div>
         </div>
 
-        <!-- بطاقة مقارنة الكواكب التفاعلية السريعة (5 Columns) -->
-        <div class="lg:col-span-5 bg-slate-950/90 rounded-2xl p-5 border border-slate-800 space-y-4">
-          <div class="flex items-center justify-between">
-            <h3 class="text-sm font-black text-sky-400">لماذا تختلف النار بين الفضاء والقمر والأرض؟</h3>
-            <span class="text-[11px] mono text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded">مفاجأة الفيزياء</span>
+        <!-- Visual Story Simulation Canvas (5 Columns) -->
+        <div class="lg:col-span-5 bg-slate-50 rounded-2xl p-5 border border-slate-200 flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-3">
+            <div>
+              <div class="text-xs font-bold uppercase text-slate-400">Live Visual Physics Simulation</div>
+              <h3 id="story-sim-title" class="text-sm font-extrabold text-slate-900">Zero Gravity Spherical Diffusion Flame</h3>
+            </div>
+            <span id="story-sim-badge" class="px-2.5 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800">
+              Zero Gravity Regime
+            </span>
           </div>
 
-          <div class="space-y-3 text-xs">
-            <div class="p-3 rounded-xl bg-slate-900 border-r-4 border-sky-400">
-              <div class="font-bold text-white">🛸 في الفضاء ($0g$ - انعدام الجاذبية):</div>
-              <p class="text-slate-300 mt-1">لا يوجد هواء ساخن يصعد للأعلى (لا يوجد طفو). النار تتكور حول نفسها ككرة زرقاء كسولة وتخنق نفسها بغازات العادم إذا أطفأنا المروحة.</p>
+          <div class="rounded-xl overflow-hidden bg-white border border-slate-200 h-60 flex items-center justify-center relative">
+            <canvas id="storyFlameCanvas" width="460" height="240" class="w-full h-full"></canvas>
+            <div id="story-canvas-caption" class="absolute bottom-2 left-3 right-3 bg-white/90 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-200 text-[11px] text-slate-600 font-medium">
+              Slow radial oxygen diffusion creates a symmetric blue flame sphere.
             </div>
+          </div>
 
-            <div class="p-3 rounded-xl bg-rose-950/30 border-r-4 border-rose-500">
-              <div class="font-bold text-rose-300">🌕 على القمر ($1/6g$) والمريخ ($3/8g$) - الفخ الخفي:</div>
-              <p class="text-slate-300 mt-1">الجاذبية الخفيفة تصنع تيار هواء طبيعي ناعم ($4\text{–}9\text{ cm/s}$) يعمل كمنفاخ يغذي النار بالأكسجين الطازج أسرع مما تبرد، فتشتعل المواد بشراسة أكبر من الأرض والفضاء!</p>
+          <!-- 3 Clear Metrics for the Story -->
+          <div class="grid grid-cols-3 gap-2.5 mt-4 text-center">
+            <div class="bg-white p-2.5 rounded-xl border border-slate-200">
+              <div class="text-[11px] text-slate-500 font-medium">Gravity Level</div>
+              <div id="story-metric-gravity" class="text-xs font-extrabold text-slate-900 mt-0.5">Zero Gravity</div>
             </div>
-
-            <div class="p-3 rounded-xl bg-slate-900 border-r-4 border-emerald-400">
-              <div class="font-bold text-white">🌍 على الأرض ($1g$ - الجاذبية الكاملة):</div>
-              <p class="text-slate-300 mt-1">تيار الطفو قوي وسريع جداً ($30\text{–}50\text{ cm/s}$) فيشد اللهب للأعلى ويبرده بالهواء البارد المحيط.</p>
+            <div class="bg-white p-2.5 rounded-xl border border-slate-200">
+              <div class="text-[11px] text-slate-500 font-medium">Oxygen Supply Flow</div>
+              <div id="story-metric-flow" class="text-xs font-extrabold text-blue-600 mt-0.5">Diffusion Only</div>
+            </div>
+            <div class="bg-white p-2.5 rounded-xl border border-slate-200">
+              <div class="text-[11px] text-slate-500 font-medium">Fire Spread Risk</div>
+              <div id="story-metric-risk" class="text-xs font-extrabold text-emerald-600 mt-0.5">Low (Self-Choking)</div>
             </div>
           </div>
         </div>
@@ -139,125 +176,207 @@
     </section>
 
     <!-- =======================================================================
-         الفصل الثاني: معرض الفيديو التفاعلي والصور الحقيقية لتجارب ناسا (MEDIA LAB)
+         STEP 2: THE CREATIVE INNOVATION — SMART ASTRONAUT CHIP & GPS TELEMETRY
          ======================================================================= -->
-    <section id="ch-media" class="glass rounded-3xl p-6 md:p-8 space-y-6">
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 pb-4 border-b border-slate-800">
+    <section id="step-chip" class="card-surface rounded-3xl p-6 md:p-8 space-y-6">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 pb-4 border-b border-slate-200">
         <div>
-          <span class="px-3 py-1 rounded-full text-xs font-bold chapter-badge text-sky-300 inline-block mb-1">
-            الفصل الثاني // المشاهدة البصرية الحية (Visual & Video Simulation Gallery)
+          <span class="px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold uppercase tracking-wide">
+            Creative Hardware Link // PYRE-Chip Wearable and Spacecraft GPS
           </span>
-          <h2 class="text-xl md:text-2xl font-black text-white">شاهد بعينك: محاكي الفيديو التفاعلي وصور تجارب حرائق الفضاء</h2>
+          <h2 class="text-xl md:text-2xl font-black text-slate-900 mt-1">
+            Smart Astronaut Chip: Live Gas Sensor, Spacecraft GPS, and Scenario Predictor
+          </h2>
+          <p class="text-xs md:text-sm text-slate-600 mt-0.5">
+            This smart chip links the astronaut's exact GPS zone inside the spacecraft with live Oxygen, Nitrogen, and Gravity readings to predict fire scenarios using NASA database records.
+          </p>
         </div>
-        <span class="text-xs text-slate-400">بدّل بين الفيديوهات التفاعلية الأربعة وحرك مؤشر الأكسجين والجاذبية لترى اللهب حياً</span>
+
+        <button onclick="runChipAutoStabilizer()" id="btn-stabilize" class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md shadow-emerald-600/20 transition shrink-0">
+          Auto-Minimize Fire Risk via Chip
+        </button>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <!-- مشغل الفيديو الفيزيائي التفاعلي (7 Columns) -->
-        <div class="lg:col-span-7 bg-slate-950 rounded-2xl p-5 border border-slate-800 flex flex-col justify-between">
-          <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
-            <div class="flex items-center gap-2">
-              <span class="w-3 h-3 rounded-full bg-rose-500 animate-ping"></span>
-              <span id="video-title" class="text-sm font-black text-white">فيديو محاكاة حي: ذروة لهب القمر (Saffire / SoFIE)</span>
+        <!-- Left: Interactive Spacecraft GPS Map & Sensor Sliders (6 Columns) -->
+        <div class="lg:col-span-6 space-y-5">
+          <!-- Spacecraft GPS Sector Selector -->
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+            <div class="flex items-center justify-between mb-2.5">
+              <span class="text-xs font-extrabold uppercase text-slate-700">
+                1. Click Astronaut GPS Zone Inside the Spacecraft:
+              </span>
+              <span id="gps-coordinates" class="text-xs font-bold text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-md border border-blue-200">
+                GPS Sector Alpha-01
+              </span>
             </div>
-            <button onclick="toggleVideoPause()" id="btn-pause-vid" class="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-bold text-sky-300">
-              ⏸️ إيقاف مؤقت / تشغيل
-            </button>
+
+            <!-- Interactive 4-Room Spacecraft Floorplan -->
+            <div class="grid grid-cols-2 gap-3">
+              <button onclick="selectGpsZone('viewport')" id="zone-viewport" class="zone-box active p-3.5 rounded-xl border border-slate-300 bg-white text-left transition">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-extrabold text-blue-700 uppercase">GPS Zone A</span>
+                  <span class="text-[11px] font-semibold text-slate-500">Command Deck</span>
+                </div>
+                <div class="text-sm font-bold text-slate-900 mt-1">Observation Viewport</div>
+                <div class="text-xs text-slate-500 mt-0.5">Primary Material: Cast Acrylic Window</div>
+              </button>
+
+              <button onclick="selectGpsZone('quarters')" id="zone-quarters" class="zone-box p-3.5 rounded-xl border border-slate-300 bg-white text-left transition">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-extrabold text-slate-600 uppercase">GPS Zone B</span>
+                  <span class="text-[11px] font-semibold text-slate-500">Habitat Module</span>
+                </div>
+                <div class="text-sm font-bold text-slate-900 mt-1">Crew Sleeping Quarters</div>
+                <div class="text-xs text-slate-500 mt-0.5">Primary Material: Cotton Fiberglass Fabric</div>
+              </button>
+
+              <button onclick="selectGpsZone('battery')" id="zone-battery" class="zone-box p-3.5 rounded-xl border border-slate-300 bg-white text-left transition">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-extrabold text-slate-600 uppercase">GPS Zone C</span>
+                  <span class="text-[11px] font-semibold text-slate-500">Engineering Bay</span>
+                </div>
+                <div class="text-sm font-bold text-slate-900 mt-1">Battery and Power Bay</div>
+                <div class="text-xs text-slate-500 mt-0.5">Primary Material: Liquid Electrolyte Cells</div>
+              </button>
+
+              <button onclick="selectGpsZone('airlock')" id="zone-airlock" class="zone-box p-3.5 rounded-xl border border-slate-300 bg-white text-left transition">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-extrabold text-slate-600 uppercase">GPS Zone D</span>
+                  <span class="text-[11px] font-semibold text-slate-500">EVA Suit Bay</span>
+                </div>
+                <div class="text-sm font-bold text-slate-900 mt-1">Airlock and Insulation Bay</div>
+                <div class="text-xs text-slate-500 mt-0.5">Primary Material: Porous Foam and Nomex</div>
+              </button>
+            </div>
           </div>
 
-          <!-- شاشة الفيديو (Interactive HTML5 Physics Video Canvas) -->
-          <div class="relative rounded-2xl overflow-hidden border border-slate-800 bg-black h-72 flex items-center justify-center">
-            <canvas id="liveVideoCanvas" width="640" height="300" class="w-full h-full"></canvas>
-            <div class="absolute top-3 right-3 bg-slate-950/80 px-3 py-1.5 rounded-xl border border-slate-700 text-[11px] mono text-sky-300" id="video-hud">
-              PSI CAM-01 // G: 0.166g | O2: 34% | P: 56.5 kPa
-            </div>
-            <div class="absolute bottom-3 right-3 left-3 bg-slate-950/85 p-2.5 rounded-xl border border-slate-800 text-xs text-slate-200" id="video-caption">
-              🎥 تيار الطفو القمري (الأسهم) يدفع الأكسجين لقلب اللهب فيرفع حرارة القمة ويزيد سرعة الانتشار إلى 3.5 ملم/ثانية.
-            </div>
-          </div>
-
-          <!-- أزرار اختيار مشهد الفيديو + سلايدرز التحكم الحي في الفيديو -->
-          <div class="mt-4 space-y-3">
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-              <button onclick="setVideoScene('0g')" class="p-2 rounded-xl bg-slate-900 hover:bg-sky-900/50 border border-slate-700 text-center font-bold">
-                🔵 1. كرة لهب الفضاء (0g)
-              </button>
-              <button onclick="setVideoScene('moon')" class="p-2 rounded-xl bg-rose-950/50 border border-rose-500/50 text-center font-bold text-rose-200">
-                🟠 2. ذروة نار القمر (1/6g)
-              </button>
-              <button onclick="setVideoScene('cool')" class="p-2 rounded-xl bg-slate-900 hover:bg-purple-900/50 border border-slate-700 text-center font-bold text-purple-300">
-                🟣 3. اللهب البارد (FLEX-2)
-              </button>
-              <button onclick="setVideoScene('efield')" class="p-2 rounded-xl bg-slate-900 hover:bg-emerald-900/50 border border-slate-700 text-center font-bold text-emerald-300">
-                ⚡ 4. الرياح الأيونية (E-FIELD)
-              </button>
+          <!-- Chip Sensor Sliders (Oxygen, Nitrogen, Gravity, Airflow, Pressure) -->
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-4">
+            <div class="text-xs font-extrabold uppercase text-slate-700">
+              2. Adjust Live Smart Chip Atmospheric Sensors:
             </div>
 
-            <!-- مؤشرات تفاعلية تغير الفيديو مباشرة -->
-            <div class="grid grid-cols-3 gap-3 bg-slate-900/90 p-3 rounded-xl border border-slate-800 text-xs">
-              <div>
-                <div class="flex justify-between mb-1"><span>الجاذبية:</span><span id="vid-lbl-g" class="mono text-sky-400">0.17g</span></div>
-                <input id="vid-inp-g" type="range" min="0" max="1" step="0.01" value="0.17" oninput="updateVideoParams()" class="w-full" />
+            <!-- Gravity Level Selector -->
+            <div>
+              <div class="flex justify-between text-xs font-semibold mb-1">
+                <span class="text-slate-600">Gravity Environment Detected by Chip:</span>
+                <span id="chip-lbl-gravity" class="font-extrabold text-blue-600">Lunar Gravity (One-Sixth Earth)</span>
               </div>
-              <div>
-                <div class="flex justify-between mb-1"><span>الأكسجين:</span><span id="vid-lbl-o2" class="mono text-rose-400">34%</span></div>
-                <input id="vid-inp-o2" type="range" min="14" max="40" step="1" value="34" oninput="updateVideoParams()" class="w-full" />
+              <select id="chip-inp-gravity" onchange="updateSmartChip()" class="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs font-semibold text-slate-800">
+                <option value="0.001">Zero Gravity (Space Station Orbit)</option>
+                <option value="0.166" selected>Lunar Gravity (One-Sixth Earth Gravity on the Moon)</option>
+                <option value="0.376">Mars Gravity (Three-Eighths Earth Gravity on Mars)</option>
+                <option value="1.0">Full Earth Gravity (Standard Terrestrial Baseline)</option>
+              </select>
+            </div>
+
+            <!-- Oxygen & Nitrogen Coupled Sliders -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="bg-white p-3 rounded-xl border border-slate-200">
+                <div class="flex justify-between text-xs font-semibold mb-1">
+                  <span class="text-slate-600">Oxygen Percentage:</span>
+                  <span id="chip-lbl-o2" class="font-extrabold text-rose-600">34 Percent</span>
+                </div>
+                <input id="chip-inp-o2" type="range" min="12" max="40" step="1" value="34" oninput="syncOxygenNitrogen('o2')" class="w-full" />
+                <div class="text-[11px] text-slate-400 mt-1">Standard Earth is 21 Percent</div>
               </div>
-              <div>
-                <div class="flex justify-between mb-1"><span>الضغط:</span><span id="vid-lbl-p" class="mono text-amber-400">56.5 kPa</span></div>
-                <input id="vid-inp-p" type="range" min="35" max="101.3" step="0.5" value="56.5" oninput="updateVideoParams()" class="w-full" />
+
+              <div class="bg-white p-3 rounded-xl border border-slate-200">
+                <div class="flex justify-between text-xs font-semibold mb-1">
+                  <span class="text-slate-600">Nitrogen Percentage:</span>
+                  <span id="chip-lbl-n2" class="font-extrabold text-emerald-600">65 Percent</span>
+                </div>
+                <input id="chip-inp-n2" type="range" min="59" max="87" step="1" value="65" oninput="syncOxygenNitrogen('n2')" class="w-full" />
+                <div class="text-[11px] text-slate-400 mt-1">Inert gas that absorbs flame heat</div>
+              </div>
+            </div>
+
+            <!-- Cabin Pressure & Ventilation Airflow -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="bg-white p-3 rounded-xl border border-slate-200">
+                <div class="flex justify-between text-xs font-semibold mb-1">
+                  <span class="text-slate-600">Cabin Pressure Level:</span>
+                  <span id="chip-lbl-pressure" class="font-extrabold text-amber-600">56.5 Kilopascals</span>
+                </div>
+                <input id="chip-inp-pressure" type="range" min="35" max="101.3" step="0.5" value="56.5" oninput="updateSmartChip()" class="w-full" />
+              </div>
+
+              <div class="bg-white p-3 rounded-xl border border-slate-200">
+                <div class="flex justify-between text-xs font-semibold mb-1">
+                  <span class="text-slate-600">Ventilation Airflow Speed:</span>
+                  <span id="chip-lbl-flow" class="font-extrabold text-blue-600">4.0 Centimeters per Second</span>
+                </div>
+                <input id="chip-inp-flow" type="range" min="0" max="25" step="0.5" value="4.0" oninput="updateSmartChip()" class="w-full" />
               </div>
             </div>
           </div>
         </div>
 
-        <!-- بطاقات الصور البصرية الموثقة من ناسا (5 Columns) -->
-        <div class="lg:col-span-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <!-- بطاقة بصرية 1 -->
-          <div class="bg-slate-900/90 rounded-2xl border border-slate-800 overflow-hidden flex flex-col justify-between">
-            <div class="h-36 bg-gradient-to-br from-sky-950 via-slate-900 to-blue-950 flex items-center justify-center relative p-4">
-              <div class="w-20 h-20 rounded-full bg-sky-400/30 border-2 border-sky-300 shadow-[0_0_35px_#38bdf8] flex items-center justify-center text-2xl">🔥</div>
-              <span class="absolute top-2 left-2 text-[10px] mono bg-black/60 px-2 py-0.5 rounded text-sky-300">ISS / FLEX-2</span>
+        <!-- Right: Smart Chip Live Diagnostic Output, Scenario Prediction & Recommendations (6 Columns) -->
+        <div class="lg:col-span-6 flex flex-col justify-between bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-3">
+            <div>
+              <div class="text-xs font-bold uppercase text-slate-400">Live Telemetry Feed from Website Database</div>
+              <h3 id="chip-zone-title" class="text-base font-black text-slate-900">
+                GPS Zone A: Command Observation Viewport
+              </h3>
             </div>
-            <div class="p-3.5 text-xs">
-              <h4 class="font-black text-white mb-1">صورة اللهب الكروي الأزرق في 0g</h4>
-              <p class="text-slate-400 leading-relaxed">في انعدام الجاذبية يختفي الطفو، فيتحول اللهب إلى كرة متماثلة تماماً تحترق ببطء وتنتج لهباً بارداً غير مرئي بعد انطفائها.</p>
+            <span id="chip-alert-badge" class="px-3 py-1 rounded-full text-xs font-extrabold bg-rose-100 text-rose-800 border border-rose-300">
+              High Ignition Risk: 82 Percent
+            </span>
+          </div>
+
+          <!-- 4 Key Chip Telemetry Readouts -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-center">
+            <div class="bg-white p-3 rounded-xl border border-slate-200">
+              <div class="text-[11px] text-slate-500 font-medium">Minimum Oxygen Limit</div>
+              <div id="chip-kpi-mloc" class="text-sm font-black text-slate-900 mt-0.5">13.8 Percent</div>
+            </div>
+            <div class="bg-white p-3 rounded-xl border border-slate-200">
+              <div class="text-[11px] text-slate-500 font-medium">Flame Spread Speed</div>
+              <div id="chip-kpi-spread" class="text-sm font-black text-rose-600 mt-0.5">3.45 mm/s</div>
+            </div>
+            <div class="bg-white p-3 rounded-xl border border-slate-200">
+              <div class="text-[11px] text-slate-500 font-medium">Nitrogen Cooling Share</div>
+              <div id="chip-kpi-n2cool" class="text-sm font-black text-emerald-600 mt-0.5">31 Percent</div>
+            </div>
+            <div class="bg-white p-3 rounded-xl border border-slate-200">
+              <div class="text-[11px] text-slate-500 font-medium">Matched NASA Study</div>
+              <div id="chip-kpi-study" class="text-sm font-black text-blue-600 mt-0.5">Saffire and SoFIE</div>
             </div>
           </div>
 
-          <!-- بطاقة بصرية 2 -->
-          <div class="bg-slate-900/90 rounded-2xl border border-slate-800 overflow-hidden flex flex-col justify-between">
-            <div class="h-36 bg-gradient-to-br from-rose-950 via-slate-900 to-amber-950 flex items-center justify-center relative p-4">
-              <div class="w-16 h-24 rounded-t-full bg-gradient-to-t from-sky-400 via-orange-500 to-yellow-300 shadow-[0_0_35px_#f97316] flex items-center justify-center text-2xl">🚀</div>
-              <span class="absolute top-2 left-2 text-[10px] mono bg-black/60 px-2 py-0.5 rounded text-rose-300">Cygnus / Saffire</span>
+          <!-- Expected Scenario Box -->
+          <div class="bg-white p-4 rounded-2xl border-l-4 border-rose-500 shadow-sm space-y-1">
+            <div class="text-xs font-extrabold uppercase text-rose-600">
+              Predicted Fire Scenario (From NASA PSI Database):
             </div>
-            <div class="p-3.5 text-xs">
-              <h4 class="font-black text-white mb-1">صورة حرائق Saffire الكبيرة</h4>
-              <p class="text-slate-400 leading-relaxed">أكبر حريق متعمد في الفضاء داخل مركبة Cygnus؛ كشف كيف يضاعف أكسجين 34% سرعة النار فوق ألواح الأكريليك.</p>
-            </div>
+            <p id="chip-scenario-text" class="text-xs md:text-sm text-slate-700 leading-relaxed">
+              At 34 Percent Oxygen and 65 Percent Nitrogen under Lunar Gravity, natural buoyant flow feeds fresh oxygen across the acrylic viewport faster than thermal radiation can cool it. If ignited, flames will accelerate rapidly across the window surface and will not self-extinguish when ventilation fans are turned off.
+            </p>
           </div>
 
-          <!-- بطاقة بصرية 3 -->
-          <div class="bg-slate-900/90 rounded-2xl border border-slate-800 overflow-hidden flex flex-col justify-between">
-            <div class="h-36 bg-gradient-to-br from-purple-950 via-slate-900 to-indigo-950 flex items-center justify-center relative p-4">
-              <div class="w-20 h-16 rounded-full bg-purple-500/30 border border-purple-400 shadow-[0_0_30px_#a855f7] flex items-center justify-center text-2xl">⚡</div>
-              <span class="absolute top-2 left-2 text-[10px] mono bg-black/60 px-2 py-0.5 rounded text-purple-300">CIR / ACME E-FIELD</span>
+          <!-- Astronaut Actionable Recommendation Box -->
+          <div class="bg-white p-4 rounded-2xl border-l-4 border-emerald-500 shadow-sm space-y-1">
+            <div class="text-xs font-extrabold uppercase text-emerald-700">
+              Recommended Astronaut Action Protocol (GPS Linked):
             </div>
-            <div class="p-3.5 text-xs">
-              <h4 class="font-black text-white mb-1">تجربة الأيونات الكهربائية E-FIELD</h4>
-              <p class="text-slate-400 leading-relaxed">استخدام مجال كهربائي عالي الفولت في رف الاحتراق CIR لدفع أيونات اللهب ومحاكاة جاذبية القمر والمريخ بدقة.</p>
-            </div>
+            <p id="chip-recommendation-text" class="text-xs md:text-sm text-slate-700 leading-relaxed">
+              1. Do not rely on fan shutoff alone in Lunar Gravity. 2. Inject Nitrogen from the Sector Alpha valve to raise Nitrogen Percentage above 80 Percent and drop Oxygen below 16 Percent. 3. Activate Fine Water Mist nozzle (20 Micron droplet size) directed at the viewport frame.
+            </p>
           </div>
 
-          <!-- بطاقة بصرية 4 -->
-          <div class="bg-slate-900/90 rounded-2xl border border-slate-800 overflow-hidden flex flex-col justify-between">
-            <div class="h-36 bg-gradient-to-br from-emerald-950 via-slate-900 to-teal-950 flex items-center justify-center relative p-4">
-              <div class="w-20 h-20 rounded-2xl bg-emerald-500/20 border border-emerald-400 shadow-[0_0_25px_#10b981] flex items-center justify-center text-2xl">🌫️</div>
-              <span class="absolute top-2 left-2 text-[10px] mono bg-black/60 px-2 py-0.5 rounded text-emerald-300">MSG / SAME & DAFT</span>
+          <!-- Gas Composition & Risk Doughnut Chart -->
+          <div class="bg-white p-3.5 rounded-2xl border border-slate-200 grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
+            <div class="sm:col-span-5 h-36">
+              <canvas id="chipGasChart"></canvas>
             </div>
-            <div class="p-3.5 text-xs">
-              <h4 class="font-black text-white mb-1">تكتل الدخان في الفضاء (SAME)</h4>
-              <p class="text-slate-400 leading-relaxed">رصد شكل سلاسل الدخان العنقودية في غياب الطفو لتصميم حساسات تفرق بين دخان الحريق الحقيقي وغبار القمر والمناجم.</p>
+            <div class="sm:col-span-7 text-xs text-slate-600 space-y-1.5">
+              <div class="font-bold text-slate-900">How Nitrogen and Oxygen Balance Controls Fire:</div>
+              <p id="chip-balance-note" class="leading-relaxed">
+                Nitrogen molecules do not burn; they absorb heat and slow down chemical reactions. Raising Nitrogen Percentage while adjusting Cabin Pressure is the safest way for the Smart Chip to protect astronauts without starving them of breathable oxygen.
+              </p>
             </div>
           </div>
         </div>
@@ -265,204 +384,220 @@
     </section>
 
     <!-- =======================================================================
-         الفصل الثالث: محرك البحث والترتيب الذكي للـ 24 تجربة (SMART FINDER)
+         STEP 3: SMART EXPERIMENT FINDER (ALL 24 NASA PSI EXPERIMENTS)
          ======================================================================= -->
-    <section id="ch-finder" class="glass rounded-3xl p-6 md:p-8 space-y-6">
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 pb-4 border-b border-slate-800">
+    <section id="step-finder" class="card-surface rounded-3xl p-6 md:p-8 space-y-6">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-2 pb-4 border-b border-slate-200">
         <div>
-          <span class="px-3 py-1 rounded-full text-xs font-bold chapter-badge text-emerald-300 inline-block mb-1">
-            الفصل الثالث // محرك البحث والترتيب والتلخيص (Summarize & Rank 24 PSI Profiles)
+          <span class="px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-bold uppercase tracking-wide">
+            Core Requirement One // Summarize and Rank All 24 NASA Experiments
           </span>
-          <h2 class="text-xl md:text-2xl font-black text-white">ابحث في الـ 24 تجربة الفضائية ورتبها حسب نسبة التطابق مع مهمتك (%)</h2>
+          <h2 class="text-xl md:text-2xl font-black text-slate-900 mt-1">
+            Smart Experiment Finder: Search, Filter, and Rank by Match Score
+          </h2>
         </div>
-        <span id="finder-count" class="text-xs mono text-sky-400 bg-sky-500/10 px-3 py-1 rounded-full border border-sky-500/30">
-          معروض 24 تجربة مرتبة
+        <span id="finder-count-badge" class="px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-bold border border-slate-300">
+          Showing All 24 Experiments Ranked by Match
         </span>
       </div>
 
-      <!-- فلاتر البحث الذكي -->
+      <!-- 4 Clean Filter Controls -->
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div class="bg-slate-900/90 p-3.5 rounded-xl border border-slate-800">
-          <label class="block text-xs text-slate-400 mb-1.5 font-bold">1. نوع الوقود / المادة:</label>
-          <select id="filter-fuel" onchange="runSmartFinder()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-white">
-            <option value="all">الكل (جميع الـ 24 تجربة)</option>
-            <option value="Solid">وقود صلب (Solid - بلاستيك، أقمشة، رغوة)</option>
-            <option value="Liquid">وقود سائل (Liquid - قطرات وقود ورذاذ)</option>
-            <option value="Gas">وقود غازي ودخان (Gas & Aerosols)</option>
+        <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">Fuel Category:</label>
+          <select id="filter-fuel" onchange="runExperimentFinder()" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs font-semibold text-slate-800">
+            <option value="all">All Fuel Types (24 Experiments)</option>
+            <option value="Solid">Solid Materials (Plastics, Fabrics, Foam)</option>
+            <option value="Liquid">Liquid Fuels (Droplets and Water Mist)</option>
+            <option value="Gas">Gaseous Fuels and Smoke Aerosols</option>
           </select>
         </div>
 
-        <div class="bg-slate-900/90 p-3.5 rounded-xl border border-slate-800">
-          <label class="block text-xs text-slate-400 mb-1.5 font-bold">2. مكان المهمة الفضائية:</label>
-          <select id="filter-env" onchange="runSmartFinder()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-white">
-            <option value="all">كل البيئات (الفضاء + القمر والمريخ)</option>
-            <option value="Lunar">قاعدة على القمر أو المريخ (1/6g - 3/8g)</option>
-            <option value="Spacecraft">مركبة فضاء / محطة دولية (0g)</option>
+        <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">Target Mission Environment:</label>
+          <select id="filter-env" onchange="runExperimentFinder()" class="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs font-semibold text-slate-800">
+            <option value="all">All Environments (Spacecraft and Lunar Base)</option>
+            <option value="Lunar">Lunar and Martian Surface Habitat</option>
+            <option value="Spacecraft">Orbital Spacecraft (Zero Gravity)</option>
           </select>
         </div>
 
-        <div class="bg-slate-900/90 p-3.5 rounded-xl border border-slate-800">
-          <div class="flex justify-between text-xs mb-1.5">
-            <span class="text-slate-400 font-bold">3. نسبة الأكسجين المطلوبة:</span>
-            <span id="lbl-filter-o2" class="mono font-bold text-rose-400">30% O₂</span>
+        <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+          <div class="flex justify-between text-xs font-bold mb-1.5">
+            <span class="text-slate-700">Target Oxygen Percentage:</span>
+            <span id="lbl-finder-o2" class="text-blue-600">30 Percent</span>
           </div>
-          <input id="filter-o2" type="range" min="15" max="40" step="1" value="30" oninput="runSmartFinder()" class="w-full" />
+          <input id="filter-o2" type="range" min="15" max="40" step="1" value="30" oninput="runExperimentFinder()" class="w-full" />
         </div>
 
-        <div class="bg-slate-900/90 p-3.5 rounded-xl border border-slate-800">
-          <div class="flex justify-between text-xs mb-1.5">
-            <span class="text-slate-400 font-bold">4. سرعة هواء المراوح:</span>
-            <span id="lbl-filter-flow" class="mono font-bold text-sky-400">5 cm/s</span>
-          </div>
-          <input id="filter-flow" type="range" min="0" max="20" step="1" value="5" oninput="runSmartFinder()" class="w-full" />
+        <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+          <label class="block text-xs font-bold text-slate-700 mb-1.5">Keyword Search:</label>
+          <input id="filter-keyword" type="text" oninput="runExperimentFinder()" placeholder="Search Saffire, acrylic, cool flame, smoke..." class="w-full bg-white border border-slate-300 rounded-lg p-2 text-xs text-slate-800" />
         </div>
       </div>
 
-      <div>
-        <input id="filter-keyword" type="text" oninput="runSmartFinder()" placeholder="🔎 ابحث بأي كلمة (مثلاً: Saffire، أكريليك، لهب بارد، دخان، إطفاء، قمر، بطاريات، رذاذ)..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-xs text-white focus:border-sky-400 focus:outline-none" />
-      </div>
-
-      <!-- شبكة بطاقات الـ 24 تجربة -->
-      <div id="finder-results" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 max-h-[680px] overflow-y-auto p-1"></div>
+      <!-- Ranked Experiment Cards Grid -->
+      <div id="finder-cards-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 max-h-[650px] overflow-y-auto p-1"></div>
     </section>
 
     <!-- =======================================================================
-         الفصل الرابع: مختبر المقارنة والجرافات (COMPARE LAB)
+         STEP 4: SIDE-BY-SIDE COMPARISON & MULTI-GRAVITY CHARTS
          ======================================================================= -->
-    <section id="ch-compare" class="glass rounded-3xl p-6 md:p-8 space-y-6">
-      <div class="pb-4 border-b border-slate-800">
-        <span class="px-3 py-1 rounded-full text-xs font-bold chapter-badge text-amber-300 inline-block mb-1">
-          الفصل الرابع // مختبر المقارنة الهندسية والرسوم البيانية (Compare Any 2 Experiments)
+    <section id="step-compare" class="card-surface rounded-3xl p-6 md:p-8 space-y-6">
+      <div class="pb-4 border-b border-slate-200">
+        <span class="px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-xs font-bold uppercase tracking-wide">
+          Core Requirement Two // Multi-Experiment and Multi-Gravity Comparison
         </span>
-        <h2 class="text-xl md:text-2xl font-black text-white">قارن وجهاً لوجه بين أي تجربتين من الـ 24 تجربة بالجدول والجرافات</h2>
+        <h2 class="text-xl md:text-2xl font-black text-slate-900 mt-1">
+          Visual Comparison Lab: Compare Experiments and Gravity Regimes
+        </h2>
       </div>
 
+      <!-- Select Two Experiments -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div class="bg-slate-900/90 p-4 rounded-xl border border-sky-500/40">
-          <label class="block text-xs font-bold text-sky-400 mb-2">التجربة الأولى (أ):</label>
-          <select id="comp-select-a" onchange="updateComparison()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-xs text-white"></select>
+        <div class="bg-blue-50/50 p-4 rounded-xl border border-blue-200">
+          <label class="block text-xs font-extrabold text-blue-800 mb-1.5 uppercase">First Experiment for Comparison:</label>
+          <select id="comp-select-a" onchange="updateComparisonView()" class="w-full bg-white border border-slate-300 rounded-lg p-2.5 text-xs font-semibold text-slate-800"></select>
         </div>
-        <div class="bg-slate-900/90 p-4 rounded-xl border border-rose-500/40">
-          <label class="block text-xs font-bold text-rose-400 mb-2">التجربة الثانية (ب):</label>
-          <select id="comp-select-b" onchange="updateComparison()" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-xs text-white"></select>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div class="bg-slate-950/80 p-5 rounded-2xl border border-slate-800">
-          <h3 class="text-sm font-bold text-sky-400 mb-2">1. مقارنة الأكسجين والحد الحرج وسرعة اللهب (Bar Chart)</h3>
-          <div class="h-64"><canvas id="compBarChart"></canvas></div>
-        </div>
-        <div class="bg-slate-950/80 p-5 rounded-2xl border border-slate-800">
-          <h3 class="text-sm font-bold text-amber-400 mb-2">2. البصمة الفيزيائية الخماسية للتجربتين (Radar Chart)</h3>
-          <div class="h-64"><canvas id="compRadarChart"></canvas></div>
+        <div class="bg-rose-50/50 p-4 rounded-xl border border-rose-200">
+          <label class="block text-xs font-extrabold text-rose-800 mb-1.5 uppercase">Second Experiment for Comparison:</label>
+          <select id="comp-select-b" onchange="updateComparisonView()" class="w-full bg-white border border-slate-300 rounded-lg p-2.5 text-xs font-semibold text-slate-800"></select>
         </div>
       </div>
 
-      <div class="overflow-x-auto bg-slate-950/90 rounded-2xl border border-slate-800 p-4">
-        <table class="w-full text-right text-xs">
+      <!-- 3 Different Interactive Charts (Bar, Radar, Multi-Gravity Line/Bar) -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+          <h3 class="text-xs font-extrabold uppercase text-slate-700 mb-1">1. Parameter Comparison (Bar Chart)</h3>
+          <p class="text-[11px] text-slate-500 mb-3">Oxygen Percentage, Minimum Oxygen Limit, and Airflow Speed</p>
+          <div class="h-60"><canvas id="compBarChart"></canvas></div>
+        </div>
+
+        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+          <h3 class="text-xs font-extrabold uppercase text-slate-700 mb-1">2. Five-Axis Safety Profile (Radar Chart)</h3>
+          <p class="text-[11px] text-slate-500 mb-3">Radiation, Airflow Sensitivity, Cool Flame, Smoke, and Lunar Risk</p>
+          <div class="h-60"><canvas id="compRadarChart"></canvas></div>
+        </div>
+
+        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+          <h3 class="text-xs font-extrabold uppercase text-slate-700 mb-1">3. Gravity Comparison (Zero, Moon, Mars, Earth)</h3>
+          <p class="text-[11px] text-slate-500 mb-3">Why Lunar Gravity creates the highest flame spread speed</p>
+          <div class="h-60"><canvas id="gravityCompareChart"></canvas></div>
+        </div>
+      </div>
+
+      <!-- Clean Comparison Table -->
+      <div class="overflow-x-auto bg-white rounded-2xl border border-slate-200">
+        <table class="w-full text-left text-xs">
           <thead>
-            <tr class="border-b border-slate-800 text-slate-400">
-              <th class="p-3">وجه المقارنة</th>
-              <th id="th-exp-a" class="p-3 text-sky-400 font-bold">التجربة أ</th>
-              <th id="th-exp-b" class="p-3 text-rose-400 font-bold">التجربة ب</th>
+            <tr class="bg-slate-100 border-b border-slate-200 text-slate-700">
+              <th class="p-3.5 font-extrabold">Comparison Criterion</th>
+              <th id="th-exp-a" class="p-3.5 font-extrabold text-blue-700">Experiment A</th>
+              <th id="th-exp-b" class="p-3.5 font-extrabold text-rose-700">Experiment B</th>
             </tr>
           </thead>
-          <tbody id="comp-table-body" class="divide-y divide-slate-800/70"></tbody>
+          <tbody id="comp-table-body" class="divide-y divide-slate-200"></tbody>
         </table>
       </div>
     </section>
 
     <!-- =======================================================================
-         الفصل الخامس: المساعد الذكي الناطق صوتياً (HUMANIZED AI CO-PILOT)
+         STEP 5: AI ADVISOR CHATBOT & EARTH APPLICATIONS
          ======================================================================= -->
-    <section id="ch-ai" class="glass rounded-3xl p-6 md:p-8 space-y-5">
-      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pb-4 border-b border-slate-800">
+    <section id="step-advisor" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <!-- AI Chatbot Column (7 Columns) -->
+      <div class="lg:col-span-7 card-surface rounded-3xl p-6 space-y-4 flex flex-col justify-between">
         <div>
-          <span class="px-3 py-1 rounded-full text-xs font-bold chapter-badge text-emerald-300 inline-block mb-1">
-            الفصل الخامس // المساعد الذكي الناطق (Voice-Enabled PSI AI Co-Pilot)
-          </span>
-          <h2 class="text-xl md:text-2xl font-black text-white">اسأل "رفيق المهمة الذكي" كتابةً أو استمع لإجابته بالصوت الحي 🔊</h2>
+          <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-200">
+            <div>
+              <span class="px-2.5 py-0.5 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-[11px] font-bold uppercase">
+                Core Requirement Three // Evidence-Based AI Interpreter
+              </span>
+              <h2 class="text-lg font-black text-slate-900 mt-1">
+                NASA Combustion Intelligence Advisor (Chatbot)
+              </h2>
+            </div>
+            <input id="gemini-api-key" type="password" placeholder="Optional Gemini API Key" class="bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-xs text-slate-800 w-48" />
+          </div>
+
+          <!-- One-Click Preset Questions -->
+          <div class="mt-3">
+            <div class="text-xs font-bold text-slate-500 mb-2">Click Any Engineering Question Below to Test the Advisor:</div>
+            <div class="flex flex-wrap gap-1.5">
+              <button onclick="askAdvisorQuestion('How do astronauts extinguish a fire on the Moon compared to Zero Gravity?')" class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-blue-600 hover:text-white text-xs font-semibold text-slate-700 transition">
+                How to extinguish Lunar vs Space fires?
+              </button>
+              <button onclick="askAdvisorQuestion('How do Oxygen Percentage, Nitrogen Percentage, and Cabin Pressure interact?')" class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-blue-600 hover:text-white text-xs font-semibold text-slate-700 transition">
+                Oxygen, Nitrogen, and Pressure interaction?
+              </button>
+              <button onclick="askAdvisorQuestion('What are Cool Flames in FLEX-2 and how do they protect electric vehicle batteries?')" class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-blue-600 hover:text-white text-xs font-semibold text-slate-700 transition">
+                Cool Flames and Electric Vehicle Batteries?
+              </button>
+              <button onclick="askAdvisorQuestion('Which materials are safest for Lunar habitats and which must be avoided?')" class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-blue-600 hover:text-white text-xs font-semibold text-slate-700 transition">
+                Safest materials for Lunar habitats?
+              </button>
+            </div>
+          </div>
+
+          <!-- Chat History Box -->
+          <div id="chat-history" class="mt-4 bg-slate-50 rounded-2xl border border-slate-200 p-4 h-72 overflow-y-auto space-y-3 text-xs leading-relaxed">
+            <div class="p-3.5 rounded-2xl bg-white border border-slate-200 shadow-sm text-slate-700">
+              <div class="font-extrabold text-blue-700 mb-1">PYRE-SI Mission Advisor</div>
+              Welcome! I am connected to all 24 NASA Physical Sciences Informatics combustion experiments and the Smart Astronaut Chip telemetry. Ask me about Oxygen and Nitrogen limits, Lunar Gravity fire risks, material rankings, or Earth safety applications.
+            </div>
+          </div>
         </div>
-        <div class="flex flex-wrap items-center gap-2">
-          <button onclick="speakLastReply()" class="px-3.5 py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 text-xs font-bold transition">
-            🔊 اقرأ آخر إجابة بالصوت
+
+        <div class="flex gap-2 pt-2">
+          <input id="chat-input" type="text" onkeydown="if(event.key==='Enter') submitChatQuestion()" placeholder="Ask a question about space fire safety, Oxygen, Nitrogen, or Earth applications..." class="flex-1 bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-xs text-slate-900" />
+          <button onclick="submitChatQuestion()" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition">
+            Ask Advisor
           </button>
-          <input id="gemini-key" type="password" placeholder="مفتاح Gemini API (اختياري)" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-white w-52" />
         </div>
       </div>
 
-      <!-- أزرار الأسئلة القصصية الجاهزة -->
-      <div class="flex flex-wrap gap-2">
-        <button onclick="askQuickQuestion('إزاي نطفي حريق في الفضاء أو في قاعدة على القمر؟')" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-sky-600 text-xs text-slate-200 border border-slate-700 transition">
-          🧯 إزاي نطفي حريق في الفضاء والقمر؟
-        </button>
-        <button onclick="askQuickQuestion('إيه اللي بيحصل لما نسبة الأكسجين تعلى لـ 34% ومعاها الضغط ينخفض لـ 56.5 kPa؟')" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-sky-600 text-xs text-slate-200 border border-slate-700 transition">
-          🔥 تأثير أكسجين 34% وضغط القمر المنخفض؟
-        </button>
-        <button onclick="askQuickQuestion('ليه حرائق القمر (1/6g) أخطر من الفضاء (0g) ومن الأرض (1g)؟')" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-sky-600 text-xs text-slate-200 border border-slate-700 transition">
-          🌕 ليه حرائق القمر أخطر من الفضاء والأرض؟
-        </button>
-        <button onclick="askQuickQuestion('إيه هو اللهب البارد (Cool Flame) في تجربة FLEX-2 وإزاي بيحمي بطاريات السيارات الكهربائية؟')" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-sky-600 text-xs text-slate-200 border border-slate-700 transition">
-          🔋 اللهب البارد وحرائق بطاريات السيارات
-        </button>
-        <button onclick="askQuickQuestion('رشح لي أفضل المواد الآمنة لبناء كبسولة القمر وأخطر المواد اللي لازم نتجنبها')" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-sky-600 text-xs text-slate-200 border border-slate-700 transition">
-          🛡️ ترشيح المواد الآمنة لكبسولة القمر
-        </button>
-      </div>
-
-      <!-- نافذة المحادثة -->
-      <div id="chat-window" class="bg-slate-950/90 rounded-2xl border border-slate-800 p-4 h-80 overflow-y-auto space-y-4 text-xs leading-relaxed">
-        <div class="p-4 rounded-2xl bg-slate-900 border-r-4 border-sky-400 max-w-3xl">
-          <div class="font-bold text-sky-400 mb-1">👩‍🚀 رفيق المهمة الذكي (PYRE-SI Co-Pilot):</div>
-          <p class="text-slate-200">
-            أهلاً بك يا قائد المهمة! أنا أحفظ نتائج الـ <strong>24 تجربة</strong> في أرشيف وكالة ناسا (PSI). اضغط على أي سؤال جاهز بالأعلى أو اكتب سؤالك، وسأشرح لك الفيزياء ببساطة مع ذكر أرقام التجارب المرجعية وفائدتها على الأرض!
+      <!-- Earth Impact Column (5 Columns) -->
+      <div class="lg:col-span-5 card-surface rounded-3xl p-6 space-y-4 flex flex-col justify-between">
+        <div>
+          <span class="px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[11px] font-bold uppercase">
+            Core Requirement Four // Earth Safety Transfer
+          </span>
+          <h2 class="text-lg font-black text-slate-900 mt-1">
+            How Space Fire Data Saves Lives on Earth
+          </h2>
+          <p class="text-xs text-slate-500 mt-0.5">
+            Narrow millimeter channels on Earth trap air without buoyancy, behaving identically to Zero Gravity.
           </p>
-        </div>
-      </div>
 
-      <div class="flex gap-2">
-        <input id="chat-input" type="text" onkeydown="if(event.key==='Enter') sendChatMessage()" placeholder="اسأل رفيق المهمة الذكي أي سؤال عن حرائق الفضاء أو القمر أو الأرض..." class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-xs text-white focus:border-sky-400 focus:outline-none" />
-        <button onclick="sendChatMessage()" class="px-6 py-3 rounded-xl font-bold text-xs bg-gradient-to-r from-sky-500 to-blue-600 text-white shadow-lg">
-          إرسال 🚀
-        </button>
-      </div>
-    </section>
+          <div class="space-y-2.5 mt-4 text-xs">
+            <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+              <div class="font-extrabold text-slate-900">1. Electric Vehicle Battery Thermal Runaway (FLEX-2 and CFI-G)</div>
+              <p class="text-slate-600 mt-1 leading-relaxed">
+                Inside 3-millimeter gaps between lithium battery cells, buoyancy vanishes. Invisible Cool Flames discovered in space explain sudden battery re-ignition and guide safer cell spacing.
+              </p>
+            </div>
 
-    <!-- =======================================================================
-         الفصل السادس: من الفضاء إلى بيتك على الأرض (EARTH IMPACT STORIES)
-         ======================================================================= -->
-    <section id="ch-earth" class="glass rounded-3xl p-6 md:p-8 space-y-6">
-      <div class="pb-4 border-b border-slate-800">
-        <span class="px-3 py-1 rounded-full text-xs font-bold chapter-badge text-purple-300 inline-block mb-1">
-          الفصل السادس // الأثر الإنساني على الأرض (From Orbital Microgravity to Earth Safety)
-        </span>
-        <h2 class="text-xl md:text-2xl font-black text-white">كيف تحمي تجارب حرائق الفضاء سيارتك الكهربائية والمناجم والمستشفيات على الأرض؟</h2>
-      </div>
+            <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+              <div class="font-extrabold text-slate-900">2. Fine Water Mist Extinguishers (Fine Water Mist PSI-109)</div>
+              <p class="text-slate-600 mt-1 leading-relaxed">
+                Ultra-fine 20-micron water droplets developed for Space Station fire suppression now protect hospital intensive care units, server rooms, and museums without water damage.
+              </p>
+            </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-        <div class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-          <div class="p-4 rounded-2xl bg-slate-900/90 border border-rose-500/30">
-            <div class="font-bold text-rose-400 mb-1">🔋 1. بطاريات السيارات الكهربائية (FLEX-2 & CFI-G)</div>
-            <p class="text-slate-300 leading-relaxed">المسافات الضيقة (3 ملم) بين خلايا بطارية سيارتك تمنع صعود الهواء تماماً مثل الفضاء ($0g$). اكتشاف "اللهب البارد" في الفضاء مكّن المهندسين من تصميم عوازل تمنع انفجار البطاريات المفاجئ.</p>
-          </div>
-          <div class="p-4 rounded-2xl bg-slate-900/90 border border-sky-500/30">
-            <div class="font-bold text-sky-400 mb-1">🚿 2. طفايات الرذاذ المائي للمستشفيات (Mist PSI-109)</div>
-            <p class="text-slate-300 leading-relaxed">قطرات الضباب المائي الدقيقة (20 ميكرون) التي طورتها ناسا لإطفاء حرائق محطة الفضاء بدون إغراق الأجهزة تحمي اليوم غرف السيرفرات والعناية المركزة والمتاحف.</p>
-          </div>
-          <div class="p-4 rounded-2xl bg-slate-900/90 border border-amber-500/30">
-            <div class="font-bold text-amber-400 mb-1">⛏️ 3. إنقاذ عمال المناجم والغواصات (SAME & DAFT)</div>
-            <p class="text-slate-300 leading-relaxed">بفضل قياس حجم جزيئات الدخان في الفضاء، تم تطوير حساسات ذكية تفرق بين دخان الحريق الحقيقي (0.18 ميكرون) وغبار الفحم والصخور (أكبر من 2 ميكرون).</p>
-          </div>
-          <div class="p-4 rounded-2xl bg-slate-900/90 border border-emerald-500/30">
-            <div class="font-bold text-emerald-400 mb-1">👩‍🚒 4. بدلات رجال الإطفاء (Saffire & BASS-II)</div>
-            <p class="text-slate-300 leading-relaxed">معادلات انتقال الإشعاع الحراري عبر أقمشة Nomex في تجارب Saffire تُستخدم اليوم لتصميم الطبقات العازلة في معاطف رجال الإطفاء.</p>
-          </div>
-        </div>
+            <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+              <div class="font-extrabold text-slate-900">3. Underground Mining and Submarine Smoke Sensors (SAME and DAFT)</div>
+              <p class="text-slate-600 mt-1 leading-relaxed">
+                Space smoke particle measurements allow modern detectors to distinguish real sub-micron fire smoke from coarse coal and rock dust, eliminating false alarms.
+              </p>
+            </div>
 
-        <div class="lg:col-span-5 bg-slate-950/90 p-5 rounded-2xl border border-slate-800">
-          <h3 class="text-xs font-bold text-purple-300 mb-2 text-center">توزيع عوائد أبحاث حرائق ناسا على صناعات الأرض (%)</h3>
-          <div class="h-56"><canvas id="earthPieChart"></canvas></div>
+            <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+              <div class="font-extrabold text-slate-900">4. Firefighter Protective Turnout Gear (Saffire I-VI)</div>
+              <p class="text-slate-600 mt-1 leading-relaxed">
+                Radiative heat transfer models from Saffire fabric burns optimize the micro-air-gap insulation layers inside terrestrial firefighter suits.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -471,460 +606,631 @@
 
   <script>
     // =========================================================================
-    // قاعدة بيانات الـ 24 تجربة الكاملة لقسم Combustion Science في NASA PSI
+    // 1. COMPLETE 24 NASA PSI COMBUSTION EXPERIMENTS (CLEAN ENGLISH, NO SYMBOLS)
     // =========================================================================
     const PSI_EXPERIMENTS = [
-      { id: "PSI-128", name: "Saffire I–III (Spacecraft Fire Safety I-III)", fuel: "Solid", fuelAr: "وقود صلب (أقمشة SIBAL وأكريليك PMMA كبير الحجم)", o2: 34, mloc: 13.8, airflow: 3, spreadRate: 3.5, targetEnv: "Lunar", envAr: "قاعدة قمرية / مركبة استكشاف", objective: "دراسة انتشار الحريق في عينات كبيرة (بطول 1 متر) واستهلاك الأكسجين في غلاف جوي يحاكي مساكن القمر (34% أكسجين).", summary: "أثبتت أن رفع الأكسجين إلى 34% عند ضغط منخفض يجعل النسيج والأكريليك يشتعلان بسرعة عالية مع تركيز حراري شديد.", keyFinding: "في جاذبية القمر (1/6g) أو تيار المراوح البطيء، تتفوق تغذية الأكسجين على التبريد الإشعاعي مما يسبب ذروة خطورة الاشتعال.", earthImpact: "تصميم الطبقات العازلة في بدلات رجال الإطفاء وحساب استهلاك الأكسجين في الأماكن المغلقة كالأنفاق والغواصات.", radar: [88, 75, 20, 70, 95] },
-      { id: "PSI-135", name: "Saffire IV–VI (Post-Fire Diagnostics & Scrubbing)", fuel: "Solid", fuelAr: "وقود صلب (ألواح أكريليك محززة ومواد كابينة)", o2: 34, mloc: 13.5, airflow: 5, spreadRate: 3.8, targetEnv: "Lunar", envAr: "قاعدة قمرية ومريخية (أرتميس)", objective: "قياس الغازات السامة بعد الحريق (CO, HCN, HF) واختبار أجهزة تنقية الهواء وإزالة الدخان في مركبة Cygnus.", summary: "كشفت أن الأسطح المحززة تزيد من سرعة اللهب بشكل كبير عند أكسجين 34%، واختبرت فلاتر تنظيف الجو بعد إطفاء الحريق.", keyFinding: "خطورة الحريق الفضائي لا تنتهي بانطفاء اللهب؛ بل يجب تنقية غاز أول أكسيد الكربون وحمض الهيدروفلوريك فوراً لنجاة الطاقم.", earthImpact: "تطوير فلاتر تنقية الغازات السامة في الملاجئ، الطائرات، وحرائق المصانع الكيميائية.", radar: [91, 80, 25, 90, 96] },
-      { id: "PSI-111", name: "BASS-I (Burning and Suppression of Solids - I)", fuel: "Solid", fuelAr: "وقود صلب (عينات قطن، ورق، وأكريليك)", o2: 21, mloc: 15.2, airflow: 4, spreadRate: 1.9, targetEnv: "Spacecraft", envAr: "مركبة فضاء (محطة الفضاء الدولية)", objective: "أول مسح شامل في صندوق القفازات (MSG) لاختبار سرعة اشتعال المواد الصلبة وإطفائها بالغاز الخامل (النيتروجين).", summary: "أثبتت أن اللهب في الفضاء يأخذ شكلاً كروياً أزرق عند سرعات الهواء المنخفضة ويكون أسهل في الإطفاء إذا قُطع تيار المروحة.", keyFinding: "التحكم الدقيق في سرعة هواء التهوية هو المفتاح الأول للتحكم في قوة الحريق داخل الجاذبية الصفرية.", earthImpact: "تحسين أنظمة الإطفاء بالغازات الخاملة (النيتروجين) في غرف التحكم والاتصالات على الأرض.", radar: [65, 90, 15, 50, 78] },
-      { id: "PSI-112", name: "BASS-II (Burning and Suppression of Solids - II)", fuel: "Solid", fuelAr: "وقود صلب (بوليمرات وأنسجة هندسية)", o2: 21, mloc: 14.5, airflow: 5, spreadRate: 2.2, targetEnv: "Lunar", envAr: "مركبة فضاء + قاعدة قمرية", objective: "تحديد الحد الأدنى للأكسجين (MLOC) وتأثير سرعة هواء المراوح على استمرار اشتعال المواد الصلبة.", summary: "كشفت أن المواد الصلبة تستمر في الاشتعال في الفضاء والقمر عند نسب أكسجين أقل من الأرض إذا وُجد تيار هواء خفيف (2-8 سم/ث).", keyFinding: "إغلاق مراوح التهوية في الفضاء (0g) يخنق النار، لكن على القمر (1/6g) يستمر الطفو الطبيعي في تغذية الحريق حتى لو أُغلقت المراوح.", earthImpact: "تحديث معايير اختبار المواد المقاومة للحريق في الطائرات والغواصات.", radar: [70, 95, 15, 55, 85] },
-      { id: "PSI-106", name: "FLEX-1 (Flame Extinguishment Experiment - 1)", fuel: "Liquid", fuelAr: "وقود سائل (قطرات الميثانول والهبتان)", o2: 21, mloc: 15.4, airflow: 1, spreadRate: 2.5, targetEnv: "Spacecraft", envAr: "مركبة فضاء (0g) + محركات أرضية", objective: "دراسة تبخر واحتراق قطرات الوقود السائل المنفردة في الجاذبية الصفرية لتحديد متى تنطفئ بالإشعاع الحراري.", summary: "أثبتت أن قطرات الوقود الكبيرة في الفضاء تنطفئ ذاتياً بسبب فقدان الحرارة بالإشعاع قبل احتراقها بالكامل.", keyFinding: "اكتشاف حد الانطفاء الإشعاعي (Radiative Extinction Limit) الذي يعتمد على قطر قطرة الوقود ونسبة الأكسجين.", earthImpact: "تحسين تصميم رشاشات الوقود في محركات الطائرات والسيارات لتقليل استهلاك الوقود.", radar: [78, 35, 75, 40, 68] },
-      { id: "PSI-107", name: "FLEX-2 (Flame Extinguishment Experiment - 2)", fuel: "Liquid", fuelAr: "وقود سائل (قطرات الهبتان والديكان والأوكتان)", o2: 21, mloc: 15.0, airflow: 1, spreadRate: 2.9, targetEnv: "Spacecraft", envAr: "مركبة فضاء (0g) + بطاريات الأرض", objective: "دراسة احتراق قطرات الوقود السائل وتفاعلاتها المتبادلة واكتشاف آليات اللهب البارد غير المرئي.", summary: "اكتشفت أنه بعد انطفاء اللهب المرئي، تستمر القطرات في الاحتراق غير المرئي (اللهب البارد عند 600 كلفن) ثم تعاود الاشتعال فجأة.", keyFinding: "وجود مرحلة احتراق خفية ثنائية (Two-stage Cool Flame) لا تراها الكاميرات العادية وتسبب إعادة اشتعال الأبخرة.", earthImpact: "تفسير ومنع الانفلات الحراري وانفجار بطاريات السيارات الكهربائية (EV Batteries) وزيادة كفاءة محركات الديزل.", radar: [60, 40, 98, 45, 75] },
-      { id: "PSI-108", name: "FLEX-2J (Flame Extinguishment - JAXA Binary Droplets)", fuel: "Liquid", fuelAr: "وقود سائل مزدوج (خليط ديكان وهبتان)", o2: 21, mloc: 14.8, airflow: 2, spreadRate: 3.0, targetEnv: "Spacecraft", envAr: "مركبة فضاء وأنظمة دفع سائلة", objective: "بالتعاون مع وكالة الفضاء اليابانية، دراسة كيف تنتقل النار بين صفوف من قطرات الوقود المتجاورة في الفضاء.", summary: "حددت المسافة الحرجة بين قطرات الوقود التي تسمح بانتقال اللهب من قطرة لأخرى دون الحاجة لتيار هواء.", keyFinding: "خلط نوعين من الوقود السائل يغير درجة حرارة التبخر ويؤخر ظهور اللهب البارد.", earthImpact: "تطوير أنواع وقود حيوي هجين أكثر أماناً وأقل تلوثاً للمحركات الأرضية.", radar: [62, 45, 88, 50, 72] },
-      { id: "PSI-105", name: "FLEX-IT (FLEX-Italian Soot & Slow Evaporation)", fuel: "Liquid", fuelAr: "وقود سائل ثقيل (تولوين ووقود هيدروكربوني)", o2: 24, mloc: 15.1, airflow: 1, spreadRate: 2.3, targetEnv: "Spacecraft", envAr: "مركبة فضاء ومصافي تكرير", objective: "دراسة تكون قشرة السخام الكربوني (Soot Shell) حول قطرات الوقود بطيئة التبخر في الجاذبية الصفرية.", summary: "أظهرت أن السخام يتجمع في شكل قشرة كروية حول القطرة بسبب توازن قوى الدفع الحراري (Thermophoresis) مع انتشار الغاز.", keyFinding: "قشرة السخام تعمل كدرع حراري يقلل من وصول الحرارة لقلب القطرة ويبطئ معدل التبخر.", earthImpact: "تقليل تراكم الكربون والسخام داخل غرف الاحتراق في التوربينات الغازية على الأرض.", radar: [75, 30, 60, 92, 65] },
-      { id: "PSI-139", name: "ACME E-FIELD Flames (Electric-Field Effects)", fuel: "Gas", fuelAr: "وقود غازي (ميثان وإيثيلين متأين)", o2: 21, mloc: 15.5, airflow: 6, spreadRate: 3.1, targetEnv: "Lunar", envAr: "محاكاة جاذبية القمر والمريخ", objective: "تسليط مجال كهربائي على اللهب لتحريك الأيونات الموجبة وصناعة تيار أيوني يحاكي طفو جاذبية القمر والمريخ.", summary: "نجحت في التحكم في شكل اللهب وتقليل السخام واستخراج منحنيات اشتعال القمر (1/6g) مباشرة من محطة الفضاء.", keyFinding: "قوة المجال الكهربائي على أيونات اللهب تكافئ رياضياً قوة الطفو الناتجة عن جاذبية القمر، ويمكن استخدامها لإطفاء اللهب كهربائياً.", earthImpact: "تقليل انبعاثات السخام الكربوني في الأفران الصناعية ومحطات توليد الطاقة على الأرض.", radar: [55, 85, 30, 35, 90] },
-      { id: "PSI-141", name: "ACME BRE (Burner Residence-Time Experiment)", fuel: "Solid", fuelAr: "وقود صلب وغازي (أكريليك وبوليمرات منصهرة)", o2: 28, mloc: 14.2, airflow: 4, spreadRate: 2.6, targetEnv: "Spacecraft", envAr: "مركبة فضاء وقاعدة قمرية", objective: "دراسة استقرار اللهب لفترات طويلة (أكثر من 200 ثانية) فوق الأسطح البلاستيكية المنصهرة.", summary: "أثبتت أن اللهب الكروي الراكد في الفضاء يظل مشتعلاً لفترات طويلة جداً بسبب التوازن الحراري بين السطح والغاز.", keyFinding: "المواد التي تنطفئ سريعاً في الاختبارات القصيرة قد تظل مشتعلة لدقائق طويلة إذا تعرضت لتدفق هواء راكد ومستمر.", earthImpact: "تطوير البوليمرات والكابلات الكهربائية المقاومة للاشتعال طويل الأمد في المباني.", radar: [82, 70, 25, 60, 80] },
-      { id: "PSI-143", name: "ACME CFI-G (Cool Flames Investigation - Gases)", fuel: "Gas", fuelAr: "وقود غازي وأبخرة هيدروكربونية", o2: 25, mloc: 14.8, airflow: 2, spreadRate: 2.8, targetEnv: "Spacecraft", envAr: "مركبة فضاء ومخازن وقود", objective: "إثبات إمكانية حدوث اللهب البارد غير المرئي في الوقود الغازي دون الحاجة لقطرات سائلة.", summary: "أول تجربة تثبت تكون اللهب البارد في الغازات النقية بفضل غياب تيارات الحمل التي كانت تبدد الحرارة على الأرض.", keyFinding: "الأبخرة القابلة للاشتعال يمكن أن تتفاعل خفية عند 550 كلفن وتنتج أول أكسيد الكربون السام قبل أن تتحول لحريق مرئي.", earthImpact: "تصميم حساسات مبكرة تكشف غازات اللهب البارد في مخازن البتروكيماويات وبطاريات الليثيوم.", radar: [50, 45, 95, 50, 72] },
-      { id: "PSI-140", name: "ACME CLD Flame (Coflow Laminar Diffusion Flame)", fuel: "Gas", fuelAr: "وقود غازي (ميثان وإيثيلين مخفف بالنيتروجين)", o2: 21, mloc: 15.6, airflow: 9, spreadRate: 2.9, targetEnv: "Spacecraft", envAr: "مركبة فضاء وأفران صناعية", objective: "قياس هيكل اللهب وتركيز السخام في تدفق الهواء الموازي بدون تشوه الطفو الأرضي.", summary: "وفرت قياسات مرجعية دقيقة لسمك جبهة اللهب وتوزيع درجات الحرارة لمعايرة برامج محاكاة الحرائق (CFD).", keyFinding: "تخفيف الوقود بالنيتروجين يقلل الإشعاع الحراري الناتج عن السخام بنسبة تتجاوز 60% في الفضاء.", earthImpact: "معايرة معادلات الاحتراق في برامج المحاكاة الهندسية مثل OpenFOAM وANSYS Fluent.", radar: [72, 80, 15, 78, 70] },
-      { id: "PSI-142", name: "ACME Flame Design (Oxygen-Enriched Diffusion Flames)", fuel: "Gas", fuelAr: "وقود غازي في بيئة غنية بالأكسجين", o2: 35, mloc: 13.9, airflow: 5, spreadRate: 3.6, targetEnv: "Lunar", envAr: "قاعدة قمرية ومريخية (أكسجين مرتفع)", objective: "دراسة الفرق بين اللهب العادي واللهب المعكوس عند نسب أكسجين عالية.", summary: "أثبتت أن التحكم في مكان حقن الأكسجين يمنع تكون السخام تماماً حتى عند تركيزات أكسجين تصل إلى 35%.", keyFinding: "تصميم اللهب الخالي من السخام يحمي نوافذ وحساسات المركبات الفضائية من التلوث الكربوني أثناء الحريق.", earthImpact: "تطوير تقنية الاحتراق بالأكسجين النقي (Oxy-Fuel Combustion) في المصانع لاحتجاز الكربون.", radar: [85, 75, 20, 30, 91] },
-      { id: "PSI-144", name: "ACME s-Flame (Spherical Diffusion Flames)", fuel: "Gas", fuelAr: "وقود غازي كروي (هيدروجين وميثان)", o2: 21, mloc: 14.9, airflow: 1, spreadRate: 2.1, targetEnv: "Spacecraft", envAr: "مركبة فضاء (0g) وخزانات هيدروجين", objective: "إنشاء لهب كروي مثالي تماماً في الفضاء لدراسة تذبذب اللهب قبل انطفائه بالإشعاع الحراري.", summary: "كشفت أن اللهب الكروي يبدأ بالنبض والتذبذب عندما يقترب تركيز الأكسجين من حد الانطفاء الحرج.", keyFinding: "رصد تذبذب تردد الضوء الصادر من اللهب يعمل كإنذار مبكر يحدد ما إذا كانت النار في طريقها للانطفاء أم للانتشار.", earthImpact: "تأمين خزانات وأنابيب وقود الهيدروجين الأخضر في محطات الطاقة النظيفة على الأرض.", radar: [80, 25, 40, 25, 66] },
-      { id: "PSI-102", name: "SAME (Smoke Aerosol Measurement Experiment)", fuel: "Solid", fuelAr: "وقود صلب مدخن (تيفلون، كبتون، سيليكون، قطن)", o2: 21, mloc: 16.0, airflow: 2, spreadRate: 1.5, targetEnv: "Spacecraft", envAr: "مركبة فضاء ومناجم أرضية", objective: "قياس حجم وشكل جزيئات الدخان الناتجة عن احتراق مواد المركبات الفضائية لتصميم أجهزة إنذار دقيقة.", summary: "وجدت أن غياب الطفو في الفضاء يجعل جزيئات الدخان تتصادم وتتجمع في سلاسل عنقودية أكبر حجماً من دخان الأرض.", keyFinding: "حساسات الدخان الأرضية التقليدية قد تفشل أو تعطي إنذاراً متأخراً في الفضاء والقمر ما لم تُعاير على حجم الجزيئات الفضائية.", earthImpact: "تصميم حساسات الدخان الذكية في المناجم تحت الأرض والغواصات التي تفرق بين الدخان الحقيقي وغبار الفحم.", radar: [45, 60, 20, 98, 68] },
-      { id: "PSI-104", name: "DAFT (Dust and Aerosol Measurement Feasibility)", fuel: "Gas", fuelAr: "تمييز غبار القمر عن دخان الحرائق", o2: 30, mloc: 15.0, airflow: 3, spreadRate: 1.8, targetEnv: "Lunar", envAr: "قاعدة القمر والمناجم الأرضية", objective: "التفرقة البصرية والفيزيائية بين ذرات غبار تربة القمر (Regolith) وبين دخان الحرائق الحقيقية.", summary: "طورت خوارزميات تقيس تشتت الضوء لتفريق جزيئات الدخان الدقيقة (0.18 ميكرون) عن ذرات الغبار الخشنة (أكبر من 2 ميكرون).", keyFinding: "منع الإنذارات الكاذبة في مساكن القمر عندما يدخل الرواد ببدلاتهم المحملة بغبار القمر.", earthImpact: "منع الإنذارات الكاذبة في مناجم الفحم والذهب ومصانع الأسمنت والأخشاب على الأرض.", radar: [35, 55, 15, 95, 82] },
-      { id: "PSI-118", name: "SLICE (Structure & Liftoff In Combustion Experiment)", fuel: "Gas", fuelAr: "وقود غازي (لهب نفاث ميثان/إيثيلين)", o2: 21, mloc: 15.8, airflow: 15, spreadRate: 3.8, targetEnv: "Spacecraft", envAr: "مركبة فضاء وأنظمة دفع", objective: "دراسة متى ينفصل اللهب عن فوهة الوقود وينطفئ (Blowoff Limit) عند سرعات الهواء العالية.", summary: "حددت السرعة القصوى للهواء التي ينطفئ عندها اللهب بالتمدد والبرودة مقارنة بالسرعة البطيئة التي تغذي الحريق.", keyFinding: "زيادة سرعة الهواء فوق 20 سم/ث تبدأ في إضعاف اللهب وتبريده، بينما السرعات المنخفضة (4-8 سم/ث) هي الأخطر.", earthImpact: "تحسين استقرار الشعلات الصناعية وتقليل استهلاك الغاز الطبيعي في المصانع.", radar: [65, 92, 15, 40, 65] },
-      { id: "PSI-119", name: "SPICE (Smoke Point In Co-flow Experiment)", fuel: "Gas", fuelAr: "وقود غازي هيدروكربوني (بروبان وإيثيلين)", o2: 25, mloc: 15.2, airflow: 8, spreadRate: 2.7, targetEnv: "Lunar", envAr: "قاعدة قمرية ومركبات فضاء", objective: "تحديد النقطة الحرجة التي يبدأ عندها اللهب في إطلاق السخام الأسود الكثيف الذي يحجب الرؤية ويزيد الإشعاع.", summary: "أثبتت أن اللهب في الفضاء والقمر ينتج قشرة سخام كروية تشع حرارة عالية جداً نحو المواد المجاورة.", keyFinding: "السخام المتكون داخل اللهب يرفع الفقد الإشعاعي، لكنه في الأماكن الضيقة يسخن الجدران المجاورة ويسرع انتشار الحريق.", earthImpact: "تقليل التلوث الكربوني في محركات الطائرات النفاثة.", radar: [90, 75, 20, 92, 78] },
-      { id: "PSI-136", name: "SoFIE-GEL (Growth and Extinction Limit)", fuel: "Solid", fuelAr: "وقود صلب (كرات وأسطوانات أكريليك PMMA)", o2: 34, mloc: 13.5, airflow: 7, spreadRate: 3.9, targetEnv: "Lunar", envAr: "قاعدة أرتميس القمرية والمريخية", objective: "دراسة نمو اللهب وانطفائه فوق الأجسام الصلبة السميكة تحت ظروف أكسجين وضغط مساكن القمر.", summary: "أثبتت أن سمك المادة الصلبة يحدد كمية الحرارة الممتصة للداخل، وأن الأكسجين المرتفع (34%) يتغلب على التبريد الداخلي.", keyFinding: "المواد البلاستيكية السميكة التي تقاوم الاشتعال على الأرض تتحول إلى وقود مستمر في بيئة القمر منخفضة الضغط.", earthImpact: "تحديث المواصفات القياسية لمواد البناء العازلة للحريق في الأبراج والمستشفيات.", radar: [92, 88, 30, 72, 98] },
-      { id: "PSI-137", name: "SoFIE-MIST (Material Ignition and Suppression Test)", fuel: "Solid", fuelAr: "وقود صلب (ألواح بوليمرات وكابلات فضائية)", o2: 32, mloc: 13.7, airflow: 6, spreadRate: 3.4, targetEnv: "Lunar", envAr: "قاعدة القمر والمريخ (أرتميس)", objective: "قياس أقل حرارة إشعاعية تسبب اشتعال المواد الفضائية في نفق هوائي مصغر داخل رف الاحتراق (CIR).", summary: "وفرت خرائط دقيقة تربط بين ضغط الكابينة، نسبة الأكسجين، وسرعة الهواء لتحديد شروط الإطفاء الآمن.", keyFinding: "خفض ضغط الكابينة يقلل التبريد بالحمل، مما يجعل المواد تشتعل عند تعرضها لحرارة أقل بنسبة 30% من الأرض.", earthImpact: "حماية لوحات الكهرباء وكابلات الضغط العالي في الأماكن المغلقة والمرتفعات الجبلية.", radar: [89, 86, 25, 68, 94] },
-      { id: "PSI-138", name: "SoFIE-SMOLDER (Smoldering & Residence Time)", fuel: "Solid", fuelAr: "وقود صلب مسامي (إسفنج البولي يوريثان والعزل)", o2: 28, mloc: 13.2, airflow: 2, spreadRate: 1.4, targetEnv: "Lunar", envAr: "قاعدة قمرية ومركبات شحن", objective: "دراسة الاحتراق الكامن بدون لهب (Smoldering - الجمر المتقد) داخل مواد العزل المسامية في الجاذبية المنخفضة.", summary: "كشفت أن الاحتراق الكامن يختبئ داخل الإسفنج والعزل لساعات عند أكسجين منخفض جداً ثم يتحول فجأة إلى لهب مشتعل.", keyFinding: "الاحتراق الكامن ينتج كميات قاتلة من أول أكسيد الكربون دون رفع حرارة الغرفة، ويتطلب حساسات غاز وليس حساسات حرارة فقط.", earthImpact: "منع حرائق المراتب والأثاث الإسفنجي ومخازن القطن والحبوب على الأرض.", radar: [58, 65, 80, 88, 86] },
-      { id: "PSI-109", name: "Fine Water Mist / FSDC Suppression", fuel: "Liquid", fuelAr: "إطفاء حرائق الوقود السائل والصلب بالرذاذ", o2: 24, mloc: 16.5, airflow: 4, spreadRate: 1.1, targetEnv: "Spacecraft", envAr: "مركبة فضاء + غرف سيرفرات الأرض", objective: "اختبار كفاءة قطرات الضباب المائي متناهية الصغر في إطفاء حرائق الفضاء دون إتلاف الإلكترونيات.", summary: "أثبتت أن الرذاذ المائي بحجم 20-50 ميكرون يتبخر فوراً في منطقة اللهب، فيسحب الحرارة ويطرد الأكسجين موضعياً.", keyFinding: "أفضل طريقة لإطفاء حرائق الفضاء والقمر بدون مواد كيميائية سامة هي الرذاذ المائي الدقيق مع خفض الأكسجين الموضعي.", earthImpact: "الأساس العلمي لطفايات الرذاذ المائي الحديثة المستخدمة في مراكز البيانات والمتاحف على الأرض.", radar: [40, 65, 35, 30, 50] },
-      { id: "PSI-115", name: "DARTFire (Diffusive & Radiative Transport in Fires)", fuel: "Solid", fuelAr: "وقود صلب (شرائط PMMA سوداء تمتص الإشعاع)", o2: 30, mloc: 14.0, airflow: 5, spreadRate: 3.2, targetEnv: "Lunar", envAr: "قاعدة قمرية ومريخية", objective: "عزل وقياس دور الإشعاع الحراري وحده مقابل انتشار الأكسجين في تغذية الحرائق تحت الجاذبية المنخفضة.", summary: "أثبتت أن الإشعاع الحراري المنعكس من جدران المركبة الضيقة يمكنه إبقاء النار مشتعلة حتى عند سرعات هواء منخفضة جداً.", keyFinding: "طلاء جدران المركبات الفضائية بمواد تقلل امتصاص وإعادة إشعاع الحرارة يرفع معامل الأمان ضد انتشار الحريق.", earthImpact: "تصميم الواجهات العازلة للحرارة في ناطحات السحاب لمنع انتقال الحريق بين الطوابق.", radar: [96, 72, 18, 65, 89] },
-      { id: "PSI-121", name: "LSP (Laminar Soot Processes in Microgravity)", fuel: "Gas", fuelAr: "وقود غازي (البروبان والإيثيلين في ضغوط مختلفة)", o2: 21, mloc: 15.3, airflow: 6, spreadRate: 2.4, targetEnv: "Spacecraft", envAr: "مركبة فضاء ومحركات احتراق", objective: "قياس كيف يتكون السخام الأسود وينمو داخل اللهب الغازي عند غياب تيارات الطفو.", summary: "وجدت أن بقاء جزيئات الوقود فترة أطول داخل اللهب في الفضاء يضاعف حجم جزيئات السخام بمقدار 3 إلى 5 مرات مقارنة بالأرض.", keyFinding: "تقليل زمن بقاء الغاز داخل منطقة التفاعل يمنع تكون السخام الكثيف ويقلل الإشعاع الحراري الخطر.", earthImpact: "تصميم محركات احتراق داخلي نظيفة وتقليل الانبعاثات المسببة للاحتباس الحراري على الأرض.", radar: [84, 62, 20, 96, 74] }
+      { id: "PSI-128", name: "Saffire I to III (Large-Scale Spacecraft Fire Safety)", fuel: "Solid", o2: 34, mloc: 13.8, airflow: 3.0, spreadRate: 3.5, targetEnv: "Lunar", objective: "Investigate large-scale flame spread and oxygen consumption across one-meter fabric and acrylic panels in exploration atmospheres.", summary: "Demonstrated that raising Oxygen Percentage to 34 Percent at reduced Cabin Pressure causes rapid flame acceleration and intense radiative heating.", keyFinding: "Under Lunar Gravity or gentle ventilation flow, convective oxygen delivery outpaces radiative cooling, creating peak flammability danger.", earthImpact: "Optimizes thermal insulation layers in firefighter turnout gear and enclosed tunnel fire models.", radar: [88, 75, 20, 70, 95] },
+      { id: "PSI-135", name: "Saffire IV to VI (Post-Fire Gas Diagnostics and Scrubbing)", fuel: "Solid", o2: 34, mloc: 13.5, airflow: 5.0, spreadRate: 3.8, targetEnv: "Lunar", objective: "Measure toxic combustion gases including Carbon Monoxide and Hydrogen Fluoride and test post-fire air scrubbing filters.", summary: "Revealed that structured acrylic surfaces burn significantly faster at 34 Percent Oxygen and validated automated smoke and gas scrubbers.", keyFinding: "Crew survival requires immediate post-fire atmospheric scrubbing to remove toxic Carbon Monoxide and acidic gases.", earthImpact: "Advances emergency air filtration systems for submarines, aircraft cabins, and industrial shelters.", radar: [91, 80, 25, 90, 96] },
+      { id: "PSI-111", name: "BASS-I (Burning and Suppression of Solids Part One)", fuel: "Solid", o2: 21, mloc: 15.2, airflow: 4.0, spreadRate: 1.9, targetEnv: "Spacecraft", objective: "Evaluate solid material ignition, flame spread geometry, and Nitrogen gas suppression inside the Microgravity Science Glovebox.", summary: "Showed that Zero Gravity flames form calm blue spheres at low airflow and extinguish rapidly when ventilation flow is halted.", keyFinding: "Controlling ventilation airflow velocity and Nitrogen dilution is the primary defense against fires in Zero Gravity.", earthImpact: "Improves clean-agent Nitrogen fire suppression systems for data centers and telecommunications hubs.", radar: [65, 90, 15, 50, 78] },
+      { id: "PSI-112", name: "BASS-II (Burning and Suppression of Solids Part Two)", fuel: "Solid", o2: 21, mloc: 14.5, airflow: 5.0, spreadRate: 2.2, targetEnv: "Lunar", objective: "Determine the Minimum Oxygen Limit and forced airflow dependence for solid polymers and textiles.", summary: "Proved that materials sustain combustion at lower Oxygen Percentages in low-velocity airflows than in standard Earth gravity.", keyFinding: "Turning off cabin fans stops fires in Zero Gravity, but Lunar Gravity maintains natural buoyant airflow that keeps flames alive.", earthImpact: "Upgrades flammability certification standards for commercial aviation and spacecraft materials.", radar: [70, 95, 15, 55, 85] },
+      { id: "PSI-106", name: "FLEX-1 (Flame Extinguishment Experiment Part One)", fuel: "Liquid", o2: 21, mloc: 15.4, airflow: 1.0, spreadRate: 2.5, targetEnv: "Spacecraft", objective: "Study spherical combustion and radiative extinction of isolated liquid heptane and methanol fuel droplets.", summary: "Confirmed that large liquid fuel droplets in Zero Gravity self-extinguish due to radiative heat loss before burning completely.", keyFinding: "Identified the exact droplet diameter and Oxygen Percentage threshold where radiative heat loss quenches combustion.", earthImpact: "Enhances fuel spray efficiency and reduces emissions in automotive and aviation engines.", radar: [78, 35, 75, 40, 68] },
+      { id: "PSI-107", name: "FLEX-2 (Flame Extinguishment Experiment Part Two)", fuel: "Liquid", o2: 21, mloc: 15.0, airflow: 1.0, spreadRate: 2.9, targetEnv: "Spacecraft", objective: "Investigate droplet interactions and low-temperature two-stage Cool Flame chemistry in hydrocarbon fuels.", summary: "Discovered that after visible flames extinguish, liquid droplets continue burning invisibly at 600 Kelvin as Cool Flames before re-igniting.", keyFinding: "Uncovered two-stage invisible Cool Flame combustion that can trigger unexpected secondary vapor explosions.", earthImpact: "Prevents thermal runaway and secondary vapor ignition inside narrow Electric Vehicle battery channels.", radar: [60, 40, 98, 45, 75] },
+      { id: "PSI-108", name: "FLEX-2J (Binary Liquid Droplet Array Combustion)", fuel: "Liquid", o2: 21, mloc: 14.8, airflow: 2.0, spreadRate: 3.0, targetEnv: "Spacecraft", objective: "Examine flame propagation across linear arrays of binary decane and heptane fuel droplets.", summary: "Defined the critical inter-droplet spacing required for flames to jump from one fuel droplet to another without buoyancy.", keyFinding: "Blending fuels of different volatility delays Cool Flame transition and alters ignition spacing.", earthImpact: "Guides safer hybrid biofuel formulations for high-efficiency industrial turbines.", radar: [62, 45, 88, 50, 72] },
+      { id: "PSI-105", name: "FLEX-IT (Slow Evaporation and Soot Shell Dynamics)", fuel: "Liquid", o2: 24, mloc: 15.1, airflow: 1.5, spreadRate: 2.3, targetEnv: "Spacecraft", objective: "Analyze spherical soot shell formation around slow-evaporating heavy hydrocarbon droplets.", summary: "Demonstrated that carbon soot particles form a suspended spherical shell around burning droplets due to thermophoretic forces.", keyFinding: "Dense soot shells act as a thermal barrier that alters heat feedback to the liquid fuel core.", earthImpact: "Reduces carbon fouling and soot deposition inside industrial boilers and jet turbines.", radar: [75, 30, 60, 92, 65] },
+      { id: "PSI-139", name: "ACME E-FIELD Flames (Electric-Field Ion Driven Flames)", fuel: "Gas", o2: 21, mloc: 15.5, airflow: 6.0, spreadRate: 3.1, targetEnv: "Lunar", objective: "Use high-voltage electric fields to drive flame ions and simulate Lunar and Martian buoyant convection in orbit.", summary: "Successfully used ionic wind forces to replicate partial-gravity buoyancy and suppress soot formation in gas flames.", keyFinding: "Electrohydrodynamic force on flame ions is mathematically equivalent to Lunar Gravity buoyancy, bridging the partial-gravity data gap.", earthImpact: "Enables electric-field soot suppression and cleaner combustion in terrestrial power plants.", radar: [55, 85, 30, 35, 90] },
+      { id: "PSI-141", name: "ACME BRE (Burner Residence-Time Experiment)", fuel: "Solid", o2: 28, mloc: 14.2, airflow: 4.0, spreadRate: 2.6, targetEnv: "Spacecraft", objective: "Test long-duration flame stability lasting over 200 seconds above melting plastic and polymer fuels.", summary: "Showed that hemispherical stagnation flames can persist for several minutes when conductive heat feedback balances radiative loss.", keyFinding: "Materials that pass short ignition tests can sustain hazardous long-duration burning under steady gentle ventilation.", earthImpact: "Improves fire-retardant electrical cable coatings for residential and commercial buildings.", radar: [82, 70, 25, 60, 80] },
+      { id: "PSI-143", name: "ACME CFI-G (Cool Flames Investigation in Gases)", fuel: "Gas", o2: 25, mloc: 14.8, airflow: 2.0, spreadRate: 2.8, targetEnv: "Spacecraft", objective: "Observe non-premixed gaseous Cool Flames without liquid droplet boundaries.", summary: "First experiment to stabilize pure gaseous Cool Flames, proving that low-temperature invisible combustion occurs in fuel vapors.", keyFinding: "Gaseous hydrocarbons can react invisibly at 550 Kelvin, producing toxic Carbon Monoxide prior to hot ignition.", earthImpact: "Supports early-warning gas sensors for chemical storage tanks and lithium battery enclosures.", radar: [50, 45, 95, 50, 72] },
+      { id: "PSI-140", name: "ACME CLD Flame (Coflow Laminar Diffusion Flame)", fuel: "Gas", o2: 21, mloc: 15.6, airflow: 9.0, spreadRate: 2.9, targetEnv: "Spacecraft", objective: "Measure flame structure and Nitrogen dilution limits in axisymmetric coflow gas flames.", summary: "Provided benchmark temperature and soot concentration maps used to calibrate three-dimensional fire simulation software.", keyFinding: "Increasing Nitrogen Percentage in the fuel-air stream reduces radiative soot heat loss by more than 60 Percent.", earthImpact: "Calibrates computational fluid dynamics fire solvers such as OpenFOAM and NIST FDS.", radar: [72, 80, 15, 78, 70] },
+      { id: "PSI-142", name: "ACME Flame Design (Oxygen-Enriched Inverse Flames)", fuel: "Gas", o2: 35, mloc: 13.9, airflow: 5.0, spreadRate: 3.6, targetEnv: "Lunar", objective: "Compare normal and inverse diffusion flames in high-oxygen exploration atmospheres.", summary: "Proved that controlling where oxygen and Nitrogen mix can eliminate soot formation even at 35 Percent Oxygen.", keyFinding: "Soot-free flame architecture prevents radiant overheating of adjacent spacecraft walls.", earthImpact: "Advances clean oxy-fuel combustion systems for carbon capture in heavy industry.", radar: [85, 75, 20, 30, 91] },
+      { id: "PSI-144", name: "ACME s-Flame (Spherical Diffusion Flame Oscillations)", fuel: "Gas", o2: 21, mloc: 14.9, airflow: 1.0, spreadRate: 2.1, targetEnv: "Spacecraft", objective: "Create stationary spherical gas flames to study radiative quenching and flame pulsations.", summary: "Identified low-frequency flame pulsations that appear immediately before a flame crosses its extinction threshold.", keyFinding: "Optical pulsation frequency serves as an early diagnostic signal predicting whether a fire will grow or extinguish.", earthImpact: "Enhances optical flame detectors for hydrogen energy storage facilities.", radar: [80, 25, 40, 25, 66] },
+      { id: "PSI-102", name: "SAME (Smoke Aerosol Measurement Experiment)", fuel: "Solid", o2: 21, mloc: 16.0, airflow: 2.0, spreadRate: 1.5, targetEnv: "Spacecraft", objective: "Characterize smoke particle size distributions from overheated spacecraft wiring and polymers.", summary: "Found that absence of buoyancy allows smoke particles to collide longer, forming larger fractal chains than on Earth.", keyFinding: "Spacecraft and Lunar smoke detectors must be calibrated for larger aggregated aerosol diameters.", earthImpact: "Powers multi-wavelength smoke sensors in underground mines that separate smoke from rock dust.", radar: [45, 60, 20, 98, 68] },
+      { id: "PSI-104", name: "DAFT (Dust and Aerosol Measurement Feasibility Test)", fuel: "Gas", o2: 30, mloc: 15.0, airflow: 3.0, spreadRate: 1.8, targetEnv: "Lunar", objective: "Distinguish abrasive Lunar surface dust from genuine combustion smoke particles.", summary: "Developed optical scattering signatures that separate sub-micron pyrolysis smoke from coarse Lunar regolith dust.", keyFinding: "Prevents false fire alarms inside Lunar airlocks when astronauts return covered in Moon dust.", earthImpact: "Eliminates false alarms in coal mines, grain silos, and industrial manufacturing plants.", radar: [35, 55, 15, 95, 82] },
+      { id: "PSI-118", name: "SLICE (Structure and Liftoff In Combustion Experiment)", fuel: "Gas", o2: 21, mloc: 15.8, airflow: 15.0, spreadRate: 3.8, targetEnv: "Spacecraft", objective: "Determine flame liftoff and high-velocity blowoff limits in laminar jet flames.", summary: "Mapped the exact high-airflow boundary where aerodynamic stretch cools and blows out a flame.", keyFinding: "While gentle airflow (4 to 8 cm/s) intensifies fires, high airflow above 20 cm/s stretches and extinguishes the reaction zone.", earthImpact: "Improves burner stability and fuel economy in industrial heating furnaces.", radar: [65, 92, 15, 40, 65] },
+      { id: "PSI-119", name: "SPICE (Smoke Point In Co-flow Experiment)", fuel: "Gas", o2: 25, mloc: 15.2, airflow: 8.0, spreadRate: 2.7, targetEnv: "Lunar", objective: "Identify the critical fuel flow rate where clean flames transition into heavy black soot emitters.", summary: "Showed that microgravity and partial-gravity flames reach the soot emission point earlier than turbulent Earth flames.", keyFinding: "Controlling fuel flow and Nitrogen dilution prevents thick radiative soot clouds inside habitats.", earthImpact: "Reduces black carbon particulate emissions from aviation gas turbines.", radar: [90, 75, 20, 92, 78] },
+      { id: "PSI-136", name: "SoFIE-GEL (Growth and Extinction Limit on Thick Solids)", fuel: "Solid", o2: 34, mloc: 13.5, airflow: 7.0, spreadRate: 3.9, targetEnv: "Lunar", objective: "Study flame growth over thick acrylic spheres and cylinders in Lunar exploration atmospheres.", summary: "Demonstrated that 34 Percent Oxygen overcomes internal heat conduction into thick plastics, enabling sustained burning.", keyFinding: "Thick structural plastics that self-extinguish on Earth burn continuously under Lunar Cabin Pressure and Oxygen.", earthImpact: "Informs fire-safe structural polymer selection for high-rise buildings and hospitals.", radar: [92, 88, 30, 72, 98] },
+      { id: "PSI-137", name: "SoFIE-MIST (Material Ignition and Suppression Test)", fuel: "Solid", o2: 32, mloc: 13.7, airflow: 6.0, spreadRate: 3.4, targetEnv: "Lunar", objective: "Measure minimum radiative heat flux for ignition across cabin pressure, oxygen, and airflow sweeps.", summary: "Established comprehensive flammability maps linking Cabin Pressure, Oxygen Percentage, Nitrogen Percentage, and Airflow.", keyFinding: "Lowering Cabin Pressure reduces convective air cooling, causing materials to ignite with 30 Percent less heat input.", earthImpact: "Protects high-altitude electrical switchgear and pressurized transport cabins.", radar: [89, 86, 25, 68, 94] },
+      { id: "PSI-138", name: "SoFIE-SMOLDER (Porous Media Smoldering and Toxic Gas)", fuel: "Solid", o2: 28, mloc: 13.2, airflow: 2.0, spreadRate: 1.4, targetEnv: "Lunar", objective: "Investigate non-flaming smoldering combustion inside porous foam insulation under low gravity.", summary: "Revealed that smoldering can propagate hidden inside foam insulation at very low oxygen levels for hours before erupting into flame.", keyFinding: "Hidden smoldering releases lethal Carbon Monoxide without triggering optical flame sensors, requiring smart gas chips.", earthImpact: "Prevents hidden smoldering fires in residential upholstery, mattresses, and warehouse insulation.", radar: [58, 65, 80, 88, 86] },
+      { id: "PSI-109", name: "Fine Water Mist Suppression (FSDC Water Mist Study)", fuel: "Liquid", o2: 24, mloc: 16.5, airflow: 4.0, spreadRate: 1.1, targetEnv: "Spacecraft", objective: "Evaluate 20-to-50 micron fine water mist droplets for extinguishing spacecraft fires safely.", summary: "Proved that ultra-fine water mist evaporates instantly inside the flame zone, absorbing heat and displacing oxygen locally.", keyFinding: "Fine water mist combined with Nitrogen dilution extinguishes Lunar and orbital fires without harming electronics.", earthImpact: "Forms the foundation for modern clean water-mist fire sprinklers in server rooms and archives.", radar: [40, 65, 35, 30, 50] },
+      { id: "PSI-115", name: "DARTFire (Diffusive and Radiative Transport in Fires)", fuel: "Solid", o2: 30, mloc: 14.0, airflow: 5.0, spreadRate: 3.2, targetEnv: "Lunar", objective: "Separate radiative heat feedback from diffusive oxygen transport over solid PMMA fuels.", summary: "Showed that radiant heat reflected from nearby spacecraft walls sustains burning even at very low airflow velocities.", keyFinding: "Applying reflective, low-absorptivity coatings on interior cabin panels significantly reduces flame spread speed.", earthImpact: "Guides fire-resistant facade and corridor cladding design in modern architecture.", radar: [96, 72, 18, 65, 89] },
+      { id: "PSI-121", name: "LSP (Laminar Soot Processes in Microgravity Jets)", fuel: "Gas", o2: 21, mloc: 15.3, airflow: 6.0, spreadRate: 2.4, targetEnv: "Spacecraft", objective: "Measure soot inception and growth residence times in propane and ethylene gas flames.", summary: "Discovered that longer gas residence times in low gravity produce soot aggregates three to five times larger than on Earth.", keyFinding: "Shortening burner residence time and increasing Nitrogen dilution prevents radiative soot hazards.", earthImpact: "Designs cleaner internal combustion engines with dramatically lower particulate emissions.", radar: [84, 62, 20, 96, 74] }
     ];
 
     // =========================================================================
-    // 1. تفاعل قرار قائد المهمة (Storytelling Decision Simulator)
+    // 2. SPACECRAFT GPS ZONES DATABASE (FOR THE SMART ASTRONAUT CHIP)
     // =========================================================================
-    function makeCommanderDecision(choice) {
-      const box = document.getElementById('decision-feedback');
-      if (choice === 'wrong') {
-        box.className = "p-4 rounded-2xl bg-rose-950/80 border border-rose-500 text-xs leading-relaxed text-rose-100";
-        box.innerHTML = `
-          <strong>🚨 كارثة في الكبسولة! لماذا فشل هذا القرار على القمر؟</strong><br/>
-          في محطة الفضاء ($0g$) إغلاق المروحة يوقف الهواء تماماً فتنطفئ النار. لكنك الآن على القمر ($1/6g$)! جاذبية القمر تصنع تيار طفو طبيعي بسرعة <strong>6.4 سم/ثانية</strong> يغذي النار بالأكسجين المركز (34%) حتى والمراوح مغلقة! (مُثبت في تجربتي <code>BASS-II PSI-112</code> و <code>Saffire PSI-128</code>).
-        `;
+    const GPS_ZONES = {
+      viewport: {
+        code: "GPS Sector Alpha-01",
+        title: "GPS Zone A: Command Observation Viewport",
+        material: "Cast Acrylic Panel (PMMA)",
+        baseRisk: 1.18,
+        baseMloc: 13.8,
+        matchedStudy: "Saffire and SoFIE-GEL",
+        scenarioHigh: "At elevated Oxygen Percentage under Lunar Gravity, gentle buoyant convection feeds fresh oxygen across the acrylic viewport faster than radiation cools it. Flames accelerate rapidly and will not self-extinguish if fans are turned off.",
+        scenarioLow: "With Nitrogen Percentage increased above 78 Percent and Oxygen reduced below 19 Percent, the acrylic viewport sits safely outside the convective flammability peak.",
+        actionHigh: "1. Do not rely on fan shutoff alone in Lunar Gravity. 2. Open the Sector Alpha Nitrogen valve to raise Nitrogen above 79 Percent. 3. Activate 20-micron Fine Water Mist nozzle toward the window seal.",
+        actionLow: "Atmosphere is stabilized. Maintain current Nitrogen dilution and keep continuous optical monitoring active on the viewport frame."
+      },
+      quarters: {
+        code: "GPS Sector Beta-02",
+        title: "GPS Zone B: Crew Sleeping Quarters",
+        material: "Cotton-Fiberglass Textile (SIBAL)",
+        baseRisk: 1.25,
+        baseMloc: 13.5,
+        matchedStudy: "Saffire I-VI and BASS-II",
+        scenarioHigh: "Thin fabrics in the Crew Quarters have very low thermal inertia. Under reduced Cabin Pressure and high Oxygen, flames sweep across bedding and curtains three times faster than on Earth, rapidly consuming breathable oxygen.",
+        scenarioLow: "Current Nitrogen thermal ballast and low ventilation airflow prevent rapid concurrent flame spread across crew textiles.",
+        actionHigh: "1. Seal Crew Quarters bulkhead damper immediately. 2. Release Nitrogen inerting pulse to drop Oxygen below 16 Percent. 3. Activate Carbon Monoxide scrubbers per Saffire IV protocol.",
+        actionLow: "Crew Quarters are within safe NASA STD-6001 limits. Keep airflow speed below 2.0 Centimeters per Second."
+      },
+      battery: {
+        code: "GPS Sector Gamma-03",
+        title: "GPS Zone C: Battery and Power Bay",
+        material: "Liquid Carbonate Electrolyte (3mm Channels)",
+        baseRisk: 1.32,
+        baseMloc: 14.2,
+        matchedStudy: "FLEX-2 and ACME CFI-G",
+        scenarioHigh: "Narrow 3-millimeter channels between battery cells suppress buoyancy even on Earth or the Moon. Overheated electrolyte vapors form invisible 600-Kelvin Cool Flames that evade standard cameras and trigger sudden secondary explosion.",
+        scenarioLow: "High Nitrogen dilution and cool thermal boundaries quench low-temperature peroxy radical chemistry, preventing Cool Flame ignition.",
+        actionHigh: "1. Warning: Invisible Cool Flame regime detected! 2. Do not open the battery bay door (prevents fresh oxygen inflow). 3. Flood the bay with Nitrogen gas to quench 600-Kelvin vapor reactions.",
+        actionLow: "Battery channels are thermally stable. Continue monitoring Carbon Monoxide and Formaldehyde trace gas sensors."
+      },
+      airlock: {
+        code: "GPS Sector Delta-04",
+        title: "GPS Zone D: Airlock and Insulation Bay",
+        material: "Porous Urethane Foam and Nomex Suit Layer",
+        baseRisk: 0.95,
+        baseMloc: 13.2,
+        matchedStudy: "SoFIE-SMOLDER and DAFT",
+        scenarioHigh: "Porous insulation foam can sustain hidden non-flaming smoldering for hours at low Oxygen Percentages, releasing lethal Carbon Monoxide while Lunar dust in the airlock risks triggering false optical alarms.",
+        scenarioLow: "High Nitrogen concentration and multi-wavelength DAFT aerosol discrimination keep the Airlock safe from both smoldering and dust false alarms.",
+        actionHigh: "1. Switch smoke sensors to DAFT multi-wavelength mode to separate Lunar dust from 0.18-micron smoke. 2. Increase Nitrogen Percentage and inspect foam panels with thermal imaging.",
+        actionLow: "Airlock atmosphere is stable and DAFT dust-discrimination filter is active."
+      }
+    };
+
+    // =========================================================================
+    // 3. NAVIGATION & STORYTELLING ENGINE (STEP 1)
+    // =========================================================================
+    let currentStoryBeat = 1;
+    let storyTick = 0;
+
+    function goToSection(secId) {
+      document.getElementById(secId).scrollIntoView({ behavior: 'smooth' });
+      document.querySelectorAll('.step-pill').forEach(btn => btn.classList.remove('active'));
+      const navBtn = document.getElementById('nav-' + secId);
+      if (navBtn) navBtn.classList.add('active');
+    }
+
+    function playStoryBeat(beatNum) {
+      currentStoryBeat = beatNum;
+      [1, 2, 3].forEach(n => {
+        const b = document.getElementById('beat-btn-' + n);
+        b.className = (n === beatNum)
+          ? "p-3.5 rounded-2xl border-2 border-blue-600 bg-blue-50/70 text-left transition"
+          : "p-3.5 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-left transition";
+      });
+
+      const insight = document.getElementById('story-insight-box');
+      const simTitle = document.getElementById('story-sim-title');
+      const simBadge = document.getElementById('story-sim-badge');
+      const caption = document.getElementById('story-canvas-caption');
+      const mGrav = document.getElementById('story-metric-gravity');
+      const mFlow = document.getElementById('story-metric-flow');
+      const mRisk = document.getElementById('story-metric-risk');
+
+      if (beatNum === 1) {
+        insight.innerHTML = "<strong>Moment One Active (Zero Gravity on the Space Station):</strong> In Zero Gravity, hot air does not rise because there is no buoyancy. A flame forms a quiet blue sphere that slowly chokes on its own exhaust gases. If you switch off the ventilation fan in Zero Gravity, the fire usually extinguishes itself. Click <strong>Moment Two</strong> above to see what changes on the Moon.";
+        simTitle.innerText = "Zero Gravity Spherical Diffusion Flame";
+        simBadge.className = "px-2.5 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800";
+        simBadge.innerText = "Zero Gravity Regime";
+        caption.innerText = "Slow radial oxygen diffusion creates a symmetric blue flame sphere.";
+        mGrav.innerText = "Zero Gravity";
+        mFlow.innerText = "Diffusion Only";
+        mRisk.className = "text-xs font-extrabold text-emerald-600 mt-0.5";
+        mRisk.innerText = "Low (Self-Choking)";
+      } else if (beatNum === 2) {
+        insight.innerHTML = "<strong>Moment Two Active (The Lunar Gravity Trap):</strong> On the Moon (One-Sixth Earth Gravity), gentle buoyancy creates a steady upward draft of 4 to 9 Centimeters per Second. This gentle draft acts like a bellows, feeding fresh oxygen into the fire faster than radiation can cool it, without blowing it out! Materials that extinguish on Earth burn fiercely on the Moon.";
+        simTitle.innerText = "Lunar Gravity Convective Peak Flame";
+        simBadge.className = "px-2.5 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800";
+        simBadge.innerText = "Lunar Peak Danger";
+        caption.innerText = "Gentle Lunar buoyancy feeds fresh oxygen into the flame base, accelerating spread.";
+        mGrav.innerText = "One-Sixth Earth Gravity";
+        mFlow.innerText = "6.4 cm/s Upward Draft";
+        mRisk.className = "text-xs font-extrabold text-rose-600 mt-0.5";
+        mRisk.innerText = "Critical Peak Hazard";
       } else {
-        box.className = "p-4 rounded-2xl bg-emerald-950/80 border border-emerald-500 text-xs leading-relaxed text-emerald-100";
-        box.innerHTML = `
-          <strong>✅ قرار بطولي أنقذ الطاقم! الأساس العلمي من قاعدة ناسا (PSI):</strong><br/>
-          1. رذاذ الماء الدقيق بحجم 20 ميكرون يتبخر لحظياً في قلب اللهب ويمتص الحرارة دون إتلاف الأجهزة (تجربة <code>Fine Water Mist PSI-109</code>).<br/>
-          2. خفض الأكسجين الموضعي تحت <strong>13.5% (MLOC)</strong> يكسر مثلث الاشتعال في جاذبية القمر (تجربة <code>SoFIE PSI-135</code>).<br/>
-          3. تشغيل فلاتر تنقية غاز أول أكسيد الكربون يحمي رئة الرواد بعد الإطفاء (تجربة <code>Saffire IV-VI</code>).
-        `;
+        insight.innerHTML = "<strong>Moment Three Active (The Smart Astronaut Chip Solution):</strong> By linking our website database of 24 NASA combustion experiments to a wearable <strong>Smart Astronaut Chip</strong> with internal Spacecraft GPS, the system detects local Oxygen, Nitrogen, Pressure, and room materials in real time—predicting the fire scenario and balancing Nitrogen automatically!";
+        simTitle.innerText = "Nitrogen-Stabilized Safe Cabin Regime";
+        simBadge.className = "px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800";
+        simBadge.innerText = "Smart Chip Protected";
+        caption.innerText = "Increased Nitrogen dilution absorbs heat and quenches the flame boundary.";
+        mGrav.innerText = "Lunar or Mars Gravity";
+        mFlow.innerText = "Nitrogen Stabilized";
+        mRisk.className = "text-xs font-extrabold text-emerald-600 mt-0.5";
+        mRisk.innerText = "Minimized (Safe)";
       }
     }
 
-    // =========================================================================
-    // 2. محاكي الفيديو التفاعلي الحي (Interactive Video Physics Player)
-    // =========================================================================
-    const vCanvas = document.getElementById('liveVideoCanvas');
-    const vCtx = vCanvas.getContext('2d');
-    let vidPaused = false;
-    let vidTick = 0;
-    let vidState = { scene: 'moon', g: 0.17, o2: 34, p: 56.5 };
+    // Visual Canvas Animation for Step 1 Story
+    const sCanvas = document.getElementById('storyFlameCanvas');
+    const sCtx = sCanvas.getContext('2d');
 
-    function toggleVideoPause() {
-      vidPaused = !vidPaused;
-    }
+    function animateStoryCanvas() {
+      storyTick += 0.06;
+      sCtx.clearRect(0, 0, sCanvas.width, sCanvas.height);
 
-    function setVideoScene(sceneKey) {
-      vidState.scene = sceneKey;
-      const titleEl = document.getElementById('video-title');
-      const capEl = document.getElementById('video-caption');
-
-      if (sceneKey === '0g') {
-        document.getElementById('vid-inp-g').value = 0.00;
-        document.getElementById('vid-inp-o2').value = 21;
-        document.getElementById('vid-inp-p').value = 101.3;
-        titleEl.innerText = "فيديو محاكاة حي: كرة اللهب الزرقاء في الفضاء (0g - FLEX / s-Flame)";
-        capEl.innerText = "🎥 في انعدام الجاذبية (0g): لا يوجد صعود للهواء الساخن، فيتكور اللهب بالانتشار البطيء ويبهت لونه للأزرق.";
-      } else if (sceneKey === 'moon') {
-        document.getElementById('vid-inp-g').value = 0.17;
-        document.getElementById('vid-inp-o2').value = 34;
-        document.getElementById('vid-inp-p').value = 56.5;
-        titleEl.innerText = "فيديو محاكاة حي: ذروة لهب القمر الشرس (1/6g - Saffire / SoFIE)";
-        capEl.innerText = "🎥 في جاذبية القمر (0.17g) وأكسجين 34%: تيار الطفو اللطيف يغذي النار بالأكسجين أسرع مما تبرد فتصل لذروة الخطورة!";
-      } else if (sceneKey === 'cool') {
-        document.getElementById('vid-inp-g').value = 0.01;
-        document.getElementById('vid-inp-o2').value = 25;
-        document.getElementById('vid-inp-p').value = 70.0;
-        titleEl.innerText = "فيديو محاكاة حي: اللهب البارد غير المرئي (600K - FLEX-2 / EV Battery)";
-        capEl.innerText = "🎥 ظاهرة اللهب البارد (Cool Flame): احتراق كيميائي خفي بلون بنفسجي باهت عند حرارة منخفضة يسبب انفجار بطاريات السيارات فجأة!";
-      } else if (sceneKey === 'efield') {
-        document.getElementById('vid-inp-g').value = 0.17;
-        document.getElementById('vid-inp-o2').value = 21;
-        document.getElementById('vid-inp-p').value = 101.3;
-        titleEl.innerText = "فيديو محاكاة حي: الرياح الأيونية الكهربائية (ACME E-FIELD)";
-        capEl.innerText = "🎥 بتسليط مجال كهربائي في الفضاء، تندفع الأيونات الموجبة لتصنع جاذبية قمر صناعية وتقلل السخام الأسود!";
+      // Clean subtle grid on white background
+      sCtx.strokeStyle = '#f1f5f9';
+      sCtx.lineWidth = 1;
+      for (let x = 0; x < sCanvas.width; x += 32) {
+        sCtx.beginPath(); sCtx.moveTo(x, 0); sCtx.lineTo(x, sCanvas.height); sCtx.stroke();
       }
-      updateVideoParams();
-    }
-
-    function updateVideoParams() {
-      vidState.g = parseFloat(document.getElementById('vid-inp-g').value);
-      vidState.o2 = parseFloat(document.getElementById('vid-inp-o2').value);
-      vidState.p = parseFloat(document.getElementById('vid-inp-p').value);
-
-      document.getElementById('vid-lbl-g').innerText = vidState.g.toFixed(2) + 'g';
-      document.getElementById('vid-lbl-o2').innerText = vidState.o2 + '%';
-      document.getElementById('vid-lbl-p').innerText = vidState.p + ' kPa';
-      document.getElementById('video-hud').innerText =
-        `PSI CAM-01 // G: ${vidState.g.toFixed(2)}g | O2: ${vidState.o2}% | P: ${vidState.p} kPa`;
-    }
-
-    function renderVideoLoop() {
-      if (!vidPaused) vidTick += 0.07;
-      vCtx.clearRect(0, 0, vCanvas.width, vCanvas.height);
-
-      // رسم شبكة خلفية علمية (Grid)
-      vCtx.strokeStyle = 'rgba(56, 189, 248, 0.08)';
-      vCtx.lineWidth = 1;
-      for (let x = 0; x < vCanvas.width; x += 40) {
-        vCtx.beginPath(); vCtx.moveTo(x, 0); vCtx.lineTo(x, vCanvas.height); vCtx.stroke();
-      }
-      for (let y = 0; y < vCanvas.height; y += 40) {
-        vCtx.beginPath(); vCtx.moveTo(0, y); vCtx.lineTo(vCanvas.width, y); vCtx.stroke();
+      for (let y = 0; y < sCanvas.height; y += 32) {
+        sCtx.beginPath(); sCtx.moveTo(0, y); sCtx.lineTo(sCanvas.width, y); sCtx.stroke();
       }
 
-      const cx = vCanvas.width / 2;
-      const cy = vCanvas.height - 65;
+      const cx = sCanvas.width / 2;
+      const cy = sCanvas.height - 55;
 
-      // رسم حامل العينة
-      vCtx.fillStyle = '#334155';
-      vCtx.fillRect(cx - 70, cy + 18, 140, 10);
+      // Sample holder bar
+      sCtx.fillStyle = '#64748b';
+      sCtx.fillRect(cx - 60, cy + 16, 120, 8);
 
-      // حساب حجم واستطالة اللهب من الجاذبية والأكسجين والضغط
-      const o2Scale = Math.max(0.5, (vidState.o2 - 12) / 14);
-      const pInsulation = 1 + ((101.3 - vidState.p) / 101.3) * 0.4;
-      const stretchY = 1.0 + vidState.g * 1.65;
-      const baseR = Math.min(62, Math.max(22, 26 * o2Scale * pInsulation));
-      const wave = Math.sin(vidTick * 2.5) * 3.5;
+      const pulse = Math.sin(storyTick * 2.2) * 3;
+      sCtx.save();
+      sCtx.translate(cx, cy);
 
-      // رسم أسهم تيار الطفو أو الأيونات
-      vCtx.strokeStyle = vidState.scene === 'efield' ? 'rgba(16, 185, 129, 0.45)' : 'rgba(56, 189, 248, 0.35)';
-      vCtx.lineWidth = 2;
-      if (vidState.g > 0.03 || vidState.scene === 'efield') {
-        for (let i = -2; i <= 2; i++) {
-          if (i === 0) continue;
-          const ax = cx + i * 48;
-          const ay = ((vidTick * 28) % 140);
-          vCtx.beginPath();
-          vCtx.moveTo(ax, cy + 10 - ay);
-          vCtx.lineTo(ax, cy - 25 - ay);
-          vCtx.stroke();
-        }
-      }
-
-      // رسم قلب وهالة اللهب
-      vCtx.save();
-      vCtx.translate(cx, cy);
-      vCtx.scale(1.0, stretchY);
-
-      const grad = vCtx.createRadialGradient(0, -baseR * 0.35, 5, 0, -baseR * 0.35, baseR + wave);
-      if (vidState.scene === 'cool') {
-        grad.addColorStop(0, 'rgba(233, 213, 255, 0.9)');
-        grad.addColorStop(0.5, 'rgba(168, 85, 247, 0.55)');
-        grad.addColorStop(1, 'rgba(126, 34, 206, 0)');
-      } else if (vidState.g < 0.03) {
-        grad.addColorStop(0, 'rgba(224, 242, 254, 0.95)');
-        grad.addColorStop(0.55, 'rgba(56, 189, 248, 0.75)');
-        grad.addColorStop(1, 'rgba(2, 132, 199, 0)');
-      } else {
-        grad.addColorStop(0, 'rgba(254, 249, 195, 0.98)');
+      if (currentStoryBeat === 1) {
+        // Beat 1: Zero Gravity Blue Sphere
+        const r = 38 + pulse;
+        const grad = sCtx.createRadialGradient(0, -10, 4, 0, -10, r);
+        grad.addColorStop(0, 'rgba(219, 234, 254, 0.95)');
+        grad.addColorStop(0.55, 'rgba(59, 130, 246, 0.80)');
+        grad.addColorStop(1, 'rgba(37, 99, 235, 0)');
+        sCtx.fillStyle = grad;
+        sCtx.beginPath();
+        sCtx.arc(0, -10, r, 0, Math.PI * 2);
+        sCtx.fill();
+      } else if (currentStoryBeat === 2) {
+        // Beat 2: Lunar Gravity Intense Plume
+        sCtx.scale(1.0, 1.45);
+        const r = 46 + pulse;
+        const grad = sCtx.createRadialGradient(0, -18, 5, 0, -18, r);
+        grad.addColorStop(0, 'rgba(254, 240, 138, 0.98)');
         grad.addColorStop(0.45, 'rgba(249, 115, 22, 0.88)');
-        grad.addColorStop(0.8, 'rgba(239, 68, 68, 0.55)');
-        grad.addColorStop(1, 'rgba(239, 68, 68, 0)');
+        grad.addColorStop(0.8, 'rgba(220, 38, 38, 0.55)');
+        grad.addColorStop(1, 'rgba(220, 38, 38, 0)');
+        sCtx.fillStyle = grad;
+        sCtx.beginPath();
+        sCtx.arc(0, -18, r, 0, Math.PI * 2);
+        sCtx.fill();
+      } else {
+        // Beat 3: Smart Chip Nitrogen Suppressed Small Flame
+        const r = 22 + pulse * 0.5;
+        const grad = sCtx.createRadialGradient(0, -6, 2, 0, -6, r);
+        grad.addColorStop(0, 'rgba(209, 250, 229, 0.95)');
+        grad.addColorStop(0.6, 'rgba(16, 185, 129, 0.75)');
+        grad.addColorStop(1, 'rgba(5, 150, 105, 0)');
+        sCtx.fillStyle = grad;
+        sCtx.beginPath();
+        sCtx.arc(0, -6, r, 0, Math.PI * 2);
+        sCtx.fill();
       }
+      sCtx.restore();
 
-      vCtx.fillStyle = grad;
-      vCtx.beginPath();
-      vCtx.arc(0, -baseR * 0.35, baseR + wave, 0, Math.PI * 2);
-      vCtx.fill();
-      vCtx.restore();
-
-      requestAnimationFrame(renderVideoLoop);
+      requestAnimationFrame(animateStoryCanvas);
     }
 
     // =========================================================================
-    // 3. محرك البحث والترتيب بالنسبة المئوية للـ 24 تجربة (Smart Finder)
+    // 4. SMART ASTRONAUT CHIP & GPS ENGINE (STEP 2)
     // =========================================================================
-    function runSmartFinder() {
+    let currentGpsKey = 'viewport';
+    let chipGasChart;
+
+    function selectGpsZone(zoneKey) {
+      currentGpsKey = zoneKey;
+      ['viewport', 'quarters', 'battery', 'airlock'].forEach(k => {
+        document.getElementById('zone-' + k).classList.toggle('active', k === zoneKey);
+      });
+      updateSmartChip();
+    }
+
+    function syncOxygenNitrogen(changedSource) {
+      let o2 = parseFloat(document.getElementById('chip-inp-o2').value);
+      let n2 = parseFloat(document.getElementById('chip-inp-n2').value);
+
+      // Oxygen + Nitrogen + 1% trace gases = 100%
+      if (changedSource === 'o2') {
+        n2 = Math.max(59, Math.min(87, 99 - o2));
+        document.getElementById('chip-inp-n2').value = n2;
+      } else {
+        o2 = Math.max(12, Math.min(40, 99 - n2));
+        document.getElementById('chip-inp-o2').value = o2;
+      }
+      updateSmartChip();
+    }
+
+    function updateSmartChip() {
+      const zone = GPS_ZONES[currentGpsKey];
+      const gVal = parseFloat(document.getElementById('chip-inp-gravity').value);
+      const o2 = parseFloat(document.getElementById('chip-inp-o2').value);
+      const n2 = parseFloat(document.getElementById('chip-inp-n2').value);
+      const pressure = parseFloat(document.getElementById('chip-inp-pressure').value);
+      const flow = parseFloat(document.getElementById('chip-inp-flow').value);
+
+      // Update Labels without cryptic symbols
+      const gravNames = {
+        "0.001": "Zero Gravity (Space Station)",
+        "0.166": "Lunar Gravity (One-Sixth Earth)",
+        "0.376": "Mars Gravity (Three-Eighths Earth)",
+        "1": "Full Earth Gravity"
+      };
+      document.getElementById('chip-lbl-gravity').innerText = gravNames[String(gVal)] || "Partial Gravity";
+      document.getElementById('chip-lbl-o2').innerText = o2 + " Percent";
+      document.getElementById('chip-lbl-n2').innerText = n2 + " Percent";
+      document.getElementById('chip-lbl-pressure').innerText = pressure + " Kilopascals";
+      document.getElementById('chip-lbl-flow').innerText = flow.toFixed(1) + " Centimeters per Second";
+
+      document.getElementById('gps-coordinates').innerText = zone.code;
+      document.getElementById('chip-zone-title').innerText = `${zone.title} (${zone.material})`;
+
+      // Physics calculation linking Gravity, Oxygen, Nitrogen, Pressure, and Airflow
+      const buoyantSpeed = 11.0 * Math.sqrt(gVal) * Math.pow(pressure / 101.3, 0.45);
+      const effectiveFlow = Math.sqrt(Math.pow(flow, 2) + Math.pow(buoyantSpeed, 2));
+
+      // Partial gravity convective peak around 5-8 cm/s
+      const radQuench = Math.exp(-1.5 / Math.max(0.4, effectiveFlow));
+      const blowoffStretch = Math.exp(-0.04 * Math.max(0, effectiveFlow - 6.5));
+      const flowMultiplier = (effectiveFlow / 4.5) * radQuench * blowoffStretch;
+
+      // Nitrogen thermal heat absorption & Oxygen driving force
+      const mloc = Number((zone.baseMloc - ((101.3 - pressure) * 0.02)).toFixed(1));
+      const o2Drive = Math.max(0.05, (o2 - mloc) / 8.5);
+      const n2Damping = Math.pow(78.0 / Math.max(50, n2), 1.25);
+      const pressureInsulation = 1.0 + ((101.3 - pressure) / 101.3) * 0.45;
+
+      let spreadSpeed = 1.35 * zone.baseRisk * flowMultiplier * o2Drive * n2Damping * pressureInsulation;
+      spreadSpeed = Math.max(0.05, Number(spreadSpeed.toFixed(2)));
+
+      let riskPercent = Math.min(99, Math.max(2, Math.round((spreadSpeed / 4.2) * 65 + (o2 - mloc) * 1.9)));
+      const n2CoolingShare = Math.min(85, Math.max(15, Math.round((n2 / 100) * 58)));
+
+      // Update KPI cards
+      document.getElementById('chip-kpi-mloc').innerText = mloc + " Percent";
+      document.getElementById('chip-kpi-spread').innerText = spreadSpeed + " mm/s";
+      document.getElementById('chip-kpi-n2cool').innerText = n2CoolingShare + " Percent";
+      document.getElementById('chip-kpi-study').innerText = zone.matchedStudy;
+
+      const badge = document.getElementById('chip-alert-badge');
+      if (riskPercent < 25) {
+        badge.className = "px-3 py-1 rounded-full text-xs font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-300";
+        badge.innerText = `Safe Cabin Regime: ${riskPercent} Percent Risk`;
+        document.getElementById('chip-scenario-text').innerText = zone.scenarioLow;
+        document.getElementById('chip-recommendation-text').innerText = zone.actionLow;
+      } else if (riskPercent < 55) {
+        badge.className = "px-3 py-1 rounded-full text-xs font-extrabold bg-amber-100 text-amber-800 border border-amber-300";
+        badge.innerText = `Moderate Caution: ${riskPercent} Percent Risk`;
+        document.getElementById('chip-scenario-text').innerText = zone.scenarioHigh;
+        document.getElementById('chip-recommendation-text').innerText = zone.actionHigh;
+      } else {
+        badge.className = "px-3 py-1 rounded-full text-xs font-extrabold bg-rose-100 text-rose-800 border border-rose-300";
+        badge.innerText = `High Ignition Risk: ${riskPercent} Percent`;
+        document.getElementById('chip-scenario-text').innerText = zone.scenarioHigh;
+        document.getElementById('chip-recommendation-text').innerText = zone.actionHigh;
+      }
+
+      if (chipGasChart) {
+        chipGasChart.data.datasets[0].data = [o2, n2, riskPercent];
+        chipGasChart.update('none');
+      }
+    }
+
+    // Iterative Auto-Stabilizer for the Smart Chip
+    let stabilizing = false;
+    function runChipAutoStabilizer() {
+      if (stabilizing) return;
+      stabilizing = true;
+      let step = 0;
+      const timer = setInterval(() => {
+        step++;
+        let o2 = parseFloat(document.getElementById('chip-inp-o2').value);
+        let p = parseFloat(document.getElementById('chip-inp-pressure').value);
+        let flow = parseFloat(document.getElementById('chip-inp-flow').value);
+
+        if (o2 > 19) o2 -= 1;
+        if (p < 85) p = Math.min(86, p + 2.0);
+        if (flow > 1.0) flow = Math.max(0.5, flow - 0.5);
+
+        document.getElementById('chip-inp-o2').value = o2;
+        document.getElementById('chip-inp-n2').value = 99 - o2;
+        document.getElementById('chip-inp-pressure').value = p.toFixed(1);
+        document.getElementById('chip-inp-flow').value = flow.toFixed(1);
+        updateSmartChip();
+
+        if (step >= 16) {
+          clearInterval(timer);
+          stabilizing = false;
+        }
+      }, 110);
+    }
+
+    // =========================================================================
+    // 5. SMART EXPERIMENT FINDER & RANKER (STEP 3)
+    // =========================================================================
+    function runExperimentFinder() {
       const fuel = document.getElementById('filter-fuel').value;
       const env = document.getElementById('filter-env').value;
       const targetO2 = parseFloat(document.getElementById('filter-o2').value);
-      const targetFlow = parseFloat(document.getElementById('filter-flow').value);
-      const keyword = document.getElementById('filter-keyword').value.trim().toLowerCase();
+      const kw = document.getElementById('filter-keyword').value.trim().toLowerCase();
 
-      document.getElementById('lbl-filter-o2').innerText = targetO2 + '% O₂';
-      document.getElementById('lbl-filter-flow').innerText = targetFlow + ' cm/s';
+      document.getElementById('lbl-finder-o2').innerText = targetO2 + " Percent";
 
-      const scored = PSI_EXPERIMENTS.filter(exp => {
+      const ranked = PSI_EXPERIMENTS.filter(exp => {
         if (fuel !== 'all' && exp.fuel !== fuel) return false;
         if (env !== 'all' && exp.targetEnv !== env) return false;
-        if (keyword) {
-          const textBlob = (exp.id + ' ' + exp.name + ' ' + exp.fuelAr + ' ' + exp.summary + ' ' + exp.keyFinding + ' ' + exp.earthImpact).toLowerCase();
-          if (!textBlob.includes(keyword)) return false;
+        if (kw) {
+          const blob = (exp.id + ' ' + exp.name + ' ' + exp.summary + ' ' + exp.keyFinding + ' ' + exp.earthImpact).toLowerCase();
+          if (!blob.includes(kw)) return false;
         }
         return true;
       }).map(exp => {
-        const o2Diff = Math.abs(exp.o2 - targetO2);
-        const flowDiff = Math.abs(exp.airflow - targetFlow);
-        let matchScore = 100 - (o2Diff * 1.5) - (flowDiff * 1.1);
-        matchScore = Math.min(99, Math.max(52, Math.round(matchScore)));
+        const diff = Math.abs(exp.o2 - targetO2);
+        const matchScore = Math.min(99, Math.max(55, Math.round(100 - diff * 1.7)));
         return { ...exp, matchScore };
       }).sort((a, b) => b.matchScore - a.matchScore);
 
-      document.getElementById('finder-count').innerText = `معروض ${scored.length} تجربة مرتبة حسب نسبة التطابق`;
+      document.getElementById('finder-count-badge').innerText = `Showing ${ranked.length} Experiments Ranked by Match Score`;
 
-      document.getElementById('finder-results').innerHTML = scored.map((exp, idx) => `
-        <div class="bg-slate-900/90 rounded-2xl p-5 border border-slate-800 hover:border-sky-400 transition flex flex-col justify-between">
+      document.getElementById('finder-cards-grid').innerHTML = ranked.map((exp, idx) => `
+        <div class="bg-white rounded-2xl p-5 border border-slate-200 hover:border-blue-500 transition flex flex-col justify-between shadow-sm">
           <div>
             <div class="flex items-center justify-between gap-2 mb-2">
-              <span class="px-2.5 py-0.5 rounded-lg text-[11px] font-bold mono bg-slate-800 text-sky-400">#${idx + 1} | ${exp.id}</span>
-              <span class="px-2.5 py-0.5 rounded-full text-xs font-black mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
-                تطابق ${exp.matchScore}%
+              <span class="px-2.5 py-0.5 rounded-md text-[11px] font-extrabold bg-slate-100 text-slate-700">
+                Rank ${idx + 1} // ${exp.id}
+              </span>
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-blue-50 text-blue-700 border border-blue-200">
+                ${exp.matchScore} Percent Match
               </span>
             </div>
-            <h3 class="text-sm font-black text-white mb-1">${exp.name}</h3>
-            <div class="text-[11px] text-amber-300 mb-3">${exp.fuelAr} • ${exp.envAr}</div>
+
+            <h3 class="text-sm font-black text-slate-900 mb-1">${exp.name}</h3>
+            <div class="text-xs font-semibold text-slate-500 mb-3">
+              Fuel Category: ${exp.fuel} // Target: ${exp.targetEnv}
+            </div>
 
             <div class="space-y-2 text-xs">
-              <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800/80">
-                <span class="font-bold text-sky-400">📖 الحكاية باختصار:</span>
-                <p class="text-slate-300 mt-0.5 leading-relaxed">${exp.summary}</p>
+              <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80">
+                <span class="font-extrabold text-slate-800">Plain Summary:</span>
+                <p class="text-slate-600 mt-0.5 leading-relaxed">${exp.summary}</p>
               </div>
-              <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800/80">
-                <span class="font-bold text-rose-400">🔥 السر العلمي المكتشف:</span>
-                <p class="text-slate-300 mt-0.5 leading-relaxed">${exp.keyFinding}</p>
+              <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80">
+                <span class="font-extrabold text-blue-700">Key Discovery:</span>
+                <p class="text-slate-600 mt-0.5 leading-relaxed">${exp.keyFinding}</p>
               </div>
-              <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800/80">
-                <span class="font-bold text-emerald-400">🌍 كيف تفيدنا على الأرض؟</span>
-                <p class="text-slate-300 mt-0.5 leading-relaxed">${exp.earthImpact}</p>
+              <div class="p-2.5 rounded-xl bg-emerald-50/50 border border-emerald-200/80">
+                <span class="font-extrabold text-emerald-800">Earth Application:</span>
+                <p class="text-slate-600 mt-0.5 leading-relaxed">${exp.earthImpact}</p>
               </div>
             </div>
           </div>
 
-          <div class="mt-3 pt-2.5 border-t border-slate-800 flex items-center justify-between text-[11px] mono text-slate-400">
-            <span>O₂: <strong class="text-rose-400">${exp.o2}%</strong></span>
-            <span>Airflow: <strong class="text-sky-400">${exp.airflow} cm/s</strong></span>
-            <span>MLOC: <strong class="text-emerald-400">${exp.mloc}%</strong></span>
+          <div class="mt-4 pt-3 border-t border-slate-200 flex items-center justify-between text-[11px] font-bold text-slate-600">
+            <span>Oxygen: ${exp.o2} Percent</span>
+            <span>Min Limit: ${exp.mloc} Percent</span>
+            <span>Airflow: ${exp.airflow} cm/s</span>
           </div>
         </div>
       `).join('');
     }
 
     // =========================================================================
-    // 4. مختبر المقارنة والجرافات (Compare Module)
+    // 6. VISUAL COMPARISON LAB & LIGHT-THEME CHARTS (STEP 4)
     // =========================================================================
-    Chart.defaults.color = '#94a3b8';
-    Chart.defaults.font.family = "'Cairo', 'JetBrains Mono', sans-serif";
-    let compBarChart, compRadarChart, earthChart;
+    Chart.defaults.color = '#334155';
+    Chart.defaults.font.family = "'Inter', sans-serif";
+    let compBarChart, compRadarChart, gravityCompareChart;
 
-    function initCharts() {
+    function initAllCharts() {
+      // Chip Doughnut Chart
+      chipGasChart = new Chart(document.getElementById('chipGasChart').getContext('2d'), {
+        type: 'doughnut',
+        data: {
+          labels: ['Oxygen %', 'Nitrogen %', 'Fire Risk Index'],
+          datasets: [{
+            data: [34, 65, 82],
+            backgroundColor: ['#e11d48', '#10b981', '#f59e0b'],
+            borderWidth: 2,
+            borderColor: '#ffffff'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '58%',
+          plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } } }
+        }
+      });
+
+      // Populate Selectors for Comparison
       const selA = document.getElementById('comp-select-a');
       const selB = document.getElementById('comp-select-b');
-      const opts = PSI_EXPERIMENTS.map((e, i) => `<option value="${i}">${e.id} - ${e.name}</option>`).join('');
-      selA.innerHTML = opts;
-      selB.innerHTML = opts;
+      const htmlOpts = PSI_EXPERIMENTS.map((e, i) => `<option value="${i}">${e.id} - ${e.name}</option>`).join('');
+      selA.innerHTML = htmlOpts;
+      selB.innerHTML = htmlOpts;
       selA.value = "0";
       selB.value = "3";
 
       compBarChart = new Chart(document.getElementById('compBarChart').getContext('2d'), {
         type: 'bar',
         data: {
-          labels: ['الأكسجين O₂ (%)', 'الحد الأدنى MLOC (%)', 'سرعة الهواء (cm/s)', 'سرعة اللهب ×10 (mm/s)'],
+          labels: ['Oxygen %', 'Min Oxygen Limit %', 'Airflow (cm/s)', 'Spread Speed x10'],
           datasets: [
-            { label: 'التجربة أ', data: [], backgroundColor: '#38bdf8', borderRadius: 6 },
-            { label: 'التجربة ب', data: [], backgroundColor: '#f43f5e', borderRadius: 6 }
-          ]
-        },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
-      });
-
-      compRadarChart = new Chart(document.getElementById('compRadarChart').getContext('2d'), {
-        type: 'radar',
-        data: {
-          labels: ['الإشعاع الحراري', 'حساسية المروحة', 'اللهب البارد', 'كثافة الدخان', 'خطر القمر 1/6g'],
-          datasets: [
-            { label: 'التجربة أ', data: [], borderColor: '#38bdf8', backgroundColor: 'rgba(56, 189, 248, 0.2)' },
-            { label: 'التجربة ب', data: [], borderColor: '#f43f5e', backgroundColor: 'rgba(244, 63, 94, 0.2)' }
+            { label: 'Experiment A', data: [], backgroundColor: '#2563eb', borderRadius: 6 },
+            { label: 'Experiment B', data: [], backgroundColor: '#e11d48', borderRadius: 6 }
           ]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          scales: { r: { suggestedMin: 0, suggestedMax: 100, grid: { color: 'rgba(255,255,255,0.1)' } } },
+          plugins: { legend: { position: 'bottom' } },
+          scales: { y: { beginAtZero: true, grid: { color: '#e2e8f0' } } }
+        }
+      });
+
+      compRadarChart = new Chart(document.getElementById('compRadarChart').getContext('2d'), {
+        type: 'radar',
+        data: {
+          labels: ['Thermal Radiation', 'Airflow Sensitivity', 'Cool Flame Chemistry', 'Smoke Density', 'Lunar Peak Hazard'],
+          datasets: [
+            { label: 'Experiment A', data: [], borderColor: '#2563eb', backgroundColor: 'rgba(37, 99, 235, 0.15)' },
+            { label: 'Experiment B', data: [], borderColor: '#e11d48', backgroundColor: 'rgba(225, 29, 72, 0.15)' }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: { r: { suggestedMin: 0, suggestedMax: 100, grid: { color: '#cbd5e1' } } },
           plugins: { legend: { position: 'bottom' } }
         }
       });
 
-      earthChart = new Chart(document.getElementById('earthPieChart').getContext('2d'), {
-        type: 'doughnut',
+      gravityCompareChart = new Chart(document.getElementById('gravityCompareChart').getContext('2d'), {
+        type: 'bar',
         data: {
-          labels: ['بطاريات السيارات الكهربائية %', 'طفايات الرذاذ المائي %', 'حساسات المناجم والغواصات %', 'بدلات الإطفاء والعزل %'],
+          labels: ['Zero Gravity', 'Lunar Gravity', 'Mars Gravity', 'Earth Gravity'],
           datasets: [{
-            data: [32, 26, 22, 20],
-            backgroundColor: ['#f43f5e', '#38bdf8', '#f59e0b', '#10b981'],
-            borderColor: '#0f172a',
-            borderWidth: 3
+            label: 'Flame Spread Speed (mm/s)',
+            data: [0.95, 3.65, 2.85, 1.90],
+            backgroundColor: ['#3b82f6', '#e11d48', '#f59e0b', '#10b981'],
+            borderRadius: 6
           }]
         },
-        options: { responsive: true, maintainAspectRatio: false, cutout: '55%', plugins: { legend: { position: 'bottom' } } }
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: 'bottom' } },
+          scales: { y: { beginAtZero: true, grid: { color: '#e2e8f0' } } }
+        }
       });
 
-      updateComparison();
+      updateComparisonView();
     }
 
-    function updateComparison() {
+    function updateComparisonView() {
       const expA = PSI_EXPERIMENTS[parseInt(document.getElementById('comp-select-a').value)];
       const expB = PSI_EXPERIMENTS[parseInt(document.getElementById('comp-select-b').value)];
 
       document.getElementById('th-exp-a').innerText = `${expA.id}: ${expA.name}`;
       document.getElementById('th-exp-b').innerText = `${expB.id}: ${expB.name}`;
 
-      compBarChart.data.datasets[0].label = expA.name.split('(')[0];
+      compBarChart.data.datasets[0].label = expA.id;
       compBarChart.data.datasets[0].data = [expA.o2, expA.mloc, expA.airflow, expA.spreadRate * 10];
-      compBarChart.data.datasets[1].label = expB.name.split('(')[0];
+      compBarChart.data.datasets[1].label = expB.id;
       compBarChart.data.datasets[1].data = [expB.o2, expB.mloc, expB.airflow, expB.spreadRate * 10];
       compBarChart.update();
 
-      compRadarChart.data.datasets[0].label = expA.name.split('(')[0];
+      compRadarChart.data.datasets[0].label = expA.id;
       compRadarChart.data.datasets[0].data = expA.radar;
-      compRadarChart.data.datasets[1].label = expB.name.split('(')[0];
+      compRadarChart.data.datasets[1].label = expB.id;
       compRadarChart.data.datasets[1].data = expB.radar;
       compRadarChart.update();
 
       const rows = [
-        { label: "نوع الوقود والمادة", a: expA.fuelAr, b: expB.fuelAr },
-        { label: "البيئة الفضائية", a: expA.envAr, b: expB.envAr },
-        { label: "نسبة الأكسجين المختبرة (O₂)", a: expA.o2 + "%", b: expB.o2 + "%" },
-        { label: "أقل أكسجين للاشتعال (MLOC)", a: expA.mloc + "% O₂", b: expB.mloc + "% O₂" },
-        { label: "سرعة هواء المراوح", a: expA.airflow + " cm/s", b: expB.airflow + " cm/s" },
-        { label: "سرعة انتشار النار", a: expA.spreadRate + " mm/s", b: expB.spreadRate + " mm/s" },
-        { label: "السر العلمي المكتشف", a: expA.keyFinding, b: expB.keyFinding },
-        { label: "الفائدة على الأرض", a: expA.earthImpact, b: expB.earthImpact }
+        { label: "Fuel Category", a: expA.fuel, b: expB.fuel },
+        { label: "Target Environment", a: expA.targetEnv, b: expB.targetEnv },
+        { label: "Tested Oxygen Percentage", a: expA.o2 + " Percent", b: expB.o2 + " Percent" },
+        { label: "Minimum Oxygen Limit for Ignition", a: expA.mloc + " Percent", b: expB.mloc + " Percent" },
+        { label: "Ventilation Airflow Speed", a: expA.airflow + " Centimeters per Second", b: expB.airflow + " Centimeters per Second" },
+        { label: "Representative Flame Spread Speed", a: expA.spreadRate + " Millimeters per Second", b: expB.spreadRate + " Millimeters per Second" },
+        { label: "Scientific Objective", a: expA.objective, b: expB.objective },
+        { label: "Key Engineering Discovery", a: expA.keyFinding, b: expB.keyFinding },
+        { label: "Direct Earth Application", a: expA.earthImpact, b: expB.earthImpact }
       ];
 
       document.getElementById('comp-table-body').innerHTML = rows.map(r => `
-        <tr class="hover:bg-slate-900/60">
-          <td class="p-3 font-bold text-slate-300">${r.label}</td>
-          <td class="p-3 text-slate-200">${r.a}</td>
-          <td class="p-3 text-slate-200">${r.b}</td>
+        <tr class="hover:bg-slate-50">
+          <td class="p-3.5 font-bold text-slate-800">${r.label}</td>
+          <td class="p-3.5 text-slate-600">${r.a}</td>
+          <td class="p-3.5 text-slate-600">${r.b}</td>
         </tr>
       `).join('');
     }
 
     // =========================================================================
-    // 5. المساعد الذكي الناطق صوتياً (AI Co-Pilot + Web Speech Synthesis)
+    // 7. EVIDENCE-BASED AI ADVISOR CHATBOT (STEP 5)
     // =========================================================================
-    let lastPlainReply = "أهلاً بك يا قائد المهمة في منصة باير إس آي لسلامة الحرائق الفضائية.";
-
-    function askQuickQuestion(qText) {
+    function askAdvisorQuestion(qText) {
       document.getElementById('chat-input').value = qText;
-      sendChatMessage();
+      submitChatQuestion();
     }
 
-    async function sendChatMessage() {
-      const inputEl = document.getElementById('chat-input');
-      const userText = inputEl.value.trim();
-      if (!userText) return;
-      inputEl.value = '';
+    async function submitChatQuestion() {
+      const input = document.getElementById('chat-input');
+      const text = input.value.trim();
+      if (!text) return;
+      input.value = '';
 
-      const chatWin = document.getElementById('chat-window');
-      chatWin.innerHTML += `
+      const box = document.getElementById('chat-history');
+      box.innerHTML += `
         <div class="flex justify-end">
-          <div class="bg-sky-700 text-white p-3.5 rounded-2xl max-w-2xl">
-            <div class="font-bold text-sky-200 text-[11px] mb-0.5">👨‍🚀 سؤالك:</div>
-            <div>${userText}</div>
+          <div class="bg-blue-600 text-white p-3.5 rounded-2xl max-w-xl">
+            <div class="font-bold text-blue-100 text-[11px] mb-0.5">Mission Engineer Question</div>
+            <div>${text}</div>
           </div>
         </div>
       `;
-      chatWin.scrollTop = chatWin.scrollHeight;
+      box.scrollTop = box.scrollHeight;
 
-      const replyHtml = generateLocalPsiResponse(userText);
-      lastPlainReply = replyHtml.replace(/<[^>]*>?/gm, '');
-
-      chatWin.innerHTML += `
-        <div class="p-4 rounded-2xl bg-slate-900 border-r-4 border-sky-400 max-w-3xl">
-          <div class="font-bold text-sky-400 mb-1">👩‍🚀 إجابة رفيق المهمة الذكي (موثقة من الـ 24 تجربة):</div>
-          <div class="text-slate-200 space-y-1.5">${replyHtml}</div>
+      const reply = generateAdvisorAnswer(text);
+      box.innerHTML += `
+        <div class="p-3.5 rounded-2xl bg-white border border-slate-200 shadow-sm text-slate-700 max-w-2xl space-y-1.5">
+          <div class="font-extrabold text-blue-700">PYRE-SI Advisor (Cited from 24 NASA PSI Studies)</div>
+          <div>${reply}</div>
         </div>
       `;
-      chatWin.scrollTop = chatWin.scrollHeight;
+      box.scrollTop = box.scrollHeight;
     }
 
-    function speakLastReply() {
-      if (!('speechSynthesis' in window)) return;
-      window.speechSynthesis.cancel();
-      const utter = new SpeechSynthesisUtterance(lastPlainReply);
-      utter.lang = 'ar-EG';
-      utter.rate = 1.0;
-      window.speechSynthesis.speak(utter);
-    }
-
-    function generateLocalPsiResponse(q) {
+    function generateAdvisorAnswer(q) {
       const ql = q.toLowerCase();
-      if (ql.includes('نطفي') || ql.includes('إطفاء') || ql.includes('اطفاء')) {
-        return `
-          <p><strong>1. كيف نطفئ الحريق في الفضاء مقابل القمر؟</strong><br/>
-          في الفضاء ($0g$) نغلق مراوح التهوية فتخنق النار نفسها (تجربة <code>BASS-II PSI-112</code>). أما على القمر ($1/6g$) فالطفو الطبيعي يغذي النار حتى لو أغلقت المراوح! الحل المعتمد من ناسا هو <strong>إطلاق الرذاذ المائي الدقيق (20 ميكرون - تجربة Fine Water Mist PSI-109)</strong> مع خفض الأكسجين تحت <strong>13.5%</strong> وتنقية غاز أول أكسيد الكربون (<code>Saffire IV-VI PSI-135</code>).</p>
-        `;
+      if (ql.includes('extinguish') || ql.includes('suppress') || ql.includes('put out')) {
+        return "<strong>Extinguishing Fires in Zero Gravity vs Lunar Gravity:</strong> In Zero Gravity on the Space Station (BASS-II PSI-112), turning off ventilation fans starves the flame of oxygen so it chokes on its own exhaust. However, on the Moon (One-Sixth Earth Gravity), natural buoyant convection continues feeding oxygen even when fans are off. NASA PSI data (Fine Water Mist PSI-109 and Saffire IV-VI PSI-135) proves that Lunar fires require <strong>20-micron Fine Water Mist</strong> combined with <strong>Nitrogen dilution above 80 Percent</strong> (dropping Oxygen below the 13.5 Percent Minimum Oxygen Limit) and immediate Carbon Monoxide scrubbing.";
       }
-      if (ql.includes('أكسجين') || ql.includes('اكسجين') || ql.includes('34') || ql.includes('ضغط')) {
-        return `
-          <p><strong>تأثير رفع الأكسجين لـ 34% وخفض الضغط لـ 56.5 kPa:</strong><br/>
-          أثبتت تجارب <code>Saffire (PSI-128)</code> و <code>SoFIE-MIST (PSI-137)</code> أن خفض الضغط يقلل كثافة الهواء فيقل التبريد وتتركز الحرارة حول اللهب بنسبة +30%، بينما رفع الأكسجين إلى 34% يضاعف سرعة انتشار النار أكثر من 3 مرات ويخفض حد الاشتعال الحرج (MLOC) إلى 13.5%.</p>
-        `;
+      if (ql.includes('oxygen') || ql.includes('nitrogen') || ql.includes('pressure')) {
+        return "<strong>Interaction of Oxygen, Nitrogen, and Cabin Pressure:</strong> According to Saffire (PSI-128) and SoFIE-MIST (PSI-137), lowering Cabin Pressure to 56.5 Kilopascals reduces air density and convective cooling, trapping heat near the fuel surface. Raising Oxygen Percentage to 34 Percent accelerates flame spread more than threefold. Increasing <strong>Nitrogen Percentage</strong> acts as a thermal sponge—Nitrogen absorbs heat without reacting, raising the Minimum Oxygen Limit needed for ignition.";
       }
-      if (ql.includes('قمر') || ql.includes('1/6') || ql.includes('أخطر')) {
-        return `
-          <p><strong>لماذا حرائق القمر ($1/6g$) أخطر من الفضاء ($0g$) والأرض ($1g$)؟</strong><br/>
-          لأن جاذبية القمر الخفيفة تصنع تيار هواء هادئ (4 إلى 9 سم/ث) يعمل كمنفاخ يغذي النار بالأكسجين أسرع مما تبرد بالإشعاع ودون أن يطفيها، وهو ما أثبتته تجربتا <code>BASS-II (PSI-112)</code> و <code>ACME E-FIELD (PSI-139)</code>.</p>
-        `;
+      if (ql.includes('cool flame') || ql.includes('battery') || ql.includes('electric') || ql.includes('flex')) {
+        return "<strong>Cool Flames and Electric Vehicle Battery Safety:</strong> In FLEX-2 (PSI-107) and ACME CFI-G (PSI-143), NASA discovered that hydrocarbon fuels can burn invisibly at 550 to 600 Kelvin after visible flames go out, then suddenly re-ignite. Inside the 3-millimeter channels between Electric Vehicle lithium battery cells on Earth, buoyancy is suppressed just like in space, allowing invisible Cool Flames to trigger thermal runaway.";
       }
-      if (ql.includes('بارد') || ql.includes('بطاري') || ql.includes('flex')) {
-        return `
-          <p><strong>اللهب البارد (Cool Flame) وحماية بطاريات السيارات الكهربائية:</strong><br/>
-          اكتشفت تجربتا <code>FLEX-2 (PSI-107)</code> و <code>ACME CFI-G (PSI-143)</code> أن الوقود يستمر في التفاعل خفية عند 600 كلفن بعد انطفاء اللهب المرئي ثم ينفجر فجأة. هذا التفاعل نفسه يحدث داخل القنوات الضيقة (3 ملم) بين خلايا بطاريات الليثيوم على الأرض.</p>
-        `;
-      }
-      return `
-        <p><strong>خلاصة موثقة من أرشيف NASA PSI (الـ 24 تجربة):</strong><br/>
-        تؤكد تجارب <code>Saffire</code> و <code>SoFIE</code> و <code>BASS-II</code> أن أمان رواد الفضاء على القمر يعتمد على اختيار مواد عالية المقاومة مثل <strong>Nomex</strong> (حد أكسجين 24%) وتجنب الأكريليك المكشوف (PMMA)، مع استخدام حساسات <code>SAME/DAFT</code> لمنع الإنذارات الكاذبة.</p>
-      `;
+      return "<strong>Evidence Summary from NASA PSI Archive:</strong> Across all 24 NASA combustion experiments (including Saffire, BASS-II, SoFIE, ACME E-FIELD, and SAME), astronaut safety depends on keeping high-risk materials like untreated Cast Acrylic out of high-oxygen Lunar convective zones, choosing high-limit aramid fibers like Nomex, and linking smart cabin Nitrogen valves to real-time GPS gas chips.";
     }
 
     // =========================================================================
-    // 6. تصدير ملف البيانات الكامل (CSV)
+    // 8. EXPORT COMPLETE 24-EXPERIMENT DATASET AS CSV
     // =========================================================================
-    function exportDatasetCSV() {
-      const headers = ["ID", "Experiment_Name", "Fuel_Type", "O2_Percent", "MLOC_Percent", "Airflow_cm_s", "Target_Environment", "Summary", "Key_Finding", "Earth_Impact"];
+    function exportFullDatasetCSV() {
+      const headers = ["ID", "Experiment_Name", "Fuel_Category", "Oxygen_Percent", "Min_Oxygen_Limit_Percent", "Airflow_cm_per_s", "Target_Environment", "Summary", "Key_Finding", "Earth_Application"];
       const rows = PSI_EXPERIMENTS.map(e => [
         e.id, `"${e.name}"`, e.fuel, e.o2, e.mloc, e.airflow, e.targetEnv, `"${e.summary}"`, `"${e.keyFinding}"`, `"${e.earthImpact}"`
       ]);
-      const csvContent = "\uFEFF" + [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
-      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const csv = "\uFEFF" + [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
-      a.download = "NASA_PSI_24_Combustion_Experiments.csv";
+      a.download = "NASA_PSI_24_Combustion_Experiments_Clean.csv";
       document.body.appendChild(a);
       a.click();
       a.remove();
     }
 
     window.onload = () => {
-      runSmartFinder();
-      initCharts();
-      renderVideoLoop();
+      animateStoryCanvas();
+      initAllCharts();
+      updateSmartChip();
+      runExperimentFinder();
     };
   </script>
 </body>
 </html>
+   
