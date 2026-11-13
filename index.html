@@ -642,4 +642,496 @@
       const matFactor = { acrylic: 1.2, fabric: 1.35, battery: 1.4, nomex: 0.45 }[mat] || 1.0;
       const uBuoy = 11.2 * Math.sqrt(g) * Math.pow(press / 101.3, 0.45);
       const draft = Math.sqrt(Math.pow(flow, 2) + Math.pow(uBuoy, 2));
-      const mloc = 14.2 - ((101.3 - press) * 0.018) + (mat === 'nomex
+      const mloc = 14.2 - ((101.3 - press) * 0.018) + (mat === 'nomex' ? 8.5 : 0);
+      if (o2Val <= mloc || draft < 0.25) return 0;
+      const o2Drive = Math.max(0.05, (o2Val - mloc) / 8.0);
+      const n2Damp = Math.pow(78.0 / Math.max(50, n2Val), 1.25);
+      const radQuench = Math.exp(-1.4 / Math.max(0.35, draft));
+      const blowoff = Math.exp(-0.04 * Math.max(0, draft - 6.5));
+      return Number((1.4 * matFactor * o2Drive * n2Damp * (draft / 4.2) * radQuench * blowoff).toFixed(2));
+    }
+
+    function updateWorkbenchPhysics() {
+      const g = parseFloat(document.getElementById('valve-gravity').value);
+      const o2 = parseFloat(document.getElementById('valve-o2').value);
+      const n2 = parseFloat(document.getElementById('valve-n2').value);
+      const press = parseFloat(document.getElementById('valve-press').value);
+      const flow = parseFloat(document.getElementById('valve-flow').value);
+      const mat = document.getElementById('valve-material').value;
+
+      document.getElementById('readout-o2').innerText = o2 + " Percent";
+      document.getElementById('readout-n2').innerText = n2 + " Percent";
+      document.getElementById('readout-press').innerText = press + " kPa";
+      document.getElementById('readout-flow').innerText = flow.toFixed(1) + " cm/s";
+
+      const uBuoy = 11.2 * Math.sqrt(g) * Math.pow(press / 101.3, 0.45);
+      const draft = Number(Math.sqrt(Math.pow(flow, 2) + Math.pow(uBuoy, 2)).toFixed(1));
+      const mloc = Number((14.2 - ((101.3 - press) * 0.018) + (mat === 'nomex' ? 8.5 : 0)).toFixed(1));
+
+      let spread = computeSpreadForO2(g, o2, n2, press, flow, mat);
+      if (chamberMode === 'quenched') spread = 0.0;
+
+      let risk = spread <= 0.05 ? 3 : Math.min(99, Math.max(5, Math.round((spread / 4.0) * 68 + (o2 - mloc) * 1.8)));
+
+      benchState = { g, o2, n2, press, flow, spread, mloc, risk, draft, mat };
+
+      document.getElementById('meter-spread').innerText = spread + " mm/s";
+      document.getElementById('meter-draft').innerText = draft + " cm/s";
+      document.getElementById('meter-mloc').innerText = mloc + " Percent";
+      document.getElementById('meter-risk').innerText = risk + " Percent";
+
+      const tempK = spread <= 0.05 ? 305 : Math.round(1150 + spread * 220);
+      document.getElementById('ch-overlay-gas').innerText = `Oxygen: ${o2}% | Nitrogen: ${n2}%`;
+      document.getElementById('ch-overlay-temp').innerText = `Peak Temp: ${tempK} K`;
+
+      const o2Target = Math.round((o2 / 100) * 58);
+      molecules.forEach((m, idx) => {
+        if (chamberMode === 'quenched' && idx > 40) m.type = 'mist';
+        else m.type = idx < o2Target ? 'o2' : 'n2';
+      });
+
+      if (liveBenchChart) {
+        const o2Axis = [14, 18, 21, 26, 30, 34, 38];
+        liveBenchChart.data.datasets[0].data = o2Axis.map(val => computeSpreadForO2(g, val, 99 - val, press, flow, mat));
+        liveBenchChart.update('none');
+      }
+    }
+
+    function runChamberCommand(cmd) {
+      const obs = document.getElementById('bench-observation-box');
+      if (cmd === 'ignite') {
+        chamberMode = 'burning';
+        updateWorkbenchPhysics();
+        obs.innerHTML = `<strong>Sample Ignited:</strong> Red Oxygen molecules feed the reaction zone while green Nitrogen molecules act as a thermal absorber.`;
+      } else if (cmd === 'fan_off') {
+        document.getElementById('valve-flow').value = 0;
+        const g = parseFloat(document.getElementById('valve-gravity').value);
+        if (g <= 0.01) {
+          chamberMode = 'quenched';
+          obs.innerHTML = `<strong>Zero Gravity Result:</strong> Cutting the fans dropped Effective Draft to 0.0 cm/s. The flame choked on its own exhaust gases!`;
+        } else {
+          chamberMode = 'burning';
+          const hypCheck = selectedHypothesis === 'accelerate'
+            ? `<span class="text-emerald-700 font-bold">Prediction B Verified!</span>`
+            : `<span class="text-[#d9381e] font-bold">Prediction A Refuted by NASA Data!</span>`;
+          obs.innerHTML = `${hypCheck} Even with fan airflow at 0.0 cm/s, <strong>Lunar Gravity creates a 6.4 cm/s natural buoyant draft</strong> that keeps feeding 34% Oxygen into the fire! Click <strong>3. Auto-Minimize Risk</strong> to quench it.`;
+        }
+        updateWorkbenchPhysics();
+      } else if (cmd === 'suppress') {
+        chamberMode = 'quenched';
+        document.getElementById('valve-o2').value = 15;
+        document.getElementById('valve-n2').value = 84;
+        document.getElementById('valve-flow').value = 0.5;
+        updateWorkbenchPhysics();
+        obs.innerHTML = `<strong class="text-emerald-800">Risk Minimized to 3%:</strong> Raising Nitrogen Percentage to 84% and injecting 20-micron Fine Water Mist (blue droplets) dropped Oxygen below the Minimum Oxygen Limit and extinguished the fire.`;
+      }
+    }
+
+    let animFrame = 0;
+    function renderChamberLoop() {
+      animFrame += 0.06;
+      if (chamberMode === 'burning' && benchState.spread > 0.05) simTime += 0.03;
+      document.getElementById('bench-timer').innerText = `t = ${simTime.toFixed(1)} s`;
+
+      chCtx.fillStyle = sensorView === 'thermal' ? '#190624' : '#111621';
+      chCtx.fillRect(0, 0, chCanvas.width, chCanvas.height);
+
+      chCtx.strokeStyle = 'rgba(148, 163, 184, 0.1)';
+      for (let x = 0; x < chCanvas.width; x += 36) {
+        chCtx.beginPath(); chCtx.moveTo(x, 0); chCtx.lineTo(x, chCanvas.height); chCtx.stroke();
+      }
+      for (let y = 0; y < chCanvas.height; y += 36) {
+        chCtx.beginPath(); chCtx.moveTo(0, y); chCtx.lineTo(chCanvas.width, y); chCtx.stroke();
+      }
+
+      const upward = benchState.draft * 0.15;
+      molecules.forEach(m => {
+        m.x += m.vx;
+        m.y -= (m.vy + upward * 0.4);
+        if (m.x < 0) m.x = chCanvas.width;
+        if (m.x > chCanvas.width) m.x = 0;
+        if (m.y < 0) m.y = chCanvas.height;
+        if (m.y > chCanvas.height) m.y = 0;
+
+        chCtx.beginPath();
+        chCtx.fillStyle = m.type === 'o2' ? '#f43f5e' : (m.type === 'mist' ? '#38bdf8' : '#10b981');
+        chCtx.arc(m.x, m.y, m.type === 'mist' ? 3.5 : 2.6, 0, Math.PI * 2);
+        chCtx.fill();
+      });
+
+      const cx = chCanvas.width / 2;
+      const cy = chCanvas.height - 50;
+
+      chCtx.fillStyle = '#475569';
+      chCtx.fillRect(cx - 100, cy + 12, 200, 10);
+
+      if (chamberMode === 'burning' && benchState.spread > 0.05) {
+        const stretchY = 1.0 + benchState.g * 1.45;
+        const r = Math.min(54, Math.max(18, 15 + benchState.spread * 11));
+        const wave = Math.sin(animFrame * 2.5) * 3;
+
+        chCtx.save();
+        chCtx.translate(cx, cy);
+        chCtx.scale(1.0, stretchY);
+
+        const grad = chCtx.createRadialGradient(0, -r * 0.3, 4, 0, -r * 0.3, r + wave);
+        if (sensorView === 'thermal') {
+          grad.addColorStop(0, '#ffffff');
+          grad.addColorStop(0.4, '#fde047');
+          grad.addColorStop(0.75, '#ec4899');
+          grad.addColorStop(1, 'rgba(126,34,206,0)');
+        } else if (benchState.mat === 'battery') {
+          grad.addColorStop(0, '#f3e8ff');
+          grad.addColorStop(0.55, '#a855f7');
+          grad.addColorStop(1, 'rgba(126,34,206,0)');
+        } else if (benchState.g < 0.02) {
+          grad.addColorStop(0, '#e0f2fe');
+          grad.addColorStop(0.6, '#38bdf8');
+          grad.addColorStop(1, 'rgba(2,132,199,0)');
+        } else {
+          grad.addColorStop(0, '#fef9c3');
+          grad.addColorStop(0.45, '#f97316');
+          grad.addColorStop(0.85, 'rgba(217,56,30,0.6)');
+          grad.addColorStop(1, 'rgba(217,56,30,0)');
+        }
+
+        chCtx.fillStyle = grad;
+        chCtx.beginPath(); chCtx.arc(0, -r * 0.3, r + wave, 0, Math.PI * 2); chCtx.fill();
+        chCtx.restore();
+      }
+
+      requestAnimationFrame(renderChamberLoop);
+    }
+
+    // =========================================================================
+    // 4. STEP 2: SUMMARIZE & RANK (24 STUDIES + MATERIAL SAFETY RANKER)
+    // =========================================================================
+    let currentRankMode = 'studies';
+
+    function switchRankMode(mode) {
+      currentRankMode = mode;
+      const isStudies = mode === 'studies';
+      document.getElementById('s2-studies-grid').classList.toggle('hidden', !isStudies);
+      document.getElementById('s2-materials-view').classList.toggle('hidden', isStudies);
+      document.getElementById('rank-btn-studies').className = isStudies ? "py-2 rounded-lg bg-white text-slate-900 shadow-sm" : "py-2 rounded-lg text-slate-600";
+      document.getElementById('rank-btn-materials').className = !isStudies ? "py-2 rounded-lg bg-white text-slate-900 shadow-sm" : "py-2 rounded-lg text-slate-600";
+      renderStep2View();
+    }
+
+    function renderStep2View() {
+      const fuel = document.getElementById('s2-fuel').value;
+      const env = document.getElementById('s2-env').value;
+      const o2 = parseFloat(document.getElementById('s2-o2').value);
+      const kw = document.getElementById('s2-kw').value.trim().toLowerCase();
+      document.getElementById('s2-o2-lbl').innerText = o2 + " Percent";
+
+      const list = PSI_EXPERIMENTS.filter(e => {
+        if (fuel !== 'all' && e.fuel !== fuel) return false;
+        if (env !== 'all' && e.targetEnv !== env) return false;
+        if (kw && !(e.id + ' ' + e.name + ' ' + e.summaryEn + ' ' + e.summaryAr).toLowerCase().includes(kw)) return false;
+        return true;
+      }).map(e => {
+        const match = Math.min(99, Math.max(58, Math.round(100 - Math.abs(e.o2 - o2) * 1.7)));
+        return { ...e, match };
+      }).sort((a, b) => b.match - a.match);
+
+      document.getElementById('psi-count-tag').innerText = `${list.length} Studies Ranked`;
+      document.getElementById('s2-studies-grid').innerHTML = list.map((e, i) => `
+        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col justify-between hover:border-[#0f62fe] transition">
+          <div>
+            <div class="flex justify-between items-center mb-1.5">
+              <span class="text-[11px] font-bold mono-readout bg-slate-200 px-2 py-0.5 rounded text-slate-800">Rank #${i + 1} • ${e.id}</span>
+              <span class="text-xs font-extrabold text-[#0f62fe]">${e.match}% Match</span>
+            </div>
+            <h4 class="text-xs font-extrabold text-slate-900 mb-1.5">${e.name}</h4>
+            <p class="text-xs text-slate-600 leading-relaxed">${e.summaryEn}</p>
+            <p class="text-xs text-blue-950 font-bold mt-1 leading-relaxed" dir="rtl">${e.summaryAr}</p>
+          </div>
+          <div class="mt-3 pt-2 border-t border-slate-200 flex justify-between text-[11px] mono-readout font-semibold text-slate-600">
+            <span>Oxygen: ${e.o2}%</span>
+            <span>Min Limit: ${e.mloc}%</span>
+            <span>Spread: ${e.spreadRate} mm/s</span>
+          </div>
+        </div>
+      `).join('');
+
+      // Render Material Safety Ranking
+      const rankedMats = SPACECRAFT_MATERIALS.map(m => {
+        const risk = Math.min(99, Math.max(4, Math.round(m.baseRisk * (o2 / 24))));
+        return { ...m, risk };
+      }).sort((a, b) => a.risk - b.risk);
+
+      document.getElementById('s2-materials-list').innerHTML = rankedMats.map((m, idx) => {
+        const badge = m.risk < 30
+          ? `<span class="px-2.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[11px]"> Recommended (Safe)</span>`
+          : (m.risk < 65
+            ? `<span class="px-2.5 py-0.5 rounded bg-amber-100 text-amber-800 font-bold text-[11px]">Conditional Use</span>`
+            : `<span class="px-2.5 py-0.5 rounded bg-rose-100 text-rose-800 font-bold text-[11px]">High Hazard — Restrict</span>`);
+        return `
+          <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-3 text-xs">
+            <div class="flex items-center gap-3">
+              <span class="w-7 h-7 rounded-lg bg-[#18202c] text-white font-bold mono-readout flex items-center justify-center">#${idx + 1}</span>
+              <div>
+                <div class="font-extrabold text-slate-900">${m.name}</div>
+                <div class="text-slate-500">${m.use} • Min Oxygen Limit: <strong>${m.baseMloc}%</strong></div>
+              </div>
+            </div>
+            <div class="text-right space-y-1">
+              ${badge}
+              <div class="mono-readout font-bold text-slate-700">Hazard Score: ${m.risk}%</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // =========================================================================
+    // 5. STEP 3: MULTI-CHART COMPARISON LAB (BAR, RADAR, GRAVITY, PIE)
+    // =========================================================================
+    let s3BarChart, s3RadarChart, s3GravChart, s3PieChart;
+
+    function initAllLabCharts() {
+      Chart.defaults.color = '#334155';
+      Chart.defaults.font.family = "'Inter', 'Cairo', sans-serif";
+
+      liveBenchChart = new Chart(document.getElementById('liveBenchChart').getContext('2d'), {
+        type: 'line',
+        data: {
+          labels: ['14%', '18%', '21%', '26%', '30%', '34%', '38%'],
+          datasets: [{
+            label: 'Spread Speed (mm/s)',
+            data: [],
+            borderColor: '#0f62fe',
+            backgroundColor: 'rgba(15, 98, 254, 0.12)',
+            fill: true,
+            tension: 0.35
+          }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+      });
+
+      const selA = document.getElementById('s3-cmp-a');
+      const selB = document.getElementById('s3-cmp-b');
+      const opts = PSI_EXPERIMENTS.map((e, i) => `<option value="${i}">${e.id} - ${e.name}</option>`).join('');
+      selA.innerHTML = opts; selB.innerHTML = opts;
+      selA.value = "0"; selB.value = "3";
+
+      s3BarChart = new Chart(document.getElementById('s3BarChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: ['Oxygen %', 'Min Limit %', 'Airflow cm/s', 'Spread x10'],
+          datasets: [
+            { label: 'Study A', data: [], backgroundColor: '#0f62fe', borderRadius: 4 },
+            { label: 'Study B', data: [], backgroundColor: '#d9381e', borderRadius: 4 }
+          ]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+      });
+
+      s3RadarChart = new Chart(document.getElementById('s3RadarChart').getContext('2d'), {
+        type: 'radar',
+        data: {
+          labels: ['Radiation', 'Airflow Effect', 'Cool Flame', 'Smoke', 'Lunar Risk'],
+          datasets: [
+            { label: 'Study A', data: [], borderColor: '#0f62fe', backgroundColor: 'rgba(15, 98, 254, 0.15)' },
+            { label: 'Study B', data: [], borderColor: '#d9381e', backgroundColor: 'rgba(217, 56, 30, 0.15)' }
+          ]
+        },
+        options: { responsive: true, maintainAspectRatio: false, scales: { r: { suggestedMin: 0, suggestedMax: 100 } }, plugins: { legend: { position: 'bottom' } } }
+      });
+
+      s3GravChart = new Chart(document.getElementById('s3GravChart').getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: ['Zero Gravity', 'Lunar 1/6', 'Mars 3/8', 'Earth 1g'],
+          datasets: [{
+            label: 'Flame Spread Speed (mm/s)',
+            data: [0.95, 3.65, 2.85, 1.90],
+            backgroundColor: ['#0f62fe', '#d9381e', '#f59e0b', '#0e6027'],
+            borderRadius: 4
+          }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+      });
+
+      s3PieChart = new Chart(document.getElementById('s3PieChart').getContext('2d'), {
+        type: 'doughnut',
+        data: {
+          labels: ['Buoyant O2 Feed %', 'Radiative Loss %', 'Conductive Heat %'],
+          datasets: [{
+            data: [52, 28, 20],
+            backgroundColor: ['#d9381e', '#0f62fe', '#f59e0b'],
+            borderWidth: 2,
+            borderColor: '#ffffff'
+          }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, cutout: '55%', plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } } } }
+      });
+    }
+
+    function updateStep3Comparison() {
+      const a = PSI_EXPERIMENTS[parseInt(document.getElementById('s3-cmp-a').value)];
+      const b = PSI_EXPERIMENTS[parseInt(document.getElementById('s3-cmp-b').value)];
+
+      document.getElementById('s3-th-a').innerText = `${a.id}: ${a.name}`;
+      document.getElementById('s3-th-b').innerText = `${b.id}: ${b.name}`;
+
+      s3BarChart.data.datasets[0].label = a.id;
+      s3BarChart.data.datasets[0].data = [a.o2, a.mloc, a.airflow, a.spreadRate * 10];
+      s3BarChart.data.datasets[1].label = b.id;
+      s3BarChart.data.datasets[1].data = [b.o2, b.mloc, b.airflow, b.spreadRate * 10];
+      s3BarChart.update();
+
+      s3RadarChart.data.datasets[0].label = a.id;
+      s3RadarChart.data.datasets[0].data = a.radar;
+      s3RadarChart.data.datasets[1].label = b.id;
+      s3RadarChart.data.datasets[1].data = b.radar;
+      s3RadarChart.update();
+
+      s3PieChart.data.datasets[0].data = [a.o2 + 18, Math.max(15, 55 - a.o2), 27];
+      s3PieChart.update();
+
+      const rows = [
+        { k: "Experiment Name", va: a.name, vb: b.name },
+        { k: "Fuel Category (نوع الوقود)", va: a.fuel, vb: b.fuel },
+        { k: "Tested Oxygen Percentage", va: a.o2 + " Percent", vb: b.o2 + " Percent" },
+        { k: "Minimum Oxygen Limit (MLOC)", va: a.mloc + " Percent", vb: b.mloc + " Percent" },
+        { k: "Ventilation Airflow Speed", va: a.airflow + " cm/s", vb: b.airflow + " cm/s" },
+        { k: "Executive Summary", va: a.summaryEn + " | " + a.summaryAr, vb: b.summaryEn + " | " + b.summaryAr },
+        { k: "Earth Application", va: a.earthEn, vb: b.earthEn }
+      ];
+      document.getElementById('s3-cmp-tbody').innerHTML = rows.map(r => `
+        <tr class="hover:bg-slate-50">
+          <td class="p-3 font-bold text-slate-800">${r.k}</td>
+          <td class="p-3 text-slate-600">${r.va}</td>
+          <td class="p-3 text-slate-600">${r.vb}</td>
+        </tr>
+      `).join('');
+    }
+
+    // =========================================================================
+    // 6. STEP 4: SI EVIDENCE INTERPRETER & ARTIFACT EXPORTERS
+    // =========================================================================
+    function askNotebook(topic) {
+      const qMap = {
+        lunar: "Why is Lunar Gravity fire faster than Zero Gravity?",
+        nitrogen: "كيف يتفاعل الأكسجين والنيتروجين والضغط في حرائق القمر والمريخ؟",
+        cool: "What are Cool Flames in FLEX-2 and how do they affect EV Batteries?",
+        suppress: "ما هي أفضل طريقة لإطفاء حرائق الفضاء والقمر حسب تجارب ناسا؟"
+      };
+      document.getElementById('notebook-inp').value = qMap[topic];
+      sendNotebookQ();
+    }
+
+    async function sendNotebookQ() {
+      const inp = document.getElementById('notebook-inp');
+      const q = inp.value.trim();
+      if (!q) return;
+      inp.value = '';
+
+      const chat = document.getElementById('notebook-chat');
+      chat.innerHTML += `<div class="flex justify-end"><div class="bg-[#0f62fe] text-white px-3 py-2 rounded-lg font-semibold">${q}</div></div>`;
+
+      const apiKey = document.getElementById('gemini-api-key').value.trim();
+      if (apiKey) {
+        try {
+          const prompt = "You are the SI Interpreter for NASA Space Apps challenge 'Flame in Freefall'. Answer concisely in both English and Arabic citing exact NASA PSI IDs from these 24 experiments: " + JSON.stringify(PSI_EXPERIMENTS) + "\n\nQuestion: " + q;
+          const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+          });
+          const data = await res.json();
+          const txt = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (txt) {
+            chat.innerHTML += `<div class="p-3 rounded-lg bg-white border border-slate-200 text-slate-800">${txt.replace(/\n/g, '<br/>')}</div>`;
+            chat.scrollTop = chat.scrollHeight;
+            return;
+          }
+        } catch (e) {}
+      }
+
+      const ql = q.toLowerCase();
+      let en = "", ar = "";
+      if (ql.includes('lunar') || ql.includes('قمر')) {
+        en = "<strong>Lunar Buoyancy Peak (Cited: BASS-II PSI-112 & ACME E-FIELD PSI-139):</strong> In Zero Gravity, flames choke on their own exhaust when fans stop. Under Lunar Gravity (One-Sixth Earth), natural buoyancy creates a 6.4 cm/s upward draft that feeds fresh oxygen into the flame faster than radiation cools it.";
+        ar = "في الفضاء تخنق النار نفسها عند إغلاق المراوح، لكن جاذبية القمر تصنع تيار طفو هادئ (6.4 سم/ث) يغذي اللهب بالأكسجين أسرع مما يبرد بالإشعاع.";
+      } else if (ql.includes('نيتروجين') || ql.includes('nitrogen') || ql.includes('ضغط') || ql.includes('أكسجين')) {
+        en = "<strong>Atmosphere Scaling (Cited: Saffire PSI-128 & SoFIE-MIST PSI-137):</strong> Lowering Cabin Pressure to 56.5 Kilopascals reduces convective cooling, while 34 Percent Oxygen triples flame spread speed. Raising Nitrogen Percentage above 80 Percent absorbs flame heat and drops Oxygen below the 13.5 Percent Minimum Oxygen Limit.";
+        ar = "خفض ضغط الكابينة إلى 56.5 كيلوباسكال يحبس الحرارة حول اللهب، ورفع الأكسجين إلى 34% يضاعف سرعة النار 3 مرات، بينما يعمل رفع النيتروجين فوق 80% كإسفنجة حرارية تخمد التفاعل.";
+      } else if (ql.includes('cool') || ql.includes('بارد') || ql.includes('battery')) {
+        en = "<strong>Cool Flames & EV Batteries (Cited: FLEX-2 PSI-107 & ACME CFI-G PSI-143):</strong> Hydrocarbon fuels can react invisibly at 600 Kelvin after visible flames extinguish, triggering secondary explosions inside narrow 3-millimeter battery cell channels.";
+        ar = "اكتشفت تجربة FLEX-2 ظاهرة اللهب البارد غير المرئي عند 600 كلفن، وهو ما يفسر الانفجار المفاجئ داخل القنوات الضيقة (3 ملم) في بطاريات السيارات الكهربائية.";
+      } else {
+        en = "<strong>Spacecraft Fire Suppression Protocol (Cited: Fine Water Mist PSI-109 & Saffire IV PSI-135):</strong> On the Moon and Mars, fan shutoff alone fails. Optimal suppression combines 20-micron Fine Water Mist with Nitrogen dilution and immediate post-fire Carbon Monoxide scrubbing.";
+        ar = "أفضل طريقة لإطفاء حرائق القمر والمريخ هي الدمج بين الرذاذ المائي الدقيق (20 ميكرون) ورفع نسبة النيتروجين مع تشغيل فلاتر تنقية أول أكسيد الكربون.";
+      }
+
+      chat.innerHTML += `
+        <div class="p-3 rounded-lg bg-white border border-slate-200 text-slate-800 space-y-1">
+          <div>${en}</div>
+          <div class="text-blue-950 font-bold pt-1 border-t border-slate-100" dir="rtl">${ar}</div>
+        </div>
+      `;
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function toggleLabLanguage() {
+      isArabic = !isArabic;
+      document.body.dir = isArabic ? 'rtl' : 'ltr';
+      document.getElementById('ui-app-title').innerText = isArabic
+        ? "تحدي ناسا Flame in Freefall — تلخيص وترتيب وتفسير تجارب احتراق الفضاء"
+        : "NASA PSI Microgravity Combustion Data — Summarize • Rank • Interpret";
+      document.getElementById('tab-lbl-1').innerText = isArabic ? "1. السيناريو والمعمل" : "Scenario & Virtual Lab";
+      document.getElementById('tab-lbl-2').innerText = isArabic ? "2. التلخيص والترتيب (24)" : "Summarize & Rank (24 Studies)";
+      document.getElementById('tab-lbl-3').innerText = isArabic ? "3. مختبر المقارنة" : "Compare Experiments & Gravity";
+      document.getElementById('tab-lbl-4').innerText = isArabic ? "4. المفسر الذكي والأرض" : "SI Interpreter & Earth Impact";
+    }
+
+    function exportDatasetCSV() {
+      const headers = ["ID", "Experiment_Name", "Fuel_Category", "Oxygen_Percent", "Min_Oxygen_Limit_Percent", "Airflow_cm_s", "Target_Environment", "Summary_EN", "Summary_AR"];
+      const rows = PSI_EXPERIMENTS.map(e => [
+        e.id, `"${e.name}"`, e.fuel, e.o2, e.mloc, e.airflow, e.targetEnv, `"${e.summaryEn}"`, `"${e.summaryAr}"`
+      ]);
+      const csv = "\uFEFF" + [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "Flame_in_Freefall_24_NASA_PSI_Studies.csv";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+
+    function exportClearanceJSON() {
+      const payload = {
+        challenge: "Flame in Freefall: AI-Powered Fire Safety Insights from Microgravity Combustion Data",
+        standard: "NASA-STD-6001 Material Clearance Report",
+        selected_material: benchState.mat,
+        gravity_level: benchState.g,
+        oxygen_percent: benchState.o2,
+        nitrogen_percent: benchState.n2,
+        cabin_pressure_kpa: benchState.press,
+        predicted_spread_speed_mm_s: benchState.spread,
+        minimum_oxygen_limit_pct: benchState.mloc,
+        hazard_index_pct: benchState.risk
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "NASA_STD_6001_Material_Clearance.json";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+
+    window.onload = () => {
+      initAllLabCharts();
+      updateWorkbenchPhysics();
+      renderChamberLoop();
+      renderStep2View();
+      updateStep3Comparison();
+    };
+  </script>
+</body>
+</html>
