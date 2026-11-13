@@ -3,696 +3,669 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PYRE-SI | NASA Space Fire Intelligence & Smart Astronaut Chip</title>
+  <title>PYRE-SI | NASA Space Fire Paradox & Smart Astronaut GPS Chip</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
     :root {
-      --font-en: 'Plus Jakarta Sans', sans-serif;
-      --font-ar: 'Cairo', sans-serif;
+      --bg-ceramic: #f4f7fb;
+      --ink-dark: #090d16;
+      --accent-blue: #2563eb;
+      --accent-Alert: #e11d48;
+      --accent-safe: #059669;
     }
 
     body {
-      font-family: var(--font-en);
-      background-color: #f0f4f9;
-      color: #0f172a;
+      font-family: 'Plus Jakarta Sans', 'Cairo', sans-serif;
+      background-color: var(--bg-ceramic);
+      color: var(--ink-dark);
       overflow-x: hidden;
       scroll-behavior: smooth;
     }
 
-    body[dir="rtl"] {
-      font-family: var(--font-ar);
+    .display-font {
+      font-family: 'Space Grotesk', 'Cairo', sans-serif;
     }
 
-    /* Animated Light Aurora Background */
-    .aurora-bg {
+    /* Futuristic Ceramic & Spatial Grid Background */
+    .spatial-backdrop {
       position: fixed;
       inset: 0;
       z-index: -1;
-      background:
-        radial-gradient(circle at 12% 18%, rgba(56, 189, 248, 0.22), transparent 38%),
-        radial-gradient(circle at 88% 15%, rgba(244, 63, 94, 0.16), transparent 40%),
-        radial-gradient(circle at 50% 85%, rgba(16, 185, 129, 0.16), transparent 45%),
-        linear-gradient(180deg, #f8fafc 0%, #eef2ff 50%, #f1f5f9 100%);
+      background-color: #f4f7fb;
+      background-image:
+        radial-gradient(at 15% 10%, rgba(37, 99, 235, 0.12) 0px, transparent 45%),
+        radial-gradient(at 85% 15%, rgba(225, 29, 72, 0.10) 0px, transparent 45%),
+        radial-gradient(at 50% 90%, rgba(5, 150, 105, 0.10) 0px, transparent 50%),
+        linear-gradient(to right, rgba(148, 163, 184, 0.12) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(148, 163, 184, 0.12) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 100% 100%, 44px 44px, 44px 44px;
     }
 
-    /* VisionOS Frosted Glass Cards */
-    .vision-card {
-      background: rgba(255, 255, 255, 0.82);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.9);
+    /* Tactile 3D Hardware Module Surface */
+    .hw-panel {
+      background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+      border: 1px solid #cbd5e1;
       box-shadow:
-        0 20px 50px rgba(15, 23, 42, 0.06),
-        0 1px 3px rgba(15, 23, 42, 0.04),
-        inset 0 1px 0 rgba(255, 255, 255, 1);
-      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        0 20px 45px -15px rgba(15, 23, 42, 0.08),
+        0 4px 10px -2px rgba(15, 23, 42, 0.04),
+        inset 0 2px 0 #ffffff;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
     }
 
-    .vision-card:hover {
+    .hw-panel:hover {
       box-shadow:
-        0 25px 60px rgba(37, 99, 235, 0.09),
-        0 2px 6px rgba(15, 23, 42, 0.05),
-        inset 0 1px 0 rgba(255, 255, 255, 1);
+        0 28px 55px -12px rgba(37, 99, 235, 0.13),
+        0 6px 15px -3px rgba(15, 23, 42, 0.05),
+        inset 0 2px 0 #ffffff;
     }
 
-    .hero-portal {
-      background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(240,249,255,0.88) 100%);
-      border: 2px solid rgba(59, 130, 246, 0.25);
-      box-shadow: 0 30px 70px rgba(37, 99, 235, 0.12);
+    /* Tactile Push Button */
+    .tactile-btn {
+      box-shadow: 0 5px 0 #1e3a8a, 0 8px 20px rgba(37, 99, 235, 0.3);
+      transition: all 0.12s ease;
+    }
+    .tactile-btn:active {
+      transform: translateY(4px);
+      box-shadow: 0 1px 0 #1e3a8a, 0 3px 10px rgba(37, 99, 235, 0.2);
     }
 
-    .danger-pulse {
-      animation: dangerGlow 2.2s infinite;
+    .tactile-danger {
+      box-shadow: 0 5px 0 #881337, 0 10px 25px rgba(225, 29, 72, 0.35);
+      transition: all 0.12s ease;
+    }
+    .tactile-danger:active {
+      transform: translateY(4px);
+      box-shadow: 0 1px 0 #881337;
     }
 
-    @keyframes dangerGlow {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.35); }
-      50% { box-shadow: 0 0 0 12px rgba(244, 63, 94, 0); }
-    }
-
-    .gps-ping {
-      animation: radarPing 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
-    }
-
-    @keyframes radarPing {
-      75%, 100% {
-        transform: scale(2.4);
-        opacity: 0;
-      }
-    }
-
-    .room-node {
-      transition: all 0.3s ease;
-    }
-
-    .room-node.active {
-      background: linear-gradient(135deg, #2563eb 0%, #0284c7 100%);
-      color: #ffffff;
-      border-color: #1d4ed8;
-      transform: translateY(-2px);
-      box-shadow: 0 12px 25px rgba(37, 99, 235, 0.3);
-    }
-
-    .nav-pill.active {
+    /* Microchip Hardware Aesthetic */
+    .silicon-chip {
       background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-      color: #ffffff;
-      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.2);
+      border: 2px solid #38bdf8;
+      box-shadow: 0 0 35px rgba(56, 189, 248, 0.25), inset 0 0 20px rgba(56, 189, 248, 0.15);
+      position: relative;
     }
 
+    /* Animated Data Line */
+    .data-stream {
+      stroke-dasharray: 8 6;
+      animation: flowDash 1.2s linear infinite;
+    }
+    @keyframes flowDash {
+      to { stroke-dashoffset: -28; }
+    }
+
+    /* Astronaut GPS Pulse */
+    .astronaut-beacon {
+      transition: all 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* Custom Range Sliders */
     input[type="range"] {
       accent-color: #2563eb;
-      height: 6px;
-      border-radius: 999px;
+      height: 7px;
+      border-radius: 99px;
+      cursor: pointer;
+    }
+
+    /* Progress Bar Glow */
+    .progress-fill {
+      transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     }
   </style>
 </head>
-<body class="min-h-screen">
-  <div class="aurora-bg"></div>
+<body class="min-h-screen pb-16">
+  <div class="spatial-backdrop"></div>
 
-  <!-- ================= FLOATING VISION-OS TOP NAVBAR ================= -->
-  <header class="sticky top-3 z-50 max-w-7xl mx-auto px-3 md:px-6">
-    <div class="vision-card rounded-2xl px-4 py-3 flex flex-wrap items-center justify-between gap-3">
-      <!-- Brand Identity -->
+  <!-- ================= TOP MISSION PROGRESS & BILINGUAL HUD BAR ================= -->
+  <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-slate-300/80 shadow-sm">
+    <!-- Interactive Discovery Progress Bar -->
+    <div class="w-full bg-slate-200 h-1.5 overflow-hidden">
+      <div id="mission-progress-bar" class="progress-fill bg-gradient-to-r from-blue-600 via-rose-500 to-emerald-500 h-full w-1/4"></div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+      <!-- Brand Logo & Discovery Status -->
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-sky-500 to-emerald-400 text-white font-black text-xs flex items-center justify-center shadow-md shadow-blue-500/20 tracking-wider">
-          PYRE
+        <div class="w-11 h-11 rounded-2xl bg-slate-900 text-white display-font font-bold text-sm flex flex-col items-center justify-center border-2 border-blue-500 shadow-md">
+          <span>PYRE</span>
+          <span class="text-[9px] text-sky-400 -mt-1">CHIP</span>
         </div>
         <div>
           <div class="flex items-center gap-2">
-            <span class="text-sm md:text-base font-extrabold text-slate-900 tracking-tight" id="brand-title">
-              PYRE-SI Space Fire Intelligence
+            <span class="display-font font-extrabold text-base text-slate-900 tracking-tight">
+              NASA PSI FIRE INTELLIGENCE OS
             </span>
-            <span class="hidden sm:inline-block px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-blue-50 text-blue-700 border border-blue-200" id="brand-badge">
-              24 NASA Experiments Linked
+            <span id="discovery-badge" class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-amber-100 text-amber-900 border border-amber-300">
+              Investigation Unlocked: 25%
             </span>
           </div>
-          <p class="text-xs text-slate-500 font-medium" id="brand-sub">
-            Interactive Mission Simulator, Smart GPS Chip, and NASA Database Explorer
+          <p class="text-xs text-slate-500 font-semibold">
+            Interactive Space Fire Paradox • Wearable GPS Astronaut Chip • 24 NASA Studies
           </p>
         </div>
       </div>
 
-      <!-- Navigation Steps + Language Toggle -->
-      <div class="flex flex-wrap items-center gap-1.5">
-        <button onclick="scrollToModule('mod-hook')" id="nav-mod-hook" class="nav-pill active px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-200/70 transition">
-          1. Survival Challenge
-        </button>
-        <button onclick="scrollToModule('mod-chip')" id="nav-mod-chip" class="nav-pill px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-200/70 transition">
-          2. Smart GPS Chip
-        </button>
-        <button onclick="scrollToModule('mod-finder')" id="nav-mod-finder" class="nav-pill px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-200/70 transition">
-          3. 24 NASA Studies
-        </button>
-        <button onclick="scrollToModule('mod-compare')" id="nav-mod-compare" class="nav-pill px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-200/70 transition">
-          4. Visual Compare
-        </button>
-        <button onclick="scrollToModule('mod-advisor')" id="nav-mod-advisor" class="nav-pill px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-200/70 transition">
-          5. AI Advisor & Earth
+      <!-- Navigation & Instant Language/Audio Controls -->
+      <div class="flex flex-wrap items-center gap-2">
+        <a href="#sec-paradox" onclick="advanceProgress(25)" class="px-3 py-1.5 rounded-xl text-xs font-extrabold bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-700 transition">
+          01. The Paradox
+        </a>
+        <a href="#sec-chip" onclick="advanceProgress(50)" class="px-3 py-1.5 rounded-xl text-xs font-extrabold bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-700 transition">
+          02. Smart GPS Chip
+        </a>
+        <a href="#sec-finder" onclick="advanceProgress(75)" class="px-3 py-1.5 rounded-xl text-xs font-extrabold bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-700 transition">
+          03. 24 NASA Studies
+        </a>
+        <a href="#sec-compare" onclick="advanceProgress(90)" class="px-3 py-1.5 rounded-xl text-xs font-extrabold bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-700 transition">
+          04. Compare Lab
+        </a>
+        <a href="#sec-advisor" onclick="advanceProgress(100)" class="px-3 py-1.5 rounded-xl text-xs font-extrabold bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-700 transition">
+          05. AI & Earth
+        </a>
+
+        <button onclick="toggleSound()" id="sound-btn" class="px-3 py-1.5 rounded-xl text-xs font-extrabold bg-slate-200 text-slate-800 hover:bg-slate-300 transition">
+          Audio: ON
         </button>
 
-        <!-- Instant Bilingual Switcher -->
-        <button onclick="toggleLanguage()" id="lang-btn" class="ml-1 px-3.5 py-1.5 rounded-xl text-xs font-extrabold bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20 hover:opacity-95 transition">
-          عربي / English
+        <button onclick="toggleBilingualMode()" id="lang-toggle-btn" class="px-4 py-1.5 rounded-xl text-xs font-black bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/20 transition">
+          اللغة: English + عربي
         </button>
       </div>
     </div>
   </header>
 
-  <main class="max-w-7xl mx-auto p-3 md:p-6 space-y-10 mt-2">
+  <main class="max-w-7xl mx-auto px-4 pt-6 space-y-12">
 
     <!-- =======================================================================
-         MODULE 1: THE IRRESISTIBLE HOOK — LIVE LUNAR EMERGENCY DECISION SIMULATOR
+         STAGE 01: THE IRRESISTIBLE PARADOX EXPERIMENT (3 LIVE CHAMBERS)
          ======================================================================= -->
-    <section id="mod-hook" class="hero-portal rounded-3xl p-6 md:p-9 relative overflow-hidden">
-      <!-- Top Mission Alert Strip -->
-      <div class="flex flex-wrap items-center justify-between gap-3 pb-5 border-b border-slate-200/80">
-        <div class="flex items-center gap-2.5">
-          <span class="w-3 h-3 rounded-full bg-rose-500 danger-pulse"></span>
-          <span id="hook-tag" class="text-xs font-extrabold uppercase tracking-wider text-rose-600">
-            LIVE MISSION SIMULATION // LUNAR HABITAT SECTOR ALPHA
-          </span>
-        </div>
-        <div class="flex items-center gap-3">
-          <div class="px-3 py-1 rounded-full bg-slate-900 text-white text-xs font-bold" id="hook-timer">
-            Time to Flashover Decision: 00:15 Seconds
-          </div>
-          <button onclick="exportDatasetCSV()" class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold hover:bg-emerald-100 transition" id="btn-csv">
-            Download 24 Studies CSV
-          </button>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mt-6">
-        <!-- Left Story Challenge & Interactive Choices (7 Columns) -->
-        <div class="lg:col-span-7 space-y-5">
-          <h2 id="hook-title" class="text-2xl md:text-4xl font-black text-slate-900 leading-tight">
-            A Spark Just Ignited Inside Your Lunar Base. Your Next Click Decides If the Crew Survives.
-          </h2>
-
-          <p id="hook-desc" class="text-sm md:text-base text-slate-600 leading-relaxed">
-            You are inside a Lunar habitat under <strong>Lunar Gravity (One-Sixth Earth Gravity)</strong>. To help astronauts breathe comfortably at a lower <strong>Cabin Pressure (56.5 Kilopascals)</strong>, the air contains <strong>34 Percent Oxygen</strong> and <strong>65 Percent Nitrogen</strong>. Suddenly, an acrylic window panel catches fire. On the International Space Station in Zero Gravity, astronauts simply turn off the air fans to suffocate a fire. <strong>What is your command on the Moon?</strong>
-          </p>
-
-          <!-- Two Interactive Consequence Triggers -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
-            <button onclick="triggerHookDecision('fan_off')" id="choice-wrong" class="p-5 rounded-2xl bg-white hover:bg-rose-50/70 border-2 border-slate-200 hover:border-rose-500 text-left transition shadow-sm group">
-              <div class="flex items-center justify-between">
-                <span class="px-2.5 py-0.5 rounded-md bg-rose-100 text-rose-800 text-[11px] font-extrabold uppercase" id="choice-1-badge">Option One // Intuition</span>
-                <span class="text-xs font-bold text-slate-400 group-hover:text-rose-600">Click to Test</span>
-              </div>
-              <div class="text-base font-black text-slate-900 mt-2" id="choice-1-title">
-                Turn Off Ventilation Fans Only
-              </div>
-              <p class="text-xs text-slate-500 mt-1 leading-relaxed" id="choice-1-sub">
-                Cut the fan airflow just like astronauts do in Zero Gravity on the Space Station and wait for the flame to choke.
-              </p>
-            </button>
-
-            <button onclick="triggerHookDecision('smart_chip')" id="choice-right" class="p-5 rounded-2xl bg-white hover:bg-emerald-50/70 border-2 border-blue-500 hover:border-emerald-500 text-left transition shadow-md group">
-              <div class="flex items-center justify-between">
-                <span class="px-2.5 py-0.5 rounded-md bg-emerald-100 text-emerald-800 text-[11px] font-extrabold uppercase" id="choice-2-badge">Option Two // PYRE-SI Protocol</span>
-                <span class="text-xs font-bold text-blue-600 group-hover:text-emerald-600">Click to Test</span>
-              </div>
-              <div class="text-base font-black text-slate-900 mt-2" id="choice-2-title">
-                Trigger Smart GPS Chip & Nitrogen Pulse
-              </div>
-              <p class="text-xs text-slate-500 mt-1 leading-relaxed" id="choice-2-sub">
-                Use NASA database physics to inject Nitrogen thermal ballast and 20-micron Fine Water Mist at the exact GPS coordinates.
-              </p>
-            </button>
-          </div>
-
-          <!-- Dynamic Consequence Reveal Panel -->
-          <div id="hook-outcome-box" class="p-5 rounded-2xl bg-white/90 border border-slate-200 shadow-sm space-y-2">
-            <div class="text-xs font-extrabold uppercase text-blue-600" id="hook-outcome-title">
-              Waiting for Your Command Decision Above...
-            </div>
-            <p class="text-xs md:text-sm text-slate-700 leading-relaxed" id="hook-outcome-text">
-              Click either <strong>Option One</strong> or <strong>Option Two</strong> above to watch the live physics reaction in the combustion chamber and unlock the secret discovered across NASA's 24 space fire experiments.
-            </p>
-          </div>
-        </div>
-
-        <!-- Right Interactive Multi-Layer Flame Reactor Visor (5 Columns) -->
-        <div class="lg:col-span-5 vision-card rounded-3xl p-5 flex flex-col justify-between">
-          <div class="flex items-center justify-between mb-3">
-            <div>
-              <div class="text-[11px] font-extrabold uppercase text-slate-400" id="visor-sub">Live Combustion Chamber Visor</div>
-              <h3 class="text-sm font-black text-slate-900" id="visor-title">Lunar Gravity Flame Physics</h3>
-            </div>
-            <span id="visor-badge" class="px-3 py-1 rounded-full text-xs font-extrabold bg-amber-100 text-amber-800">
-              Awaiting Command
-            </span>
-          </div>
-
-          <!-- High-Contrast Light-Glass Flame Physics Canvas -->
-          <div class="relative rounded-2xl overflow-hidden bg-gradient-to-b from-slate-900 via-slate-950 to-slate-900 h-64 flex items-center justify-center border border-slate-300 shadow-inner">
-            <canvas id="heroFlameCanvas" width="460" height="256" class="w-full h-full"></canvas>
-            <div class="absolute top-3 left-3 right-3 flex justify-between text-[11px] font-bold text-slate-300 pointer-events-none">
-              <span id="canvas-top-left" class="bg-slate-900/80 px-2.5 py-1 rounded-lg border border-slate-700">Gravity: Lunar (One-Sixth Earth)</span>
-              <span id="canvas-top-right" class="bg-slate-900/80 px-2.5 py-1 rounded-lg border border-slate-700">Oxygen: 34 Percent</span>
-            </div>
-            <div id="canvas-bottom-caption" class="absolute bottom-3 left-3 right-3 bg-white/95 text-slate-900 px-3 py-2 rounded-xl text-xs font-bold shadow-lg text-center">
-              Gentle Lunar buoyancy feeds fresh oxygen upward into the flame base.
-            </div>
-          </div>
-
-          <!-- Quick Regime Switcher Inside the Visor -->
-          <div class="grid grid-cols-3 gap-2 mt-4">
-            <button onclick="setHeroFlameMode('zero')" class="p-2 rounded-xl bg-slate-100 hover:bg-blue-50 border border-slate-200 text-xs font-bold text-slate-700 transition" id="vmode-zero">
-              Zero Gravity Ball
-            </button>
-            <button onclick="setHeroFlameMode('lunar')" class="p-2 rounded-xl bg-rose-50 border border-rose-200 text-xs font-bold text-rose-700 transition" id="vmode-lunar">
-              Lunar Danger Peak
-            </button>
-            <button onclick="setHeroFlameMode('cool')" class="p-2 rounded-xl bg-purple-50 border border-purple-200 text-xs font-bold text-purple-700 transition" id="vmode-cool">
-              Invisible Cool Flame
-            </button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- =======================================================================
-         MODULE 2: SMART ASTRONAUT CHIP & INTERACTIVE SPACECRAFT GPS RADAR
-         ======================================================================= -->
-    <section id="mod-chip" class="vision-card rounded-3xl p-6 md:p-9 space-y-6">
-      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b border-slate-200">
+    <section id="sec-paradox" class="hw-panel rounded-[32px] p-6 md:p-10 relative overflow-hidden">
+      <!-- Top Mission Story Banner -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-200">
         <div>
-          <span class="px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-extrabold uppercase tracking-wide" id="chip-tag">
-            Creative Hardware Innovation // Wearable PYRE-Chip & Spacecraft GPS
-          </span>
-          <h2 class="text-xl md:text-3xl font-black text-slate-900 mt-1.5" id="chip-heading">
-            Smart Astronaut Chip: Live GPS Location, Gas Telemetry & Scenario Predictor
-          </h2>
-          <p class="text-xs md:text-sm text-slate-600 mt-1" id="chip-sub">
-            Click any room on the Spacecraft Blueprint below to move the astronaut's GPS beacon. The Smart Chip reads Oxygen Percentage, Nitrogen Percentage, Cabin Pressure, and Gravity Level to predict the fire scenario and guide the astronaut.
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-100 text-rose-800 text-xs font-extrabold uppercase tracking-wider">
+            Interactive Experiment 01 // Test Your Intuition Right Now
+          </div>
+          <h1 id="hero-main-title" class="display-font text-2xl md:text-4xl font-extrabold text-slate-900 mt-2 leading-tight">
+            Three Identical Fires Are Burning Below. What Happens When You Cut the Ventilation Fans?
+          </h1>
+          <p id="hero-sub-ar" class="text-sm md:text-base font-bold text-blue-700 mt-1">
+            قدامك 3 حرائق متطابقة في الأرض والفضاء والقمر.. اضغط الزرار الأحمر تحت وشوف المفاجأة اللي هتحصل لما نقفل مراوح الهواء!
           </p>
         </div>
 
-        <button onclick="autoOptimizeChip()" id="btn-auto-opt" class="px-5 py-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold text-xs shadow-lg shadow-emerald-600/25 transition shrink-0">
-          Auto-Stabilize Cabin via Smart Chip
+        <button onclick="exportDatasetCSV()" class="px-4 py-2.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-extrabold shrink-0 shadow-md transition">
+          Download All 24 NASA Studies (CSV)
         </button>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        <!-- Left: Interactive Spacecraft Blueprint & Sensor Controls (6 Columns) -->
-        <div class="lg:col-span-6 space-y-5">
-          <!-- Interactive Visual Spacecraft Deck Map -->
-          <div class="bg-slate-900 rounded-3xl p-5 text-white relative overflow-hidden border border-slate-800 shadow-xl">
-            <div class="flex items-center justify-between mb-3">
-              <div class="flex items-center gap-2">
-                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 gps-ping"></span>
-                <span class="text-xs font-extrabold uppercase tracking-wider text-sky-400" id="map-title">
-                  LIVE SPACECRAFT GPS BLUEPRINT (CLICK ROOM TO MOVE ASTRONAUT)
-                </span>
-              </div>
-              <span id="gps-code-pill" class="px-2.5 py-0.5 rounded-md bg-slate-800 text-sky-300 text-xs font-bold border border-slate-700">
-                GPS: Sector Alpha-01
-              </span>
-            </div>
-
-            <!-- 4 Interactive Spacecraft Rooms -->
-            <div class="grid grid-cols-2 gap-3">
-              <button onclick="selectRoom('viewport')" id="room-viewport" class="room-node active p-4 rounded-2xl border border-slate-700 bg-slate-800/90 text-left">
-                <div class="flex items-center justify-between">
-                  <span class="text-[11px] font-extrabold uppercase tracking-wider opacity-80">GPS Zone A</span>
-                  <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-white/20">Astronaut Here</span>
-                </div>
-                <div class="text-sm font-black mt-1.5" id="r1-name">Observation Viewport</div>
-                <div class="text-xs opacity-80 mt-0.5" id="r1-mat">Material: Cast Acrylic Window</div>
-              </button>
-
-              <button onclick="selectRoom('quarters')" id="room-quarters" class="room-node p-4 rounded-2xl border border-slate-700 bg-slate-800/90 text-left">
-                <div class="flex items-center justify-between">
-                  <span class="text-[11px] font-extrabold uppercase tracking-wider opacity-80">GPS Zone B</span>
-                  <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-white/10">Select Zone</span>
-                </div>
-                <div class="text-sm font-black mt-1.5" id="r2-name">Crew Sleeping Quarters</div>
-                <div class="text-xs opacity-80 mt-0.5" id="r2-mat">Material: Cotton Fiberglass Fabric</div>
-              </button>
-
-              <button onclick="selectRoom('battery')" id="room-battery" class="room-node p-4 rounded-2xl border border-slate-700 bg-slate-800/90 text-left">
-                <div class="flex items-center justify-between">
-                  <span class="text-[11px] font-extrabold uppercase tracking-wider opacity-80">GPS Zone C</span>
-                  <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-white/10">Select Zone</span>
-                </div>
-                <div class="text-sm font-black mt-1.5" id="r3-name">Battery and Power Bay</div>
-                <div class="text-xs opacity-80 mt-0.5" id="r3-mat">Material: Liquid Electrolyte Cells</div>
-              </button>
-
-              <button onclick="selectRoom('airlock')" id="room-airlock" class="room-node p-4 rounded-2xl border border-slate-700 bg-slate-800/90 text-left">
-                <div class="flex items-center justify-between">
-                  <span class="text-[11px] font-extrabold uppercase tracking-wider opacity-80">GPS Zone D</span>
-                  <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-white/10">Select Zone</span>
-                </div>
-                <div class="text-sm font-black mt-1.5" id="r4-name">Airlock and Suit Storage</div>
-                <div class="text-xs opacity-80 mt-0.5" id="r4-mat">Material: Porous Insulation & Nomex</div>
-              </button>
-            </div>
+      <!-- THE 3 LIVE COMBUSTION CHAMBERS CANVAS -->
+      <div class="mt-6 bg-slate-950 rounded-3xl p-4 md:p-6 border-2 border-slate-300 shadow-2xl relative">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3 text-center">
+          <div class="bg-slate-900/90 border border-slate-700 rounded-2xl p-3">
+            <div class="text-[11px] font-bold text-emerald-400 uppercase tracking-wider">Chamber One // Earth Baseline</div>
+            <div class="text-sm font-black text-white mt-0.5">Full Earth Gravity (Normal Air)</div>
+            <div class="text-xs text-slate-400" id="ch1-status">21% Oxygen • 78% Nitrogen • Fast Buoyancy</div>
           </div>
 
-          <!-- Smart Chip Atmospheric Sensor Sliders (Zero Cryptic Symbols) -->
-          <div class="bg-white/90 rounded-3xl p-5 border border-slate-200/90 space-y-4 shadow-sm">
-            <div class="text-xs font-extrabold uppercase text-slate-500" id="sliders-heading">
-              Adjust Live Smart Chip Atmospheric Readings:
-            </div>
+          <div class="bg-slate-900/90 border border-sky-500/50 rounded-2xl p-3">
+            <div class="text-[11px] font-bold text-sky-400 uppercase tracking-wider">Chamber Two // Space Station</div>
+            <div class="text-sm font-black text-white mt-0.5">Zero Gravity (Orbital Station)</div>
+            <div class="text-xs text-slate-400" id="ch2-status">21% Oxygen • No Buoyancy • Fan Assisted</div>
+          </div>
 
-            <!-- Gravity Environment Selector -->
+          <div class="bg-slate-900/90 border border-rose-500/70 rounded-2xl p-3">
+            <div class="text-[11px] font-bold text-rose-400 uppercase tracking-wider">Chamber Three // Lunar Base</div>
+            <div class="text-sm font-black text-white mt-0.5">Lunar Gravity (One-Sixth Earth)</div>
+            <div class="text-xs text-slate-400" id="ch3-status">34% Oxygen • 65% Nitrogen • 56.5 Kilopascals</div>
+          </div>
+        </div>
+
+        <!-- Triple Chamber Interactive Physics Canvas -->
+        <div class="rounded-2xl overflow-hidden bg-slate-900 border border-slate-800">
+          <canvas id="paradoxCanvas" width="1080" height="270" class="w-full h-56 md:h-64 block"></canvas>
+        </div>
+
+        <!-- Giant Interactive Trigger Controls Below Chambers -->
+        <div class="mt-5 flex flex-col md:flex-row items-center justify-between gap-4 bg-white rounded-2xl p-4 border border-slate-200">
+          <div class="flex flex-wrap items-center gap-3">
+            <button onclick="runParadoxTest('cut_fans')" id="btn-cut-fans" class="tactile-danger px-6 py-3.5 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white font-black text-xs md:text-sm uppercase tracking-wide">
+              Step 1: Cut Ventilation Fans (إيقاف مراوح الهواء)
+            </button>
+
+            <button onclick="runParadoxTest('activate_chip')" id="btn-chip-save" class="tactile-btn px-6 py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs md:text-sm uppercase tracking-wide">
+              Step 2: Activate Smart GPS Chip (تفعيل الشريحة الذكية)
+            </button>
+
+            <button onclick="runParadoxTest('reset')" class="px-4 py-3.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold text-xs transition">
+              Reset Chambers
+            </button>
+          </div>
+
+          <div id="paradox-verdict-pill" class="px-4 py-2 rounded-xl bg-amber-50 border border-amber-300 text-amber-900 text-xs font-extrabold">
+            Press "Step 1: Cut Ventilation Fans" to witness the Lunar Paradox!
+          </div>
+        </div>
+      </div>
+
+      <!-- The Mystery Reveal Explanation Box (Unlocks when clicked) -->
+      <div id="paradox-explanation-card" class="mt-5 p-5 rounded-2xl bg-blue-50/80 border-2 border-blue-200 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="space-y-1">
+          <div class="text-xs font-black uppercase text-blue-700" id="reveal-title">
+            Why Does This Happen? (The Core Discovery of NASA's 24 PSI Experiments)
+          </div>
+          <p class="text-xs md:text-sm text-slate-700 leading-relaxed" id="reveal-body">
+            In <strong>Zero Gravity (Chamber Two)</strong>, hot air does not rise; when you cut the fans, the flame chokes on its own exhaust and dies. But in <strong>Lunar Gravity (Chamber Three)</strong>, One-Sixth Earth Gravity creates a gentle natural upward draft (6.4 Centimeters per Second) that acts like a bellows—feeding <strong>34 Percent Oxygen</strong> into the fire faster than radiation cools it! Turning off the fans cannot stop a Lunar fire. <strong>That is why we built the Smart Astronaut GPS Chip below.</strong>
+          </p>
+        </div>
+        <a href="#sec-chip" onclick="advanceProgress(50)" class="px-5 py-3 rounded-xl bg-slate-900 hover:bg-blue-700 text-white text-xs font-extrabold shrink-0 transition">
+          See How the Chip Solves This ↓
+        </a>
+      </div>
+    </section>
+
+    <!-- =======================================================================
+         STAGE 02: THE CREATIVE HARDWARE — WEARABLE SMART CHIP & LIVE GPS FLOORPLAN
+         ======================================================================= -->
+    <section id="sec-chip" class="hw-panel rounded-[32px] p-6 md:p-10 space-y-8">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b border-slate-200">
+        <div>
+          <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-xs font-extrabold uppercase tracking-wider">
+            Stage 02 // Creative Hardware Integration: Wearable PYRE-Chip + Internal Spacecraft GPS
+          </span>
+          <h2 class="display-font text-2xl md:text-3xl font-extrabold text-slate-900 mt-2">
+            Interactive Spacecraft GPS Blueprint & Smart Chip Telemetry
+          </h2>
+          <p class="text-xs md:text-sm font-bold text-slate-600 mt-1">
+            شريحة ذكية مربوطة بالـ GPS داخل المركبة وبقاعدة بيانات الموقع: اضغط على أي غرفة في المخطط الهندسي تحت عشان تحرك رائد الفضاء وتشوف الشريحة بتقرأ الأكسجين والنيتروجين والجاذبية وتتوقع السيناريو إزاي!
+          </p>
+        </div>
+
+        <button onclick="runIterativeChipOptimizer()" id="btn-minimize-risk" class="tactile-btn px-6 py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs md:text-sm shrink-0">
+          Auto-Optimize Gases to Minimum Risk %
+        </button>
+      </div>
+
+      <!-- Interactive Spacecraft Blueprint SVG + 3D Silicon Chip Hardware Visualizer -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+
+        <!-- Left: Interactive SVG Spacecraft Floorplan & GPS Tracker (7 Columns) -->
+        <div class="lg:col-span-7 bg-slate-900 rounded-3xl p-5 border-2 border-slate-800 text-white flex flex-col justify-between shadow-xl">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
             <div>
-              <div class="flex justify-between text-xs font-bold mb-1.5">
-                <span class="text-slate-700" id="lbl-title-grav">Gravity Level Detected:</span>
-                <span id="chip-val-grav" class="text-blue-600 font-extrabold">Lunar Gravity (One-Sixth Earth)</span>
+              <span class="text-[11px] font-extrabold uppercase tracking-wider text-sky-400">
+                Interactive Spacecraft GPS Floorplan // Click Any Sector to Move Astronaut
+              </span>
+              <h3 class="text-base font-black text-white" id="blueprint-room-name">
+                Active GPS Location: Sector Alpha-01 (Observation Viewport)
+              </h3>
+            </div>
+            <span id="gps-live-coord" class="px-3 py-1 rounded-lg bg-sky-500/20 border border-sky-400/40 text-sky-300 text-xs font-extrabold">
+              GPS: X-140, Y-85
+            </span>
+          </div>
+
+          <!-- Interactive SVG Spacecraft Cutaway Map -->
+          <div class="relative bg-slate-950 rounded-2xl border border-slate-800 p-2 overflow-hidden">
+            <svg viewBox="0 0 680 300" class="w-full h-auto select-none">
+              <!-- Outer Hull Outline -->
+              <rect x="15" y="15" width="650" height="270" rx="36" fill="#0f172a" stroke="#334155" stroke-width="4" />
+
+              <!-- Room 1: Observation Viewport (Top Left) -->
+              <g onclick="moveAstronautTo('viewport')" class="cursor-pointer group">
+                <rect id="svg-room-viewport" x="30" y="30" width="300" height="115" rx="18" fill="#1e3a8a" fill-opacity="0.45" stroke="#38bdf8" stroke-width="2.5" />
+                <text x="50" y="60" fill="#38bdf8" font-size="11" font-weight="800">GPS SECTOR ALPHA-01</text>
+                <text x="50" y="82" fill="#ffffff" font-size="15" font-weight="900">1. Observation Viewport</text>
+                <text x="50" y="104" fill="#cbd5e1" font-size="11">Material: Cast Acrylic Window (PMMA)</text>
+                <text x="50" y="124" fill="#93c5fd" font-size="11" font-weight="700">نافذة المراقبة (أكريليك شفاف)</text>
+              </g>
+
+              <!-- Room 2: Crew Sleeping Quarters (Top Right) -->
+              <g onclick="moveAstronautTo('quarters')" class="cursor-pointer group">
+                <rect id="svg-room-quarters" x="350" y="30" width="300" height="115" rx="18" fill="#1e293b" fill-opacity="0.7" stroke="#475569" stroke-width="2" />
+                <text x="370" y="60" fill="#94a3b8" font-size="11" font-weight="800">GPS SECTOR BETA-02</text>
+                <text x="370" y="82" fill="#ffffff" font-size="15" font-weight="900">2. Crew Sleeping Quarters</text>
+                <text x="370" y="104" fill="#cbd5e1" font-size="11">Material: Cotton-Fiberglass (SIBAL)</text>
+                <text x="370" y="124" fill="#93c5fd" font-size="11" font-weight="700">غرفة نوم الطاقم (أقمشة وأنسجة)</text>
+              </g>
+
+              <!-- Room 3: Battery & Power Bay (Bottom Left) -->
+              <g onclick="moveAstronautTo('battery')" class="cursor-pointer group">
+                <rect id="svg-room-battery" x="30" y="155" width="300" height="115" rx="18" fill="#1e293b" fill-opacity="0.7" stroke="#475569" stroke-width="2" />
+                <text x="50" y="185" fill="#94a3b8" font-size="11" font-weight="800">GPS SECTOR GAMMA-03</text>
+                <text x="50" y="207" fill="#ffffff" font-size="15" font-weight="900">3. Battery and Power Bay</text>
+                <text x="50" y="229" fill="#cbd5e1" font-size="11">Material: Liquid Electrolyte (3mm Gap)</text>
+                <text x="50" y="249" fill="#93c5fd" font-size="11" font-weight="700">غرفة البطاريات (لهب بارد خفي)</text>
+              </g>
+
+              <!-- Room 4: Airlock & Suit Bay (Bottom Right) -->
+              <g onclick="moveAstronautTo('airlock')" class="cursor-pointer group">
+                <rect id="svg-room-airlock" x="350" y="155" width="300" height="115" rx="18" fill="#1e293b" fill-opacity="0.7" stroke="#475569" stroke-width="2" />
+                <text x="370" y="185" fill="#94a3b8" font-size="11" font-weight="800">GPS SECTOR DELTA-04</text>
+                <text x="370" y="207" fill="#ffffff" font-size="15" font-weight="900">4. Airlock & Suit Insulation</text>
+                <text x="370" y="229" fill="#cbd5e1" font-size="11">Material: Porous Foam & Nomex</text>
+                <text x="370" y="249" fill="#93c5fd" font-size="11" font-weight="700">غرفة معادلة الضغط والبدلات</text>
+              </g>
+
+              <!-- Animated Data Stream Line from Astronaut to Chip -->
+              <line id="svg-telemetry-line" x1="280" y1="85" x2="340" y2="150" stroke="#38bdf8" stroke-width="2.5" class="data-stream" />
+
+              <!-- Moving Astronaut GPS Beacon -->
+              <g id="astronaut-marker" class="astronaut-beacon" transform="translate(280, 85)">
+                <circle r="22" fill="#38bdf8" fill-opacity="0.25">
+                  <animate attributeName="r" values="16;28;16" dur="1.8s" repeatCount="indefinite" />
+                </circle>
+                <circle r="13" fill="#0284c7" stroke="#ffffff" stroke-width="2.5" />
+                <text text-anchor="middle" y="4" fill="#ffffff" font-size="9" font-weight="900">GPS</text>
+              </g>
+            </svg>
+          </div>
+
+          <!-- Atmospheric Sliders Connected to the Chip (Zero Cryptic Symbols) -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 text-xs">
+            <div class="bg-slate-950/90 p-3.5 rounded-2xl border border-slate-800">
+              <div class="flex justify-between font-bold mb-1.5">
+                <span class="text-slate-300">Gravity Level (مستوى الجاذبية):</span>
+                <span id="chip-disp-grav" class="text-sky-400 font-extrabold">Lunar Gravity</span>
               </div>
-              <select id="chip-sel-grav" onchange="updateChipTelemetry()" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs font-bold text-slate-800">
-                <option value="0.001">Zero Gravity (Orbital Space Station)</option>
-                <option value="0.166" selected>Lunar Gravity (One-Sixth Earth Gravity on the Moon)</option>
-                <option value="0.376">Mars Gravity (Three-Eighths Earth Gravity on Mars)</option>
-                <option value="1.0">Full Earth Gravity (Standard Terrestrial Baseline)</option>
+              <select id="chip-inp-grav" onchange="updateChipEngine()" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2 text-xs font-bold text-white">
+                <option value="0.001">Zero Gravity (Space Station Orbit)</option>
+                <option value="0.166" selected>Lunar Gravity (One-Sixth Earth Gravity)</option>
+                <option value="0.376">Mars Gravity (Three-Eighths Earth Gravity)</option>
+                <option value="1.0">Full Earth Gravity (Normal Baseline)</option>
               </select>
             </div>
 
-            <!-- Coupled Oxygen & Nitrogen Sliders -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div class="p-3.5 rounded-2xl bg-rose-50/50 border border-rose-200/70">
-                <div class="flex justify-between text-xs font-bold mb-1">
-                  <span class="text-slate-700" id="lbl-title-o2">Oxygen Percentage:</span>
-                  <span id="chip-val-o2" class="text-rose-600 font-extrabold">34 Percent</span>
-                </div>
-                <input id="chip-inp-o2" type="range" min="12" max="40" step="1" value="34" oninput="coupleGasSliders('o2')" class="w-full" />
-                <div class="text-[11px] text-slate-500 mt-1" id="sub-o2">Feeds flame intensity</div>
+            <div class="bg-slate-950/90 p-3.5 rounded-2xl border border-slate-800">
+              <div class="flex justify-between font-bold mb-1.5">
+                <span class="text-slate-300">Cabin Pressure (ضغط الكابينة):</span>
+                <span id="chip-disp-press" class="text-amber-400 font-extrabold">56.5 Kilopascals</span>
               </div>
-
-              <div class="p-3.5 rounded-2xl bg-emerald-50/50 border border-emerald-200/70">
-                <div class="flex justify-between text-xs font-bold mb-1">
-                  <span class="text-slate-700" id="lbl-title-n2">Nitrogen Percentage:</span>
-                  <span id="chip-val-n2" class="text-emerald-700 font-extrabold">65 Percent</span>
-                </div>
-                <input id="chip-inp-n2" type="range" min="59" max="87" step="1" value="65" oninput="coupleGasSliders('n2')" class="w-full" />
-                <div class="text-[11px] text-slate-500 mt-1" id="sub-n2">Inert gas that absorbs heat</div>
-              </div>
+              <input id="chip-inp-press" type="range" min="35" max="101.3" step="0.5" value="56.5" oninput="updateChipEngine()" class="w-full" />
             </div>
 
-            <!-- Cabin Pressure & Ventilation Airflow -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div class="p-3.5 rounded-2xl bg-amber-50/50 border border-amber-200/70">
-                <div class="flex justify-between text-xs font-bold mb-1">
-                  <span class="text-slate-700" id="lbl-title-press">Cabin Pressure:</span>
-                  <span id="chip-val-press" class="text-amber-700 font-extrabold">56.5 Kilopascals</span>
-                </div>
-                <input id="chip-inp-press" type="range" min="35" max="101.3" step="0.5" value="56.5" oninput="updateChipTelemetry()" class="w-full" />
+            <div class="bg-slate-950/90 p-3.5 rounded-2xl border border-slate-800">
+              <div class="flex justify-between font-bold mb-1.5">
+                <span class="text-slate-300">Oxygen Percentage (نسبة الأكسجين):</span>
+                <span id="chip-disp-o2" class="text-rose-400 font-extrabold">34 Percent</span>
               </div>
+              <input id="chip-inp-o2" type="range" min="12" max="40" step="1" value="34" oninput="syncChipGases('o2')" class="w-full" />
+            </div>
 
-              <div class="p-3.5 rounded-2xl bg-blue-50/50 border border-blue-200/70">
-                <div class="flex justify-between text-xs font-bold mb-1">
-                  <span class="text-slate-700" id="lbl-title-flow">Ventilation Airflow Speed:</span>
-                  <span id="chip-val-flow" class="text-blue-700 font-extrabold">4.0 cm/s</span>
-                </div>
-                <input id="chip-inp-flow" type="range" min="0" max="25" step="0.5" value="4.0" oninput="updateChipTelemetry()" class="w-full" />
+            <div class="bg-slate-950/90 p-3.5 rounded-2xl border border-slate-800">
+              <div class="flex justify-between font-bold mb-1.5">
+                <span class="text-slate-300">Nitrogen Percentage (نسبة النيتروجين):</span>
+                <span id="chip-disp-n2" class="text-emerald-400 font-extrabold">65 Percent</span>
               </div>
+              <input id="chip-inp-n2" type="range" min="59" max="87" step="1" value="65" oninput="syncChipGases('n2')" class="w-full" />
             </div>
           </div>
         </div>
 
-        <!-- Right: Smart Chip Predicted Scenario, Recommendation & Telemetry Gauges (6 Columns) -->
-        <div class="lg:col-span-6 flex flex-col justify-between bg-white/90 rounded-3xl p-6 border border-slate-200/90 shadow-sm space-y-5">
-          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-3">
-            <div>
-              <div class="text-[11px] font-extrabold uppercase text-blue-600" id="chip-out-sub">
-                REAL-TIME CHIP INTELLIGENCE REPORT
+        <!-- Right: The Wearable PYRE-Chip Hardware Visor & Scenario Output (5 Columns) -->
+        <div class="lg:col-span-5 flex flex-col justify-between space-y-4">
+
+          <!-- 3D Silicon Chip Hardware Representation -->
+          <div class="silicon-chip rounded-3xl p-5 text-white">
+            <div class="flex items-center justify-between border-b border-slate-700/80 pb-3 mb-4">
+              <div>
+                <div class="text-[10px] font-extrabold uppercase tracking-widest text-sky-400">
+                  PYRE-CHIP HARDWARE TELEMETRY PROCESSOR
+                </div>
+                <div class="text-sm font-black text-white mt-0.5" id="chip-hw-sector">
+                  Linked to: Observation Viewport
+                </div>
               </div>
-              <h3 id="chip-room-heading" class="text-base md:text-lg font-black text-slate-900">
-                GPS Zone A: Command Observation Viewport
-              </h3>
+              <span id="chip-status-pill" class="px-3 py-1 rounded-full text-xs font-black bg-rose-500 text-white">
+                84% Fire Risk
+              </span>
             </div>
-            <span id="chip-risk-pill" class="px-3.5 py-1 rounded-full text-xs font-black bg-rose-100 text-rose-800 border border-rose-300">
-              High Hazard: 82 Percent Risk
-            </span>
+
+            <!-- 3 Circular Radial SVG Rings for Oxygen, Nitrogen, and Fire Risk -->
+            <div class="grid grid-cols-3 gap-2 text-center">
+              <div class="bg-slate-900/90 p-3 rounded-2xl border border-slate-800 flex flex-col items-center">
+                <svg class="w-16 h-16 -rotate-90" viewBox="0 0 36 36">
+                  <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#1e293b" stroke-width="3.5"/>
+                  <path id="ring-o2" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#f43f5e" stroke-width="3.5" stroke-dasharray="34, 100"/>
+                </svg>
+                <div class="text-xs font-black text-rose-400 -mt-10 mb-6" id="ring-lbl-o2">34%</div>
+                <div class="text-[11px] font-bold text-slate-300">Oxygen Level</div>
+              </div>
+
+              <div class="bg-slate-900/90 p-3 rounded-2xl border border-slate-800 flex flex-col items-center">
+                <svg class="w-16 h-16 -rotate-90" viewBox="0 0 36 36">
+                  <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#1e293b" stroke-width="3.5"/>
+                  <path id="ring-n2" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#10b981" stroke-width="3.5" stroke-dasharray="65, 100"/>
+                </svg>
+                <div class="text-xs font-black text-emerald-400 -mt-10 mb-6" id="ring-lbl-n2">65%</div>
+                <div class="text-[11px] font-bold text-slate-300">Nitrogen Shield</div>
+              </div>
+
+              <div class="bg-slate-900/90 p-3 rounded-2xl border border-slate-800 flex flex-col items-center">
+                <svg class="w-16 h-16 -rotate-90" viewBox="0 0 36 36">
+                  <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#1e293b" stroke-width="3.5"/>
+                  <path id="ring-risk" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#f59e0b" stroke-width="3.5" stroke-dasharray="84, 100"/>
+                </svg>
+                <div class="text-xs font-black text-amber-400 -mt-10 mb-6" id="ring-lbl-risk">84%</div>
+                <div class="text-[11px] font-bold text-slate-300">Hazard Index</div>
+              </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-slate-800 flex justify-between text-xs text-slate-300 font-semibold">
+              <span>Min Oxygen Limit: <strong id="chip-mloc-val" class="text-sky-400">13.8 Percent</strong></span>
+              <span>Spread Speed: <strong id="chip-spread-val" class="text-rose-400">3.45 mm/s</strong></span>
+            </div>
           </div>
 
-          <!-- 4 Crisp Telemetry Gauges -->
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
-            <div class="p-3 rounded-2xl bg-slate-50 border border-slate-200">
-              <div class="text-[11px] text-slate-500 font-semibold" id="kpi-lbl-1">Min Oxygen Limit</div>
-              <div id="chip-kpi-mloc" class="text-sm font-black text-slate-900 mt-1">13.8 Percent</div>
+          <!-- Expected Scenario Predicted by the Chip -->
+          <div class="bg-rose-50/90 p-5 rounded-3xl border-2 border-rose-200 space-y-1.5">
+            <div class="text-xs font-black uppercase text-rose-700">
+              1. Predicted Fire Scenario (السيناريو المتوقع من الشريحة):
             </div>
-            <div class="p-3 rounded-2xl bg-slate-50 border border-slate-200">
-              <div class="text-[11px] text-slate-500 font-semibold" id="kpi-lbl-2">Flame Spread Speed</div>
-              <div id="chip-kpi-spread" class="text-sm font-black text-rose-600 mt-1">3.45 mm/s</div>
-            </div>
-            <div class="p-3 rounded-2xl bg-slate-50 border border-slate-200">
-              <div class="text-[11px] text-slate-500 font-semibold" id="kpi-lbl-3">Nitrogen Cooling</div>
-              <div id="chip-kpi-n2cool" class="text-sm font-black text-emerald-600 mt-1">31 Percent</div>
-            </div>
-            <div class="p-3 rounded-2xl bg-slate-50 border border-slate-200">
-              <div class="text-[11px] text-slate-500 font-semibold" id="kpi-lbl-4">NASA Reference</div>
-              <div id="chip-kpi-ref" class="text-sm font-black text-blue-600 mt-1">Saffire & SoFIE</div>
-            </div>
+            <p id="chip-scen-en" class="text-xs md:text-sm font-semibold text-slate-800 leading-relaxed"></p>
+            <p id="chip-scen-ar" class="text-xs font-bold text-rose-900 leading-relaxed pt-1 border-t border-rose-200/70" dir="rtl"></p>
           </div>
 
-          <!-- Predicted Scenario Card -->
-          <div class="p-4 rounded-2xl bg-rose-50/60 border-l-4 border-rose-500 space-y-1">
-            <div class="text-xs font-black uppercase text-rose-700" id="scen-title">
-              Expected Fire Scenario (Predicted from NASA PSI Database):
+          <!-- Actionable GPS Recommendation Sent to Astronaut -->
+          <div class="bg-emerald-50/90 p-5 rounded-3xl border-2 border-emerald-200 space-y-1.5">
+            <div class="text-xs font-black uppercase text-emerald-800">
+              2. GPS Action Recommendation (التوصية الفورية لرائد الفضاء):
             </div>
-            <p id="chip-scenario-body" class="text-xs md:text-sm text-slate-700 leading-relaxed">
-              At 34 Percent Oxygen and 65 Percent Nitrogen under Lunar Gravity, gentle buoyant air currents feed fresh oxygen across the acrylic window faster than radiation cools it. Flames accelerate rapidly and will not stop if ventilation fans are switched off.
-            </p>
+            <p id="chip-rec-en" class="text-xs md:text-sm font-semibold text-slate-800 leading-relaxed"></p>
+            <p id="chip-rec-ar" class="text-xs font-bold text-emerald-900 leading-relaxed pt-1 border-t border-emerald-200/70" dir="rtl"></p>
           </div>
 
-          <!-- Astronaut Action Recommendation Card -->
-          <div class="p-4 rounded-2xl bg-emerald-50/70 border-l-4 border-emerald-600 space-y-1">
-            <div class="text-xs font-black uppercase text-emerald-800" id="rec-title">
-              Immediate Recommendation Sent to Astronaut Visor:
-            </div>
-            <p id="chip-rec-body" class="text-xs md:text-sm text-slate-700 leading-relaxed">
-              1. Do not rely on fan shutoff alone in Lunar Gravity. 2. Open Sector Alpha Nitrogen valve to raise Nitrogen Percentage above 79 Percent. 3. Discharge 20-micron Fine Water Mist toward the window frame.
-            </p>
-          </div>
-
-          <!-- Doughnut Chart + Gas Explanation -->
-          <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center pt-1">
-            <div class="sm:col-span-5 h-36">
-              <canvas id="chipDoughnutChart"></canvas>
-            </div>
-            <div class="sm:col-span-7 text-xs text-slate-600 space-y-1">
-              <div class="font-extrabold text-slate-900" id="gas-exp-title">Why Nitrogen Percentage Matters:</div>
-              <p class="leading-relaxed" id="gas-exp-body">
-                Nitrogen is an inert thermal sponge. When the Smart Chip detects rising fire risk in any GPS sector, increasing Nitrogen Percentage absorbs flame heat and raises the Minimum Oxygen Limit required for burning.
-              </p>
-            </div>
-          </div>
         </div>
       </div>
     </section>
 
     <!-- =======================================================================
-         MODULE 3: SMART EXPERIMENT FINDER (ALL 24 NASA PSI STUDIES)
+         STAGE 03: SMART EXPERIMENT FINDER (ALL 24 NASA PSI STUDIES)
          ======================================================================= -->
-    <section id="mod-finder" class="vision-card rounded-3xl p-6 md:p-9 space-y-6">
+    <section id="sec-finder" class="hw-panel rounded-[32px] p-6 md:p-10 space-y-6">
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-4 border-b border-slate-200">
         <div>
-          <span class="px-3 py-1 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-extrabold uppercase" id="finder-tag">
-            Core NASA Challenge Requirement // Summarize & Rank All 24 Experiments
+          <span class="px-3 py-1 rounded-full bg-indigo-100 text-indigo-800 text-xs font-extrabold uppercase">
+            Stage 03 // Summarize & Rank All 24 NASA PSI Combustion Experiments
           </span>
-          <h2 class="text-xl md:text-2xl font-black text-slate-900 mt-1.5" id="finder-heading">
-            Smart NASA Experiment Finder (Ranked by Percentage Match)
+          <h2 class="display-font text-2xl md:text-3xl font-extrabold text-slate-900 mt-1.5">
+            Smart NASA Experiment Finder (محرك بحث وترتيب الـ 24 تجربة)
           </h2>
         </div>
-        <span id="finder-count-pill" class="px-3.5 py-1.5 rounded-full bg-slate-900 text-white text-xs font-bold">
-          Showing 24 NASA Experiments
+        <span id="finder-badge-count" class="px-4 py-1.5 rounded-full bg-slate-900 text-white text-xs font-extrabold">
+          24 NASA Experiments Ranked
         </span>
       </div>
 
-      <!-- 4 Filter Controls -->
+      <!-- Filter Bar -->
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm">
-          <label class="block text-xs font-extrabold text-slate-700 mb-1.5" id="flt-lbl-fuel">Fuel Category:</label>
-          <select id="filter-fuel" onchange="renderExperimentCards()" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2 text-xs font-bold text-slate-800">
-            <option value="all">All Fuel Types (24 Studies)</option>
-            <option value="Solid">Solid Materials (Plastics, Fabrics, Foam)</option>
-            <option value="Liquid">Liquid Fuels (Droplets & Water Mist)</option>
-            <option value="Gas">Gaseous Fuels & Smoke Aerosols</option>
+        <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
+          <label class="block text-xs font-extrabold text-slate-700 mb-1">Fuel Category (نوع الوقود):</label>
+          <select id="flt-fuel" onchange="renderFinder()" class="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs font-bold text-slate-800">
+            <option value="all">All Fuels (24 NASA Studies)</option>
+            <option value="Solid">Solid Materials (وقود صلب)</option>
+            <option value="Liquid">Liquid Droplets & Mist (وقود سائل)</option>
+            <option value="Gas">Gas Flames & Smoke (وقود غازي ودخان)</option>
           </select>
         </div>
 
-        <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm">
-          <label class="block text-xs font-extrabold text-slate-700 mb-1.5" id="flt-lbl-env">Mission Habitat:</label>
-          <select id="filter-env" onchange="renderExperimentCards()" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2 text-xs font-bold text-slate-800">
-            <option value="all">All Environments (Space & Lunar Base)</option>
-            <option value="Lunar">Lunar & Martian Surface Habitat</option>
-            <option value="Spacecraft">Orbital Spacecraft (Zero Gravity)</option>
+        <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
+          <label class="block text-xs font-extrabold text-slate-700 mb-1">Target Habitat (المكان):</label>
+          <select id="flt-env" onchange="renderFinder()" class="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs font-bold text-slate-800">
+            <option value="all">All Missions (Space + Moon Base)</option>
+            <option value="Lunar">Lunar & Mars Base (قاعدة القمر والمريخ)</option>
+            <option value="Spacecraft">Space Station Zero Gravity (مركبة فضاء)</option>
           </select>
         </div>
 
-        <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm">
-          <div class="flex justify-between text-xs font-extrabold mb-1.5">
-            <span class="text-slate-700" id="flt-lbl-o2">Target Oxygen Percentage:</span>
-            <span id="finder-o2-val" class="text-blue-600">30 Percent</span>
+        <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
+          <div class="flex justify-between text-xs font-extrabold mb-1">
+            <span class="text-slate-700">Target Oxygen Percentage:</span>
+            <span id="flt-o2-lbl" class="text-blue-600">30 Percent</span>
           </div>
-          <input id="filter-o2" type="range" min="15" max="40" step="1" value="30" oninput="renderExperimentCards()" class="w-full" />
+          <input id="flt-o2" type="range" min="15" max="40" step="1" value="30" oninput="renderFinder()" class="w-full" />
         </div>
 
-        <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm">
-          <label class="block text-xs font-extrabold text-slate-700 mb-1.5" id="flt-lbl-search">Instant Keyword Search:</label>
-          <input id="filter-kw" type="text" oninput="renderExperimentCards()" placeholder="Search Saffire, acrylic, cool flame, smoke..." class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2 text-xs text-slate-800" />
+        <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
+          <label class="block text-xs font-extrabold text-slate-700 mb-1">Search Keywords (بحث فوري):</label>
+          <input id="flt-kw" type="text" oninput="renderFinder()" placeholder="Saffire, acrylic, cool flame, smoke..." class="w-full bg-white border border-slate-300 rounded-xl p-2 text-xs text-slate-800" />
         </div>
       </div>
 
-      <!-- Cards Container -->
+      <!-- 24 Experiment Cards Grid -->
       <div id="finder-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 max-h-[640px] overflow-y-auto p-1"></div>
     </section>
 
     <!-- =======================================================================
-         MODULE 4: VISUAL COMPARISON LAB & MULTI-GRAVITY CHARTS
+         STAGE 04: VISUAL COMPARISON LAB (BAR, RADAR, GRAVITY, PIE & TABLE)
          ======================================================================= -->
-    <section id="mod-compare" class="vision-card rounded-3xl p-6 md:p-9 space-y-6">
+    <section id="sec-compare" class="hw-panel rounded-[32px] p-6 md:p-10 space-y-6">
       <div class="pb-4 border-b border-slate-200">
-        <span class="px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-xs font-extrabold uppercase" id="comp-tag">
-          Core Requirement Two // Multi-Experiment & Multi-Gravity Analytics
+        <span class="px-3 py-1 rounded-full bg-amber-100 text-amber-900 text-xs font-extrabold uppercase">
+          Stage 04 // Multi-Experiment & Multi-Gravity Visual Analytics
         </span>
-        <h2 class="text-xl md:text-2xl font-black text-slate-900 mt-1.5" id="comp-heading">
-          Visual Comparison Lab: Compare Any Two NASA Experiments & Gravity Levels
+        <h2 class="display-font text-2xl md:text-3xl font-extrabold text-slate-900 mt-1.5">
+          Visual Comparison Lab (مختبر المقارنة والرسوم البيانية)
         </h2>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div class="bg-blue-50/60 p-4 rounded-2xl border border-blue-200">
-          <label class="block text-xs font-extrabold text-blue-900 mb-1.5 uppercase" id="comp-lbl-a">Select First NASA Experiment:</label>
-          <select id="comp-sel-a" onchange="updateComparisonLab()" class="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs font-bold text-slate-800"></select>
+        <div class="bg-blue-50/70 p-4 rounded-2xl border border-blue-200">
+          <label class="block text-xs font-black text-blue-900 mb-1.5 uppercase">First NASA Experiment (التجربة الأولى):</label>
+          <select id="cmp-a" onchange="updateCompareCharts()" class="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs font-bold text-slate-900"></select>
         </div>
-        <div class="bg-rose-50/60 p-4 rounded-2xl border border-rose-200">
-          <label class="block text-xs font-extrabold text-rose-900 mb-1.5 uppercase" id="comp-lbl-b">Select Second NASA Experiment:</label>
-          <select id="comp-sel-b" onchange="updateComparisonLab()" class="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs font-bold text-slate-800"></select>
+        <div class="bg-rose-50/70 p-4 rounded-2xl border border-rose-200">
+          <label class="block text-xs font-black text-rose-900 mb-1.5 uppercase">Second NASA Experiment (التجربة الثانية):</label>
+          <select id="cmp-b" onchange="updateCompareCharts()" class="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs font-bold text-slate-900"></select>
         </div>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-          <h3 class="text-xs font-extrabold uppercase text-slate-700 mb-1" id="ch1-title">1. Oxygen & Spread Speed (Bar Chart)</h3>
-          <div class="h-60"><canvas id="chartCompareBar"></canvas></div>
+          <h3 class="text-xs font-extrabold uppercase text-slate-700 mb-2">1. Oxygen & Spread Speed (Bar Chart)</h3>
+          <div class="h-60"><canvas id="cmpBarCanvas"></canvas></div>
         </div>
         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-          <h3 class="text-xs font-extrabold uppercase text-slate-700 mb-1" id="ch2-title">2. Five-Dimension Safety Radar</h3>
-          <div class="h-60"><canvas id="chartCompareRadar"></canvas></div>
+          <h3 class="text-xs font-extrabold uppercase text-slate-700 mb-2">2. Five-Axis Physics Profile (Radar Chart)</h3>
+          <div class="h-60"><canvas id="cmpRadarCanvas"></canvas></div>
         </div>
         <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-          <h3 class="text-xs font-extrabold uppercase text-slate-700 mb-1" id="ch3-title">3. Gravity Comparison (Space, Moon, Mars, Earth)</h3>
-          <div class="h-60"><canvas id="chartGravityBar"></canvas></div>
+          <h3 class="text-xs font-extrabold uppercase text-slate-700 mb-2">3. Gravity Comparison (Space, Moon, Mars, Earth)</h3>
+          <div class="h-60"><canvas id="cmpGravityCanvas"></canvas></div>
         </div>
       </div>
 
+      <!-- Comparison Table -->
       <div class="overflow-x-auto bg-white rounded-2xl border border-slate-200 shadow-sm">
-        <table class="w-full text-xs text-left" id="comp-table">
+        <table class="w-full text-xs text-left">
           <thead>
             <tr class="bg-slate-100 border-b border-slate-200 text-slate-700">
-              <th class="p-3.5 font-extrabold" id="th-crit">Comparison Criterion</th>
-              <th class="p-3.5 font-extrabold text-blue-700" id="th-a">Experiment A</th>
-              <th class="p-3.5 font-extrabold text-rose-700" id="th-b">Experiment B</th>
+              <th class="p-3.5 font-extrabold">Comparison Parameter (وجه المقارنة)</th>
+              <th id="th-cmp-a" class="p-3.5 font-extrabold text-blue-700">Experiment A</th>
+              <th id="th-cmp-b" class="p-3.5 font-extrabold text-rose-700">Experiment B</th>
             </tr>
           </thead>
-          <tbody id="comp-tbody" class="divide-y divide-slate-200"></tbody>
+          <tbody id="cmp-tbody" class="divide-y divide-slate-200"></tbody>
         </table>
       </div>
     </section>
 
     <!-- =======================================================================
-         MODULE 5: BILINGUAL AI MISSION ADVISOR & EARTH APPLICATIONS
+         STAGE 05: BILINGUAL AI MISSION CO-PILOT & EARTH APPLICATIONS
          ======================================================================= -->
-    <section id="mod-advisor" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <section id="sec-advisor" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
       <!-- AI Chatbot (7 Columns) -->
-      <div class="lg:col-span-7 vision-card rounded-3xl p-6 md:p-8 flex flex-col justify-between space-y-4">
+      <div class="lg:col-span-7 hw-panel rounded-[32px] p-6 md:p-8 flex flex-col justify-between space-y-4">
         <div>
-          <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-200">
-            <div>
-              <span class="px-2.5 py-0.5 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-[11px] font-extrabold uppercase" id="ai-tag">
-                Interactive AI Co-Pilot // Grounded in 24 NASA Studies
-              </span>
-              <h2 class="text-lg md:text-xl font-black text-slate-900 mt-1" id="ai-heading">
-                Ask the NASA Combustion Intelligence Advisor
-              </h2>
-            </div>
-            <input id="gemini-key" type="password" placeholder="Optional Gemini API Key" class="bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs text-slate-800 w-48" />
+          <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-xs font-extrabold uppercase">
+            Stage 05 // Bilingual AI Mission Co-Pilot (المساعد الذكي لتحدي ناسا)
+          </span>
+          <h2 class="display-font text-xl md:text-2xl font-extrabold text-slate-900 mt-2">
+            Ask the NASA PSI Intelligence Chatbot (English & عربي)
+          </h2>
+
+          <div class="flex flex-wrap gap-2 mt-3">
+            <button onclick="askBot('lunar')" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-blue-600 hover:text-white text-xs font-bold text-slate-700 transition">
+              Why is Lunar Gravity more dangerous than Space?
+            </button>
+            <button onclick="askBot('chip')" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-blue-600 hover:text-white text-xs font-bold text-slate-700 transition">
+              إزاي الشريحة الذكية والنيتروجين بيمنعوا الحريق؟
+            </button>
+            <button onclick="askBot('cool')" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-blue-600 hover:text-white text-xs font-bold text-slate-700 transition">
+              Cool Flames & Electric Vehicle Batteries?
+            </button>
+            <button onclick="askBot('materials')" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-blue-600 hover:text-white text-xs font-bold text-slate-700 transition">
+              أفضل المواد الآمنة لبناء كبسولة القمر؟
+            </button>
           </div>
 
-          <div class="mt-3">
-            <div class="text-xs font-bold text-slate-500 mb-2" id="ai-prompt-lbl">Click Any Question to Test Live Interpretation:</div>
-            <div class="flex flex-wrap gap-1.5">
-              <button onclick="askPresetQuestion('lunar')" class="px-3 py-1.5 rounded-xl bg-white hover:bg-blue-600 hover:text-white border border-slate-200 text-xs font-bold text-slate-700 transition" id="qbtn-1">
-                Why is Lunar Gravity more dangerous than Zero Gravity?
-              </button>
-              <button onclick="askPresetQuestion('gas')" class="px-3 py-1.5 rounded-xl bg-white hover:bg-blue-600 hover:text-white border border-slate-200 text-xs font-bold text-slate-700 transition" id="qbtn-2">
-                How do Oxygen, Nitrogen, and Pressure interact?
-              </button>
-              <button onclick="askPresetQuestion('cool')" class="px-3 py-1.5 rounded-xl bg-white hover:bg-blue-600 hover:text-white border border-slate-200 text-xs font-bold text-slate-700 transition" id="qbtn-3">
-                What are Cool Flames and how do they affect EV Batteries?
-              </button>
-              <button onclick="askPresetQuestion('extinguish')" class="px-3 py-1.5 rounded-xl bg-white hover:bg-blue-600 hover:text-white border border-slate-200 text-xs font-bold text-slate-700 transition" id="qbtn-4">
-                Best protocol to extinguish a Lunar base fire?
-              </button>
-            </div>
-          </div>
-
-          <div id="chat-box" class="mt-4 bg-white/90 rounded-2xl border border-slate-200 p-4 h-72 overflow-y-auto space-y-3 text-xs leading-relaxed shadow-inner">
-            <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-slate-700">
-              <div class="font-extrabold text-blue-700 mb-1">PYRE-SI Mission Advisor</div>
-              <span id="chat-welcome">
-                Welcome! Ask me any question in English or Arabic about NASA's 24 combustion experiments, the Smart Astronaut GPS Chip, Oxygen and Nitrogen balance, or Earth fire safety applications.
-              </span>
+          <div id="bot-window" class="mt-4 bg-slate-50 rounded-2xl border border-slate-200 p-4 h-72 overflow-y-auto space-y-3 text-xs leading-relaxed">
+            <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm text-slate-800">
+              <div class="font-black text-blue-700 mb-1">PYRE-SI Bilingual Co-Pilot</div>
+              Welcome! Ask me any question in English or Arabic. I interpret all 24 NASA PSI combustion experiments, explain the Smart Astronaut GPS Chip, and connect space discoveries to Earth fire safety.
+              <div class="text-blue-900 font-bold mt-1" dir="rtl">أهلاً بك! اسألني بالإنجليزي أو العربي عن الـ 24 تجربة في ناسا، وعن الشريحة الذكية وتأثير الأكسجين والنيتروجين والجاذبية.</div>
             </div>
           </div>
         </div>
 
         <div class="flex gap-2">
-          <input id="chat-inp" type="text" onkeydown="if(event.key==='Enter') sendAdvisorChat()" placeholder="Type your question in English or Arabic..." class="flex-1 bg-white border border-slate-300 rounded-xl px-4 py-3 text-xs text-slate-900" />
-          <button onclick="sendAdvisorChat()" class="px-5 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs shadow-md transition" id="btn-send">
-            Ask Advisor
+          <input id="bot-input" type="text" onkeydown="if(event.key==='Enter') sendBotMessage()" placeholder="Ask in English or اكتب سؤالك بالعربي..." class="flex-1 bg-white border border-slate-300 rounded-xl px-4 py-3 text-xs text-slate-900 font-semibold" />
+          <button onclick="sendBotMessage()" class="tactile-btn px-6 py-3 rounded-xl bg-blue-600 text-white font-black text-xs">
+            Send
           </button>
         </div>
       </div>
 
-      <!-- Earth Impact (5 Columns) -->
-      <div class="lg:col-span-5 vision-card rounded-3xl p-6 md:p-8 space-y-4">
-        <span class="px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[11px] font-extrabold uppercase" id="earth-tag">
-          Galactic & Terrestrial Impact
+      <!-- Earth Impact Cards (5 Columns) -->
+      <div class="lg:col-span-5 hw-panel rounded-[32px] p-6 md:p-8 space-y-4">
+        <span class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-extrabold uppercase">
+          Earth Safety Applications (التطبيقات الأرضية)
         </span>
-        <h2 class="text-lg md:text-xl font-black text-slate-900" id="earth-heading">
-          How Space Fire Physics Protects Life on Earth
+        <h2 class="display-font text-xl md:text-2xl font-extrabold text-slate-900">
+          From Space Station to Earth Industries
         </h2>
-        <p class="text-xs text-slate-500" id="earth-sub">
-          Whenever air is trapped inside narrow 3-millimeter gaps on Earth, buoyancy disappears and space fire physics takes over.
-        </p>
 
         <div class="space-y-3 text-xs">
           <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm">
-            <div class="font-black text-rose-700 text-sm" id="e1-title">1. Electric Vehicle Battery Safety (FLEX-2 & CFI-G)</div>
-            <p class="text-slate-600 mt-1 leading-relaxed" id="e1-body">
-              Narrow 3-millimeter gaps between lithium battery cells suppress buoyancy just like Zero Gravity. Invisible 600-Kelvin Cool Flames discovered in space explain sudden battery thermal runaway and guide safer cell barriers.
-            </p>
+            <div class="font-black text-rose-700 text-sm">1. Electric Vehicle Battery Safety (FLEX-2 & CFI-G)</div>
+            <p class="text-slate-600 mt-1">Narrow 3-millimeter battery gaps trap air without buoyancy just like Zero Gravity. Invisible 600-Kelvin Cool Flames discovered in space explain sudden battery explosions.</p>
+            <p class="text-slate-800 font-bold mt-1" dir="rtl">حماية بطاريات السيارات الكهربائية من انفجار اللهب البارد الخفي داخل قنوات الـ 3 ملم.</p>
           </div>
 
           <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm">
-            <div class="font-black text-blue-700 text-sm" id="e2-title">2. Hospital & Server Water Mist Extinguishers (PSI-109)</div>
-            <p class="text-slate-600 mt-1 leading-relaxed" id="e2-body">
-              Ultra-fine 20-micron water droplets developed for Space Station fire suppression absorb heat rapidly without soaking delicate electronics in intensive care units and data centers.
-            </p>
+            <div class="font-black text-blue-700 text-sm">2. Fine Water Mist Extinguishers (Mist PSI-109)</div>
+            <p class="text-slate-600 mt-1">Ultra-fine 20-micron water droplets evaporate inside the flame to extinguish fires in hospital intensive care units and server rooms without water damage.</p>
+            <p class="text-slate-800 font-bold mt-1" dir="rtl">طفايات الرذاذ المائي الدقيق لحماية غرف العناية المركزة والسيرفرات بدون إتلاف الأجهزة.</p>
           </div>
 
           <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm">
-            <div class="font-black text-amber-700 text-sm" id="e3-title">3. Underground Mining Smoke Discrimination (SAME & DAFT)</div>
-            <p class="text-slate-600 mt-1 leading-relaxed" id="e3-body">
-              Space smoke particle size measurements enable smart sensors in mines and submarines to separate real 0.18-micron fire smoke from coarse rock dust, stopping false alarms.
-            </p>
-          </div>
-
-          <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm">
-            <div class="font-black text-emerald-700 text-sm" id="e4-title">4. Firefighter Protective Gear (Saffire I-VI)</div>
-            <p class="text-slate-600 mt-1 leading-relaxed" id="e4-body">
-              Radiative heat transfer equations calibrated during large-scale Saffire fabric burns optimize micro-air-gap thermal liners inside firefighter suits.
-            </p>
+            <div class="font-black text-amber-700 text-sm">3. Underground Mining Smoke Sensors (SAME & DAFT)</div>
+            <p class="text-slate-600 mt-1">Separates sub-micron combustion smoke (0.18 microns) from coarse coal and rock dust (>2 microns), eliminating false alarms in mines and submarines.</p>
+            <p class="text-slate-800 font-bold mt-1" dir="rtl">حساسات ذكية للمناجم والغواصات تفرق بين دخان الحريق الحقيقي وغبار الفحم والصخور.</p>
           </div>
         </div>
       </div>
@@ -702,78 +675,588 @@
 
   <script>
     // =========================================================================
-    // 1. BILINGUAL LANGUAGE STATE & UI DICTIONARY (ENGLISH <-> ARABIC)
+    // 1. WEB AUDIO SYNTHESIZER (FUTURISTIC NASA TELEMETRY CLICKS & ALERTS)
     // =========================================================================
-    let currentLang = 'en';
+    let soundEnabled = true;
+    let audioCtx = null;
 
-    const UI_TEXT = {
-      en: {
-        brandTitle: "PYRE-SI Space Fire Intelligence",
-        brandBadge: "24 NASA Experiments Linked",
-        brandSub: "Interactive Mission Simulator, Smart GPS Chip, and NASA Database Explorer",
-        nav1: "1. Survival Challenge",
-        nav2: "2. Smart GPS Chip",
-        nav3: "3. 24 NASA Studies",
-        nav4: "4. Visual Compare",
-        nav5: "5. AI Advisor & Earth",
-        hookTag: "LIVE MISSION SIMULATION // LUNAR HABITAT SECTOR ALPHA",
-        btnCsv: "Download 24 Studies CSV",
-        hookTitle: "A Spark Just Ignited Inside Your Lunar Base. Your Next Click Decides If the Crew Survives.",
-        hookDesc: "You are inside a Lunar habitat under <strong>Lunar Gravity (One-Sixth Earth Gravity)</strong>. To help astronauts breathe comfortably at a lower <strong>Cabin Pressure (56.5 Kilopascals)</strong>, the air contains <strong>34 Percent Oxygen</strong> and <strong>65 Percent Nitrogen</strong>. Suddenly, an acrylic window panel catches fire. On the International Space Station in Zero Gravity, astronauts simply turn off the air fans to suffocate a fire. <strong>What is your command on the Moon?</strong>",
-        c1Badge: "Option One // Intuition",
-        c1Title: "Turn Off Ventilation Fans Only",
-        c1Sub: "Cut the fan airflow just like astronauts do in Zero Gravity on the Space Station and wait for the flame to choke.",
-        c2Badge: "Option Two // PYRE-SI Protocol",
-        c2Title: "Trigger Smart GPS Chip & Nitrogen Pulse",
-        c2Sub: "Use NASA database physics to inject Nitrogen thermal ballast and 20-micron Fine Water Mist at the exact GPS coordinates.",
-        visorSub: "Live Combustion Chamber Visor",
-        visorTitle: "Lunar Gravity Flame Physics",
-        vmodeZero: "Zero Gravity Ball",
-        vmodeLunar: "Lunar Danger Peak",
-        vmodeCool: "Invisible Cool Flame",
-        chipTag: "Creative Hardware Innovation // Wearable PYRE-Chip & Spacecraft GPS",
-        chipHeading: "Smart Astronaut Chip: Live GPS Location, Gas Telemetry & Scenario Predictor",
-        chipSub: "Click any room on the Spacecraft Blueprint below to move the astronaut's GPS beacon. The Smart Chip reads Oxygen Percentage, Nitrogen Percentage, Cabin Pressure, and Gravity Level to predict the fire scenario and guide the astronaut.",
-        btnAutoOpt: "Auto-Stabilize Cabin via Smart Chip",
-        mapTitle: "LIVE SPACECRAFT GPS BLUEPRINT (CLICK ROOM TO MOVE ASTRONAUT)",
-        r1Name: "Observation Viewport", r1Mat: "Material: Cast Acrylic Window",
-        r2Name: "Crew Sleeping Quarters", r2Mat: "Material: Cotton Fiberglass Fabric",
-        r3Name: "Battery and Power Bay", r3Mat: "Material: Liquid Electrolyte Cells",
-        r4Name: "Airlock and Suit Storage", r4Mat: "Material: Porous Insulation & Nomex",
-        slidersHeading: "Adjust Live Smart Chip Atmospheric Readings:",
-        lblGrav: "Gravity Level Detected:",
-        lblO2: "Oxygen Percentage:",
-        lblN2: "Nitrogen Percentage:",
-        lblPress: "Cabin Pressure:",
-        lblFlow: "Ventilation Airflow Speed:",
-        kpi1: "Min Oxygen Limit", kpi2: "Flame Spread Speed", kpi3: "Nitrogen Cooling", kpi4: "NASA Reference",
-        scenTitle: "Expected Fire Scenario (Predicted from NASA PSI Database):",
-        recTitle: "Immediate Recommendation Sent to Astronaut Visor:",
-        gasExpTitle: "Why Nitrogen Percentage Matters:",
-        gasExpBody: "Nitrogen is an inert thermal sponge. When the Smart Chip detects rising fire risk in any GPS sector, increasing Nitrogen Percentage absorbs flame heat and raises the Minimum Oxygen Limit required for burning.",
-        finderTag: "Core NASA Challenge Requirement // Summarize & Rank All 24 Experiments",
-        finderHeading: "Smart NASA Experiment Finder (Ranked by Percentage Match)",
-        fltFuel: "Fuel Category:", fltEnv: "Mission Habitat:", fltO2: "Target Oxygen Percentage:", fltSearch: "Instant Keyword Search:",
-        compTag: "Core Requirement Two // Multi-Experiment & Multi-Gravity Analytics",
-        compHeading: "Visual Comparison Lab: Compare Any Two NASA Experiments & Gravity Levels",
-        compA: "Select First NASA Experiment:", compB: "Select Second NASA Experiment:",
-        aiHeading: "Ask the NASA Combustion Intelligence Advisor",
-        earthHeading: "How Space Fire Physics Protects Life on Earth"
+    function playTelemetrySound(type) {
+      if (!soundEnabled) return;
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        const now = audioCtx.currentTime;
+        if (type === 'click') {
+          osc.frequency.setValueAtTime(720, now);
+          osc.frequency.exponentialRampToValueAtTime(1100, now + 0.05);
+          gain.gain.setValueAtTime(0.06, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+          osc.start(now); osc.stop(now + 0.06);
+        } else if (type === 'alert') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(340, now);
+          osc.frequency.setValueAtTime(520, now + 0.12);
+          gain.gain.setValueAtTime(0.08, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+          osc.start(now); osc.stop(now + 0.28);
+        } else if (type === 'safe') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(523.25, now);
+          osc.frequency.setValueAtTime(659.25, now + 0.08);
+          osc.frequency.setValueAtTime(783.99, now + 0.16);
+          gain.gain.setValueAtTime(0.07, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.32);
+          osc.start(now); osc.stop(now + 0.32);
+        }
+      } catch (e) {}
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      document.getElementById('sound-btn').innerText = soundEnabled ? "Audio: ON" : "Audio: OFF";
+    }
+
+    function advanceProgress(pct) {
+      playTelemetrySound('click');
+      const bar = document.getElementById('mission-progress-bar');
+      bar.style.width = pct + '%';
+      document.getElementById('discovery-badge').innerText = `Investigation Unlocked: ${pct}%`;
+    }
+
+    // =========================================================================
+    // 2. STAGE 01: THE 3-CHAMBER LIVE PARADOX CANVAS ENGINE
+    // =========================================================================
+    const pCanvas = document.getElementById('paradoxCanvas');
+    const pCtx = pCanvas.getContext('2d');
+    let pState = 'normal'; // 'normal' | 'cut_fans' | 'activate_chip'
+    let pTick = 0;
+
+    function runParadoxTest(mode) {
+      pState = mode;
+      const pill = document.getElementById('paradox-verdict-pill');
+      const revTitle = document.getElementById('reveal-title');
+      const revBody = document.getElementById('reveal-body');
+
+      if (mode === 'cut_fans') {
+        playTelemetrySound('alert');
+        advanceProgress(45);
+        pill.className = "px-4 py-2 rounded-xl bg-rose-100 border border-rose-400 text-rose-900 text-xs font-black";
+        pill.innerText = "PARADOX TRIGGERED: Space Fire Died, But Lunar Fire Exploded 3X!";
+        revTitle.innerText = "SHOCKING RESULT: Why Did the Moon Fire Grow Larger When Fans Stopped?! (مفاجأة القمر)";
+        revBody.innerHTML = "When you cut the fans: <strong>Chamber Two (Zero Gravity)</strong> lost all oxygen flow and extinguished itself. But in <strong>Chamber Three (Lunar Gravity)</strong>, One-Sixth Earth Gravity creates a natural upward draft (6.4 cm/s) that feeds <strong>34 Percent Oxygen</strong> right into the flame base without blowing it out! Now click <strong>Step 2: Activate Smart GPS Chip</strong> to see how we extinguish it.";
+      } else if (mode === 'activate_chip') {
+        playTelemetrySound('safe');
+        advanceProgress(60);
+        pill.className = "px-4 py-2 rounded-xl bg-emerald-100 border border-emerald-400 text-emerald-900 text-xs font-black";
+        pill.innerText = "SMART CHIP ACTIVE: Nitrogen Raised to 80% + 20-Micron Water Mist Discharged!";
+        revTitle.innerText = "PROBLEM SOLVED BY PYRE-CHIP: Nitrogen Dilution + Fine Water Mist (الحل الذكي)";
+        revBody.innerHTML = "Because fan shutoff fails on the Moon, the <strong>Smart Astronaut GPS Chip</strong> automatically detects the room's material and triggers a <strong>Nitrogen gas pulse (raising Nitrogen above 80 Percent)</strong> along with <strong>20-micron Fine Water Mist (NASA PSI-109)</strong>, quenching the Lunar flame in seconds!";
+      } else {
+        playTelemetrySound('click');
+        pill.className = "px-4 py-2 rounded-xl bg-amber-50 border border-amber-300 text-amber-900 text-xs font-extrabold";
+        pill.innerText = "Chambers Reset. Click Step 1 to test fan shutoff!";
+      }
+    }
+
+    function renderParadoxCanvas() {
+      pTick += 0.065;
+      pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
+
+      // Draw 3 Chamber Dividers
+      const colW = pCanvas.width / 3;
+      pCtx.strokeStyle = '#1e293b';
+      pCtx.lineWidth = 2;
+      for (let i = 1; i < 3; i++) {
+        pCtx.beginPath(); pCtx.moveTo(colW * i, 0); pCtx.lineTo(colW * i, pCanvas.height); pCtx.stroke();
+      }
+
+      const centers = [colW * 0.5, colW * 1.5, colW * 2.5];
+      const baseY = pCanvas.height - 48;
+      const flicker = Math.sin(pTick * 2.5) * 3;
+
+      centers.forEach((cx, idx) => {
+        // Pedestal
+        pCtx.fillStyle = '#475569';
+        pCtx.fillRect(cx - 55, baseY + 14, 110, 8);
+
+        pCtx.save();
+        pCtx.translate(cx, baseY);
+
+        if (idx === 0) {
+          // Chamber 1: Earth Gravity Flame
+          const r = (pState === 'activate_chip') ? 16 : 36 + flicker;
+          pCtx.scale(0.85, 1.45);
+          const g1 = pCtx.createRadialGradient(0, -16, 4, 0, -16, r);
+          g1.addColorStop(0, '#fef08a');
+          g1.addColorStop(0.5, '#f97316');
+          g1.addColorStop(1, 'rgba(239,68,68,0)');
+          pCtx.fillStyle = g1;
+          pCtx.beginPath(); pCtx.arc(0, -16, r, 0, Math.PI * 2); pCtx.fill();
+        } else if (idx === 1) {
+          // Chamber 2: Zero Gravity Space Station Flame (DIES when fans cut!)
+          const r = (pState === 'normal') ? (32 + flicker * 0.6) : 5;
+          const g2 = pCtx.createRadialGradient(0, -8, 2, 0, -8, r);
+          g2.addColorStop(0, '#e0f2fe');
+          g2.addColorStop(0.6, '#38bdf8');
+          g2.addColorStop(1, 'rgba(2,132,199,0)');
+          pCtx.fillStyle = g2;
+          pCtx.beginPath(); pCtx.arc(0, -8, r, 0, Math.PI * 2); pCtx.fill();
+        } else {
+          // Chamber 3: Lunar Gravity Flame (EXPLODES on cut_fans, QUENCHED on activate_chip)
+          let r = 46 + flicker;
+          let stretch = 1.35;
+          if (pState === 'cut_fans') { r = 68 + flicker * 1.5; stretch = 1.65; }
+          if (pState === 'activate_chip') { r = 14; stretch = 1.0; }
+
+          pCtx.scale(1.0, stretch);
+          const g3 = pCtx.createRadialGradient(0, -22, 5, 0, -22, r);
+          if (pState === 'activate_chip') {
+            g3.addColorStop(0, '#a7f3d0');
+            g3.addColorStop(0.6, '#10b981');
+            g3.addColorStop(1, 'rgba(16,185,129,0)');
+          } else {
+            g3.addColorStop(0, '#ffffff');
+            g3.addColorStop(0.35, '#fb923c');
+            g3.addColorStop(0.75, '#e11d48');
+            g3.addColorStop(1, 'rgba(225,29,72,0)');
+          }
+          pCtx.fillStyle = g3;
+          pCtx.beginPath(); pCtx.arc(0, -22, r, 0, Math.PI * 2); pCtx.fill();
+        }
+        pCtx.restore();
+      });
+
+      requestAnimationFrame(renderParadoxCanvas);
+    }
+
+    // =========================================================================
+    // 3. STAGE 02: SPACECRAFT GPS BLUEPRINT & SMART CHIP ENGINE
+    // =========================================================================
+    const CHIP_SECTORS = {
+      viewport: {
+        name: "Sector Alpha-01 (Observation Viewport - Acrylic PMMA)",
+        coords: "GPS: X-140, Y-85", x: 280, y: 85, baseRisk: 1.22, baseMloc: 13.8,
+        scenEn: "Under Lunar Gravity with 34 Percent Oxygen, gentle buoyant convection feeds fresh oxygen across the acrylic window faster than radiation cools it. Turning off fans will not stop flame spread.",
+        scenAr: "في جاذبية القمر مع أكسجين 34%، يغذي تيار الطفو الطبيعي نافذة الأكريليك بالأكسجين أسرع مما يبردها الإشعاع، ولن تنطفئ النار بإغلاق المراوح.",
+        recEn: "Inject Nitrogen via Sector Alpha valve to raise Nitrogen above 79 Percent and discharge 20-micron Fine Water Mist.",
+        recAr: "افتح صمام النيتروجين في القطاع ألفا لرفع النيتروجين فوق 79% مع إطلاق رذاذ الماء الدقيق (20 ميكرون)."
       },
-      ar: {
-        brandTitle: "منصة PYRE-SI لذكاء حرائق الفضاء والشريحة الذكية",
-        brandBadge: "24 تجربة ناسا موثقة بالكامل",
-        brandSub: "محاكي طوارئ القمر، شريحة رائد الفضاء بالـ GPS، ومحرك بحث تجارب ناسا",
-        nav1: "1. تحدي النجاة على القمر",
-        nav2: "2. الشريحة الذكية والـ GPS",
-        nav3: "3. مستكشف الـ 24 تجربة",
-        nav4: "4. المقارنة والجرافات",
-        nav5: "5. المساعد الذكي والأرض",
-        hookTag: "محاكاة طوارئ حية // القطاع ألفا في قاعدة القمر",
-        btnCsv: "تحميل جدول الـ 24 تجربة (CSV)",
-        hookTitle: "اندلعت شرارة الآن داخل قاعدتك على القمر.. ضغطتك القادمة تحدد مصير الطاقم!",
-        hookDesc: "أنت الآن داخل قاعدة قمرية تحت <strong>جاذبية القمر (سُدس جاذبية الأرض)</strong>. ولكي يتنفس الرواد بسهولة تحت <strong>ضغط كابينة منخفض (56.5 كيلوباسكال)</strong>، يحتوي الهواء على <strong>نسبة أكسجين 34 بالمائة</strong> و<strong>نسبة نيتروجين 65 بالمائة</strong>. فجأة اشتعلت نافذة الأكريليك! في محطة الفضاء الدولية (انعدام الجاذبية) يكتفي الرواد بإغلاق مراوح الهواء لخنق النار.. <strong>ما هو قرارك الآن على القمر؟</strong>",
-        c1Badge: "الخيار الأول // القرار التقليدي",
-        c1Title: "إغلاق مراوح التهوية فقط",
-        c1Sub: "افصل مراوح الهواء كما يفعل الرواد في محطة الفضاء الدولية وانتظر انطفاء النار وحدها.",
-        c2Badge: "الخيار الثاني // بروتوك
+      quarters: {
+        name: "Sector Beta-02 (Crew Sleeping Quarters - SIBAL Fabric)",
+        coords: "GPS: X-590, Y-85", x: 600, y: 85, baseRisk: 1.30, baseMloc: 13.5,
+        scenEn: "Thin fabrics ignite rapidly under reduced Cabin Pressure (56.5 Kilopascals) and 34 Percent Oxygen, accelerating three times faster than on Earth.",
+        scenAr: "الأقمشة الرقيقة في غرفة نوم الطاقم تشتعل بسرعة مضاعفة 3 مرات تحت ضغط الكابينة المنخفض والأكسجين المرتفع.",
+        recEn: "Seal Crew Quarters damper, release Nitrogen pulse to drop Oxygen below 16 Percent, and run Carbon Monoxide scrubbers.",
+        recAr: "أغلق بوابة التهوية فوراً، واضخ غاز النيتروجين لخفض الأكسجين تحت 16% مع تشغيل فلاتر أول أكسيد الكربون."
+      },
+      battery: {
+        name: "Sector Gamma-03 (Battery Bay - 3mm Electrolyte Channels)",
+        coords: "GPS: X-140, Y-210", x: 280, y: 210, baseRisk: 1.36, baseMloc: 14.2,
+        scenEn: "Narrow 3-millimeter channels between battery cells suppress buoyancy. Overheated vapors form invisible 600-Kelvin Cool Flames (FLEX-2) that trigger sudden secondary explosion.",
+        scenAr: "المسافات الضيقة (3 ملم) بين خلايا البطارية تمنع الطفو وتكوّن لهباً بارداً غير مرئي (600 كلفن) يسبب انفجاراً مفاجئاً!",
+        recEn: "Do not open battery hatch! Flood enclosure with Nitrogen gas to quench 600-Kelvin Cool Flame radical chemistry.",
+        recAr: "لا تفتح خزانة البطاريات! اغمر الخزانة بغاز النيتروجين الخامل لإخماد تفاعلات اللهب البارد الخفية."
+      },
+      airlock: {
+        name: "Sector Delta-04 (Airlock & Suit Bay - Foam & Nomex)",
+        coords: "GPS: X-590, Y-210", x: 600, y: 210, baseRisk: 0.94, baseMloc: 13.2,
+        scenEn: "Porous foam insulation can hide non-flaming smoldering for hours, releasing Carbon Monoxide while Lunar dust risks false alarms.",
+        scenAr: "العزل المسامي قد يخفي احتراقاً كامناً بدون لهب يطلق أول أكسيد الكربون، بينما قد يسبب غبار القمر إنذارات كاذبة.",
+        recEn: "Enable DAFT multi-wavelength sensor filter to separate Lunar dust from real smoke and boost Nitrogen Percentage.",
+        recAr: "فعّل فلتر تجربة DAFT للتفرقة بين غبار القمر ودخان الحريق الحقيقي مع رفع نسبة النيتروجين."
+      }
+    };
+
+    let currentSectorKey = 'viewport';
+
+    function moveAstronautTo(sectorKey) {
+      playTelemetrySound('click');
+      advanceProgress(65);
+      currentSectorKey = sectorKey;
+      const s = CHIP_SECTORS[sectorKey];
+
+      // Move SVG Astronaut Beacon smoothly
+      document.getElementById('astronaut-marker').setAttribute('transform', `translate(${s.x}, ${s.y})`);
+      const line = document.getElementById('svg-telemetry-line');
+      line.setAttribute('x1', s.x);
+      line.setAttribute('y1', s.y);
+
+      // Highlight active room in SVG
+      ['viewport', 'quarters', 'battery', 'airlock'].forEach(k => {
+        const rect = document.getElementById('svg-room-' + k);
+        if (k === sectorKey) {
+          rect.setAttribute('fill', '#1e3a8a');
+          rect.setAttribute('stroke', '#38bdf8');
+          rect.setAttribute('stroke-width', '3');
+        } else {
+          rect.setAttribute('fill', '#1e293b');
+          rect.setAttribute('stroke', '#475569');
+          rect.setAttribute('stroke-width', '2');
+        }
+      });
+
+      document.getElementById('blueprint-room-name').innerText = `Active GPS Location: ${s.name}`;
+      document.getElementById('gps-live-coord').innerText = s.coords;
+      document.getElementById('chip-hw-sector').innerText = `Linked to: ${s.name}`;
+      updateChipEngine();
+    }
+
+    function syncChipGases(source) {
+      let o2 = parseFloat(document.getElementById('chip-inp-o2').value);
+      let n2 = parseFloat(document.getElementById('chip-inp-n2').value);
+      if (source === 'o2') {
+        n2 = Math.max(59, Math.min(87, 99 - o2));
+        document.getElementById('chip-inp-n2').value = n2;
+      } else {
+        o2 = Math.max(12, Math.min(40, 99 - n2));
+        document.getElementById('chip-inp-o2').value = o2;
+      }
+      updateChipEngine();
+    }
+
+    function updateChipEngine() {
+      const s = CHIP_SECTORS[currentSectorKey];
+      const gVal = parseFloat(document.getElementById('chip-inp-grav').value);
+      const press = parseFloat(document.getElementById('chip-inp-press').value);
+      const o2 = parseFloat(document.getElementById('chip-inp-o2').value);
+      const n2 = parseFloat(document.getElementById('chip-inp-n2').value);
+
+      const gNames = { "0.001": "Zero Gravity", "0.166": "Lunar Gravity", "0.376": "Mars Gravity", "1": "Earth Gravity" };
+      document.getElementById('chip-disp-grav').innerText = gNames[String(gVal)] || "Partial Gravity";
+      document.getElementById('chip-disp-press').innerText = press + " Kilopascals";
+      document.getElementById('chip-disp-o2').innerText = o2 + " Percent";
+      document.getElementById('chip-disp-n2').innerText = n2 + " Percent";
+
+      const mloc = Number((s.baseMloc - ((101.3 - press) * 0.02)).toFixed(1));
+      const o2Drive = Math.max(0.05, (o2 - mloc) / 8.0);
+      const n2Shield = Math.pow(78.0 / Math.max(50, n2), 1.3);
+      const gravPeak = (gVal > 0.05 && gVal < 0.5) ? 1.45 : (gVal <= 0.05 ? 0.65 : 1.0);
+
+      let spread = Number((1.35 * s.baseRisk * o2Drive * n2Shield * gravPeak).toFixed(2));
+      spread = Math.max(0.08, spread);
+      let risk = Math.min(99, Math.max(3, Math.round((spread / 4.2) * 68 + (o2 - mloc) * 1.8)));
+
+      // Update SVG Circular Rings
+      document.getElementById('ring-o2').setAttribute('stroke-dasharray', `${o2}, 100`);
+      document.getElementById('ring-n2').setAttribute('stroke-dasharray', `${n2}, 100`);
+      document.getElementById('ring-risk').setAttribute('stroke-dasharray', `${risk}, 100`);
+      document.getElementById('ring-lbl-o2').innerText = o2 + '%';
+      document.getElementById('ring-lbl-n2').innerText = n2 + '%';
+      document.getElementById('ring-lbl-risk').innerText = risk + '%';
+
+      document.getElementById('chip-mloc-val').innerText = mloc + " Percent";
+      document.getElementById('chip-spread-val').innerText = spread + " mm/s";
+
+      const pill = document.getElementById('chip-status-pill');
+      if (risk < 25) {
+        pill.className = "px-3 py-1 rounded-full text-xs font-black bg-emerald-500 text-white";
+        pill.innerText = `Safe: ${risk}% Risk`;
+      } else {
+        pill.className = "px-3 py-1 rounded-full text-xs font-black bg-rose-500 text-white";
+        pill.innerText = `High Risk: ${risk}%`;
+      }
+
+      document.getElementById('chip-scen-en').innerText = s.scenEn;
+      document.getElementById('chip-scen-ar').innerText = s.scenAr;
+      document.getElementById('chip-rec-en').innerText = s.recEn;
+      document.getElementById('chip-rec-ar').innerText = s.recAr;
+    }
+
+    function runIterativeChipOptimizer() {
+      playTelemetrySound('safe');
+      advanceProgress(80);
+      let step = 0;
+      const timer = setInterval(() => {
+        step++;
+        let o2 = parseFloat(document.getElementById('chip-inp-o2').value);
+        let press = parseFloat(document.getElementById('chip-inp-press').value);
+        if (o2 > 18) o2 -= 1;
+        if (press < 86) press = Math.min(86, press + 2.5);
+        document.getElementById('chip-inp-o2').value = o2;
+        document.getElementById('chip-inp-n2').value = 99 - o2;
+        document.getElementById('chip-inp-press').value = press.toFixed(1);
+        updateChipEngine();
+        if (step >= 16) clearInterval(timer);
+      }, 90);
+    }
+
+    // =========================================================================
+    // 4. COMPLETE 24 NASA PSI EXPERIMENTS DATABASE
+    // =========================================================================
+    const PSI_EXPERIMENTS = [
+      { id: "PSI-128", name: "Saffire I to III (Large-Scale Spacecraft Fire Safety)", fuel: "Solid", o2: 34, mloc: 13.8, airflow: 3.0, spreadRate: 3.5, targetEnv: "Lunar", summaryEn: "Demonstrated that raising Oxygen Percentage to 34 Percent at reduced Cabin Pressure causes rapid flame acceleration across one-meter panels.", summaryAr: "أثبتت أن رفع الأكسجين إلى 34% عند ضغط منخفض يضاعف سرعة انتشار النار في العينات الكبيرة.", findingEn: "Under Lunar Gravity or gentle airflow, convective oxygen delivery outpaces radiative cooling.", earthEn: "Optimizes thermal insulation layers in firefighter turnout gear.", radar: [88, 75, 20, 70, 95] },
+      { id: "PSI-135", name: "Saffire IV to VI (Post-Fire Gas Diagnostics & Scrubbing)", fuel: "Solid", o2: 34, mloc: 13.5, airflow: 5.0, spreadRate: 3.8, targetEnv: "Lunar", summaryEn: "Measured toxic Carbon Monoxide and Hydrogen Fluoride gases after spacecraft fires and validated automated air scrubbers.", summaryAr: "قاست الغازات السامة بعد الحريق واختبرت فلاتر تنقية هواء الكابينة تلقائياً.", findingEn: "Immediate post-fire atmospheric scrubbing is essential to remove lethal Carbon Monoxide.", earthEn: "Advances emergency air filtration systems for submarines and shelters.", radar: [91, 80, 25, 90, 96] },
+      { id: "PSI-111", name: "BASS-I (Burning and Suppression of Solids Part One)", fuel: "Solid", o2: 21, mloc: 15.2, airflow: 4.0, spreadRate: 1.9, targetEnv: "Spacecraft", summaryEn: "Showed that Zero Gravity flames form calm blue spheres at low airflow and extinguish rapidly when ventilation is halted.", summaryAr: "أثبتت أن اللهب في انعدام الجاذبية يتخذ شكلاً كروياً أزرق وينطفئ عند إيقاف المراوح وضخ النيتروجين.", findingEn: "Controlling airflow speed and Nitrogen dilution is the primary defense in Zero Gravity.", earthEn: "Improves clean-agent Nitrogen fire suppression for server rooms.", radar: [65, 90, 15, 50, 78] },
+      { id: "PSI-112", name: "BASS-II (Burning and Suppression of Solids Part Two)", fuel: "Solid", o2: 21, mloc: 14.5, airflow: 5.0, spreadRate: 2.2, targetEnv: "Lunar", summaryEn: "Proved that solid materials sustain combustion at lower Oxygen Percentages in gentle airflows than on Earth.", summaryAr: "كشفت أن المواد الصلبة تشتعل عند نسب أكسجين أقل إذا وُجد تيار هواء هادئ كطفو القمر.", findingEn: "Turning off fans stops Zero Gravity fires, but Lunar Gravity buoyancy keeps flames alive.", earthEn: "Upgrades flammability certification for aviation materials.", radar: [70, 95, 15, 55, 85] },
+      { id: "PSI-106", name: "FLEX-1 (Flame Extinguishment Experiment Part One)", fuel: "Liquid", o2: 21, mloc: 15.4, airflow: 1.0, spreadRate: 2.5, targetEnv: "Spacecraft", summaryEn: "Confirmed that large liquid fuel droplets in Zero Gravity self-extinguish due to radiative heat loss.", summaryAr: "أثبتت أن قطرات الوقود السائل الكبيرة في الفضاء تنطفئ ذاتياً بفعل الفقد الإشعاعي.", findingEn: "Identified the exact droplet diameter where radiative loss quenches combustion.", earthEn: "Enhances fuel spray efficiency in automotive and jet engines.", radar: [78, 35, 75, 40, 68] },
+      { id: "PSI-107", name: "FLEX-2 (Flame Extinguishment Experiment Part Two)", fuel: "Liquid", o2: 21, mloc: 15.0, airflow: 1.0, spreadRate: 2.9, targetEnv: "Spacecraft", summaryEn: "Discovered that after visible flames go out, liquid droplets continue burning invisibly at 600 Kelvin as Cool Flames.", summaryAr: "اكتشفت استمرار احتراق القطرات بشكل غير مرئي (اللهب البارد عند 600 كلفن) ثم إعادة اشتعالها فجأة.", findingEn: "Uncovered two-stage invisible Cool Flame chemistry that triggers secondary vapor explosions.", earthEn: "Prevents thermal runaway inside narrow Electric Vehicle battery channels.", radar: [60, 40, 98, 45, 75] },
+      { id: "PSI-108", name: "FLEX-2J (Binary Liquid Droplet Array Combustion)", fuel: "Liquid", o2: 21, mloc: 14.8, airflow: 2.0, spreadRate: 3.0, targetEnv: "Spacecraft", summaryEn: "Defined the critical spacing required for flames to jump across linear arrays of fuel droplets.", summaryAr: "حددت المسافة الحرجة لانتقال اللهب بين صفوف قطرات الوقود السائل.", findingEn: "Blending fuels of different volatility delays Cool Flame transition.", earthEn: "Guides safer hybrid biofuel formulations for industrial turbines.", radar: [62, 45, 88, 50, 72] },
+      { id: "PSI-105", name: "FLEX-IT (Slow Evaporation and Soot Shell Dynamics)", fuel: "Liquid", o2: 24, mloc: 15.1, airflow: 1.5, spreadRate: 2.3, targetEnv: "Spacecraft", summaryEn: "Demonstrated that carbon soot particles form a suspended spherical shell around burning droplets.", summaryAr: "أظهرت تجمع ذرات السخام الكربوني في قشرة كروية حول قطرات الوقود.", findingEn: "Soot shells act as a thermal barrier that alters heat feedback to the fuel core.", earthEn: "Reduces carbon fouling inside industrial boilers and turbines.", radar: [75, 30, 60, 92, 65] },
+      { id: "PSI-139", name: "ACME E-FIELD Flames (Electric-Field Ion Driven Flames)", fuel: "Gas", o2: 21, mloc: 15.5, airflow: 6.0, spreadRate: 3.1, targetEnv: "Lunar", summaryEn: "Used high-voltage electric fields to drive flame ions and replicate Lunar and Martian buoyant convection.", summaryAr: "استخدمت المجال الكهربائي لدفع أيونات اللهب ومحاكاة جاذبية القمر والمريخ بدقة.", findingEn: "Ionic wind force on flame ions is mathematically equivalent to Lunar Gravity buoyancy.", earthEn: "Enables electric-field soot suppression in power plants.", radar: [55, 85, 30, 35, 90] },
+      { id: "PSI-141", name: "ACME BRE (Burner Residence-Time Experiment)", fuel: "Solid", o2: 28, mloc: 14.2, airflow: 4.0, spreadRate: 2.6, targetEnv: "Spacecraft", summaryEn: "Showed that hemispherical stagnation flames persist for over 200 seconds above melting polymers.", summaryAr: "أثبتت استمرار اللهب الكروي الراكد لأكثر من 200 ثانية فوق البوليمرات المنصهرة.", findingEn: "Materials passing short tests can sustain long burning under gentle ventilation.", earthEn: "Improves fire-retardant electrical cable coatings in buildings.", radar: [82, 70, 25, 60, 80] },
+      { id: "PSI-143", name: "ACME CFI-G (Cool Flames Investigation in Gases)", fuel: "Gas", o2: 25, mloc: 14.8, airflow: 2.0, spreadRate: 2.8, targetEnv: "Spacecraft", summaryEn: "First experiment to stabilize pure gaseous Cool Flames at 550 Kelvin without liquid droplets.", summaryAr: "أول تجربة تثبت تكون اللهب البارد غير المرئي في الوقود الغازي والأبخرة.", findingEn: "Hydrocarbon vapors react invisibly at 550 Kelvin, producing Carbon Monoxide before hot ignition.", earthEn: "Supports early-warning gas sensors for lithium battery enclosures.", radar: [50, 45, 95, 50, 72] },
+      { id: "PSI-140", name: "ACME CLD Flame (Coflow Laminar Diffusion Flame)", fuel: "Gas", o2: 21, mloc: 15.6, airflow: 9.0, spreadRate: 2.9, targetEnv: "Spacecraft", summaryEn: "Provided benchmark temperature and soot maps used to calibrate 3D fire simulation software.", summaryAr: "وفرت خرائط مرجعية لدرجات الحرارة والسخام لمعايرة برامج محاكاة الحرائق.", findingEn: "Increasing Nitrogen Percentage reduces radiative soot heat loss by over 60 Percent.", earthEn: "Calibrates computational fluid dynamics solvers like OpenFOAM.", radar: [72, 80, 15, 78, 70] },
+      { id: "PSI-142", name: "ACME Flame Design (Oxygen-Enriched Inverse Flames)", fuel: "Gas", o2: 35, mloc: 13.9, airflow: 5.0, spreadRate: 3.6, targetEnv: "Lunar", summaryEn: "Proved that controlling oxygen and Nitrogen mixing eliminates soot even at 35 Percent Oxygen.", summaryAr: "أثبتت أن التحكم في مزج الأكسجين والنيتروجين يمنع تكون السخام عند أكسجين 35%.", findingEn: "Soot-free flame structure prevents radiant overheating of spacecraft walls.", earthEn: "Advances clean oxy-fuel combustion for industrial carbon capture.", radar: [85, 75, 20, 30, 91] },
+      { id: "PSI-144", name: "ACME s-Flame (Spherical Diffusion Flame Oscillations)", fuel: "Gas", o2: 21, mloc: 14.9, airflow: 1.0, spreadRate: 2.1, targetEnv: "Spacecraft", summaryEn: "Identified low-frequency flame pulsations appearing right before extinction thresholds.", summaryAr: "رصدت نبضات ضوئية تظهر في اللهب الكروي قبل انطفائه أو انتشاره.", findingEn: "Optical pulsation frequency predicts whether a fire will grow or self-extinguish.", earthEn: "Enhances optical flame detectors for hydrogen storage facilities.", radar: [80, 25, 40, 25, 66] },
+      { id: "PSI-102", name: "SAME (Smoke Aerosol Measurement Experiment)", fuel: "Solid", o2: 21, mloc: 16.0, airflow: 2.0, spreadRate: 1.5, targetEnv: "Spacecraft", summaryEn: "Found that absence of buoyancy causes smoke particles to form larger fractal chains than on Earth.", summaryAr: "وجدت أن غياب الطفو يجعل جزيئات الدخان تتجمع في سلاسل عنقودية أكبر من دخان الأرض.", findingEn: "Spacecraft smoke detectors must be calibrated for larger aggregated aerosol sizes.", earthEn: "Powers mine smoke sensors that separate real smoke from rock dust.", radar: [45, 60, 20, 98, 68] },
+      { id: "PSI-104", name: "DAFT (Dust and Aerosol Measurement Feasibility Test)", fuel: "Gas", o2: 30, mloc: 15.0, airflow: 3.0, spreadRate: 1.8, targetEnv: "Lunar", summaryEn: "Developed optical scattering signatures separating sub-micron smoke from coarse Lunar dust.", summaryAr: "طورت خوارزميات بصرية تفرق بين دخان الحرائق الدقيق وغبار تربة القمر الخشن.", findingEn: "Prevents false fire alarms inside Lunar airlocks when astronauts return covered in dust.", earthEn: "Eliminates false alarms in coal mines, grain silos, and cement plants.", radar: [35, 55, 15, 95, 82] },
+      { id: "PSI-118", name: "SLICE (Structure and Liftoff In Combustion Experiment)", fuel: "Gas", o2: 21, mloc: 15.8, airflow: 15.0, spreadRate: 3.8, targetEnv: "Spacecraft", summaryEn: "Mapped the high-airflow blowoff boundary where aerodynamic stretch cools and extinguishes a flame.", summaryAr: "حددت سرعة الهواء القصوى التي ينفصل عندها اللهب وينطفئ بالتمدد والتبريد.", findingEn: "Gentle airflow (4-8 cm/s) intensifies fires, while high airflow (>20 cm/s) blows them out.", earthEn: "Improves burner stability in industrial heating furnaces.", radar: [65, 92, 15, 40, 65] },
+      { id: "PSI-119", name: "SPICE (Smoke Point In Co-flow Experiment)", fuel: "Gas", o2: 25, mloc: 15.2, airflow: 8.0, spreadRate: 2.7, targetEnv: "Lunar", summaryEn: "Showed that low-gravity flames reach heavy soot emission points earlier than Earth flames.", summaryAr: "أثبتت أن اللهب في الفضاء والقمر يطلق السخام الأسود أسرع من لهب الأرض.", findingEn: "Nitrogen dilution prevents thick radiative soot clouds inside habitats.", earthEn: "Reduces black carbon emissions from aviation gas turbines.", radar: [90, 75, 20, 92, 78] },
+      { id: "PSI-136", name: "SoFIE-GEL (Growth and Extinction Limit on Thick Solids)", fuel: "Solid", o2: 34, mloc: 13.5, airflow: 7.0, spreadRate: 3.9, targetEnv: "Lunar", summaryEn: "Demonstrated that 34 Percent Oxygen overcomes internal heat conduction in thick acrylics.", summaryAr: "أثبتت أن أكسجين 34% يتغلب على التبريد الداخلي للبلاستيك السميك ويجعله يشتعل باستمرار.", findingEn: "Thick plastics that self-extinguish on Earth burn continuously under Lunar atmospheres.", earthEn: "Informs fire-safe structural polymer selection for hospitals.", radar: [92, 88, 30, 72, 98] },
+      { id: "PSI-137", name: "SoFIE-MIST (Material Ignition and Suppression Test)", fuel: "Solid", o2: 32, mloc: 13.7, airflow: 6.0, spreadRate: 3.4, targetEnv: "Lunar", summaryEn: "Established flammability maps linking Cabin Pressure, Oxygen, Nitrogen, and Airflow.", summaryAr: "وضعت خرائط اشتعال شاملة تربط بين ضغط الكابينة والأكسجين والنيتروجين وسرعة الهواء.", findingEn: "Lowering Cabin Pressure reduces air cooling, causing ignition with 30 Percent less heat.", earthEn: "Protects high-altitude electrical switchgear and pressurized cabins.", radar: [89, 86, 25, 68, 94] },
+      { id: "PSI-138", name: "SoFIE-SMOLDER (Porous Media Smoldering & Toxic Gas)", fuel: "Solid", o2: 28, mloc: 13.2, airflow: 2.0, spreadRate: 1.4, targetEnv: "Lunar", summaryEn: "Revealed that non-flaming smoldering hides inside foam insulation for hours at low oxygen.", summaryAr: "كشفت أن الاحتراق الكامن بدون لهب يختبئ داخل الإسفنج لساعات ويطلق أول أكسيد الكربون.", findingEn: "Hidden smoldering requires smart gas chips rather than optical flame cameras.", earthEn: "Prevents hidden smoldering fires in mattresses and warehouse insulation.", radar: [58, 65, 80, 88, 86] },
+      { id: "PSI-109", name: "Fine Water Mist Suppression (FSDC Water Mist Study)", fuel: "Liquid", o2: 24, mloc: 16.5, airflow: 4.0, spreadRate: 1.1, targetEnv: "Spacecraft", summaryEn: "Proved that 20-micron water mist evaporates instantly inside flames, absorbing heat and displacing oxygen.", summaryAr: "أثبتت أن الرذاذ المائي الدقيق (20 ميكرون) يتبخر فوراً في اللهب ويمتص الحرارة.", findingEn: "Fine water mist with Nitrogen dilution extinguishes Lunar fires without harming electronics.", earthEn: "Foundation for clean water-mist sprinklers in server rooms and ICUs.", radar: [40, 65, 35, 30, 50] },
+      { id: "PSI-115", name: "DARTFire (Diffusive and Radiative Transport in Fires)", fuel: "Solid", o2: 30, mloc: 14.0, airflow: 5.0, spreadRate: 3.2, targetEnv: "Lunar", summaryEn: "Showed that radiant heat reflected from cabin walls sustains burning at very low airflow.", summaryAr: "أثبتت أن الحرارة الإشعاعية المنعكسة من جدران الكابينة تبقي النار مشتعلة.", findingEn: "Reflective interior coatings significantly reduce flame spread speed.", earthEn: "Guides fire-resistant facade cladding in high-rise architecture.", radar: [96, 72, 18, 65, 89] },
+      { id: "PSI-121", name: "LSP (Laminar Soot Processes in Microgravity Jets)", fuel: "Gas", o2: 21, mloc: 15.3, airflow: 6.0, spreadRate: 2.4, targetEnv: "Spacecraft", summaryEn: "Discovered that longer gas residence times in low gravity produce soot aggregates 3 to 5 times larger.", summaryAr: "وجدت أن بقاء الغاز فترة أطول داخل لهب الفضاء يضاعف حجم السخام 3 إلى 5 مرات.", findingEn: "Shortening residence time and raising Nitrogen prevents radiative soot hazards.", earthEn: "Designs cleaner internal combustion engines on Earth.", radar: [84, 62, 20, 96, 74] }
+    ];
+
+    // =========================================================================
+    // 5. STAGE 03: RENDER 24 NASA EXPERIMENTS
+    // =========================================================================
+    let showArabicPrimary = false;
+
+    function toggleBilingualMode() {
+      playTelemetrySound('click');
+      showArabicPrimary = !showArabicPrimary;
+      document.getElementById('lang-toggle-btn').innerText = showArabicPrimary ? "اللغة: عربي + English" : "اللغة: English + عربي";
+      renderFinder();
+      updateCompareCharts();
+    }
+
+    function renderFinder() {
+      const fuel = document.getElementById('flt-fuel').value;
+      const env = document.getElementById('flt-env').value;
+      const o2 = parseFloat(document.getElementById('flt-o2').value);
+      const kw = document.getElementById('flt-kw').value.trim().toLowerCase();
+
+      document.getElementById('flt-o2-lbl').innerText = o2 + " Percent";
+
+      const ranked = PSI_EXPERIMENTS.filter(e => {
+        if (fuel !== 'all' && e.fuel !== fuel) return false;
+        if (env !== 'all' && e.targetEnv !== env) return false;
+        if (kw) {
+          const blob = (e.id + ' ' + e.name + ' ' + e.summaryEn + ' ' + e.summaryAr + ' ' + e.findingEn).toLowerCase();
+          if (!blob.includes(kw)) return false;
+        }
+        return true;
+      }).map(e => {
+        const matchScore = Math.min(99, Math.max(58, Math.round(100 - Math.abs(e.o2 - o2) * 1.7)));
+        return { ...e, matchScore };
+      }).sort((a, b) => b.matchScore - a.matchScore);
+
+      document.getElementById('finder-badge-count').innerText = `${ranked.length} NASA Experiments Ranked`;
+
+      document.getElementById('finder-grid').innerHTML = ranked.map((e, i) => `
+        <div class="bg-white rounded-3xl p-5 border border-slate-200 hover:border-blue-500 transition flex flex-col justify-between shadow-sm">
+          <div>
+            <div class="flex items-center justify-between gap-2 mb-2">
+              <span class="px-2.5 py-0.5 rounded-lg text-[11px] font-black bg-slate-900 text-white">
+                #${i + 1} // ${e.id}
+              </span>
+              <span class="px-3 py-0.5 rounded-full text-xs font-black bg-blue-50 text-blue-700 border border-blue-200">
+                ${e.matchScore}% Match
+              </span>
+            </div>
+            <h3 class="text-sm font-black text-slate-900 mb-2">${e.name}</h3>
+
+            <div class="space-y-2 text-xs">
+              <div class="p-3 rounded-2xl bg-slate-50 border border-slate-200/80">
+                <p class="font-semibold text-slate-800 leading-relaxed">${e.summaryEn}</p>
+                <p class="font-bold text-blue-800 mt-1 leading-relaxed" dir="rtl">${e.summaryAr}</p>
+              </div>
+              <div class="p-2.5 rounded-2xl bg-emerald-50/60 border border-emerald-200/80">
+                <span class="font-black text-emerald-900">Earth Application:</span>
+                <p class="text-slate-700 mt-0.5">${e.earthEn}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4 pt-2.5 border-t border-slate-200 flex items-center justify-between text-[11px] font-extrabold text-slate-600">
+            <span>Oxygen: ${e.o2}%</span>
+            <span>Min Limit: ${e.mloc}%</span>
+            <span>Airflow: ${e.airflow} cm/s</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // =========================================================================
+    // 6. STAGE 04: VISUAL COMPARISON CHARTS
+    // =========================================================================
+    Chart.defaults.color = '#334155';
+    Chart.defaults.font.family = "'Plus Jakarta Sans', 'Cairo', sans-serif";
+    let cmpBarChart, cmpRadarChart, cmpGravityChart;
+
+    function initComparisonLab() {
+      const selA = document.getElementById('cmp-a');
+      const selB = document.getElementById('cmp-b');
+      const opts = PSI_EXPERIMENTS.map((e, i) => `<option value="${i}">${e.id} - ${e.name}</option>`).join('');
+      selA.innerHTML = opts; selB.innerHTML = opts;
+      selA.value = "0"; selB.value = "3";
+
+      cmpBarChart = new Chart(document.getElementById('cmpBarCanvas').getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: ['Oxygen %', 'Min Limit %', 'Airflow cm/s', 'Spread Speed x10'],
+          datasets: [
+            { label: 'Experiment A', data: [], backgroundColor: '#2563eb', borderRadius: 6 },
+            { label: 'Experiment B', data: [], backgroundColor: '#e11d48', borderRadius: 6 }
+          ]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+      });
+
+      cmpRadarChart = new Chart(document.getElementById('cmpRadarCanvas').getContext('2d'), {
+        type: 'radar',
+        data: {
+          labels: ['Radiation', 'Airflow Effect', 'Cool Flame', 'Smoke Density', 'Lunar Risk'],
+          datasets: [
+            { label: 'Experiment A', data: [], borderColor: '#2563eb', backgroundColor: 'rgba(37, 99, 235, 0.15)' },
+            { label: 'Experiment B', data: [], borderColor: '#e11d48', backgroundColor: 'rgba(225, 29, 72, 0.15)' }
+          ]
+        },
+        options: { responsive: true, maintainAspectRatio: false, scales: { r: { suggestedMin: 0, suggestedMax: 100 } }, plugins: { legend: { position: 'bottom' } } }
+      });
+
+      cmpGravityChart = new Chart(document.getElementById('cmpGravityCanvas').getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: ['Zero Gravity', 'Lunar Gravity', 'Mars Gravity', 'Earth Gravity'],
+          datasets: [{
+            label: 'Flame Spread Speed (mm/s)',
+            data: [0.95, 3.65, 2.85, 1.90],
+            backgroundColor: ['#3b82f6', '#e11d48', '#f59e0b', '#10b981'],
+            borderRadius: 6
+          }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+      });
+
+      updateCompareCharts();
+    }
+
+    function updateCompareCharts() {
+      const a = PSI_EXPERIMENTS[parseInt(document.getElementById('cmp-a').value)];
+      const b = PSI_EXPERIMENTS[parseInt(document.getElementById('cmp-b').value)];
+
+      document.getElementById('th-cmp-a').innerText = `${a.id}: ${a.name}`;
+      document.getElementById('th-cmp-b').innerText = `${b.id}: ${b.name}`;
+
+      cmpBarChart.data.datasets[0].label = a.id;
+      cmpBarChart.data.datasets[0].data = [a.o2, a.mloc, a.airflow, a.spreadRate * 10];
+      cmpBarChart.data.datasets[1].label = b.id;
+      cmpBarChart.data.datasets[1].data = [b.o2, b.mloc, b.airflow, b.spreadRate * 10];
+      cmpBarChart.update();
+
+      cmpRadarChart.data.datasets[0].label = a.id;
+      cmpRadarChart.data.datasets[0].data = a.radar;
+      cmpRadarChart.data.datasets[1].label = b.id;
+      cmpRadarChart.data.datasets[1].data = b.radar;
+      cmpRadarChart.update();
+
+      const rows = [
+        { label: "Fuel Category (نوع الوقود)", va: a.fuel, vb: b.fuel },
+        { label: "Tested Oxygen Percentage (نسبة الأكسجين)", va: a.o2 + " Percent", vb: b.o2 + " Percent" },
+        { label: "Minimum Oxygen Limit (أقل أكسجين للاشتعال)", va: a.mloc + " Percent", vb: b.mloc + " Percent" },
+        { label: "Ventilation Airflow Speed (سرعة الهواء)", va: a.airflow + " cm/s", vb: b.airflow + " cm/s" },
+        { label: "Summary (الملخص)", va: a.summaryEn + " — " + a.summaryAr, vb: b.summaryEn + " — " + b.summaryAr },
+        { label: "Key Finding (النتيجة)", va: a.findingEn, vb: b.findingEn },
+        { label: "Earth Benefit (الفائدة للأرض)", va: a.earthEn, vb: b.earthEn }
+      ];
+
+      document.getElementById('cmp-tbody').innerHTML = rows.map(r => `
+        <tr class="hover:bg-slate-50">
+          <td class="p-3.5 font-extrabold text-slate-800">${r.label}</td>
+          <td class="p-3.5 text-slate-600">${r.va}</td>
+          <td class="p-3.5 text-slate-600">${r.vb}</td>
+        </tr>
+      `).join('');
+    }
+
+    // =========================================================================
+    // 7. STAGE 05: BILINGUAL AI CHATBOT
+    // =========================================================================
+    function askBot(topic) {
+      const questions = {
+        lunar: "Why is Lunar Gravity more dangerous than Zero Gravity? (ليه نار القمر أخطر من الفضاء؟)",
+        chip: "How does the Smart Astronaut GPS Chip use Nitrogen to stop fires? (إزاي الشريحة الذكية بتمنع الحريق؟)",
+        cool: "What are Cool Flames in FLEX-2 and how do they protect EV Batteries? (ما هو اللهب البارد؟)",
+        materials: "Which materials are safest for Lunar habitats? (ما هي أكثر المواد أماناً للقمر؟)"
+      };
+      document.getElementById('bot-input').value = questions[topic];
+      sendBotMessage();
+    }
+
+    function sendBotMessage() {
+      playTelemetrySound('click');
+      const inp = document.getElementById('bot-input');
+      const q = inp.value.trim();
+      if (!q) return;
+      inp.value = '';
+
+      const win = document.getElementById('bot-window');
+      win.innerHTML += `
+        <div class="flex justify-end">
+          <div class="bg-blue-600 text-white p-3.5 rounded-2xl max-w-xl font-bold">${q}</div>
+        </div>
+      `;
+
+      const ql = q.toLowerCase();
+      let enReply = "";
+      let arReply = "";
+
+      if (ql.includes('lunar') || ql.includes('قمر') || ql.includes('dangerous')) {
+        enReply = "<strong>Lunar Gravity Peak (BASS-II PSI-112 & ACME E-FIELD PSI-139):</strong> In Zero Gravity, flames choke on their own exhaust when fans stop. On the Moon (One-Sixth Earth Gravity), natural buoyancy creates a 6.4 cm/s upward airflow that feeds 34 Percent Oxygen into the flame faster than radiative cooling can quench it.";
+        arReply = "في الفضاء تخنق النار نفسها عند إغلاق المراوح لغياب الطفو، لكن جاذبية القمر (سُدس الأرض) تصنع تيار طفو هادئ يغذي اللهب بالأكسجين أسرع مما يبرد بالإشعاع، فتصل النار لذروة الاشتعال.";
+      } else if (ql.includes('chip') || ql.includes('شريح') || ql.includes('نيتروجين') || ql.includes('nitrogen')) {
+        enReply = "<strong>Smart GPS Chip & Nitrogen Shield (Saffire PSI-128 & Mist PSI-109):</strong> The wearable chip tracks the astronaut's GPS sector, reads room materials, and automatically injects inert Nitrogen above 79 Percent (dropping Oxygen below the 13.5 Percent limit) while discharging 20-micron Fine Water Mist.";
+        arReply = "تحدد الشريحة الذكية موقع رائد الفضاء بالـ GPS وتتعرف على مواد الغرفة، ثم تضخ غاز النيتروجين الخامل فوق 79% لامتصاص الحرارة وخفض الأكسجين تحت 13.5% مع إطلاق رذاذ الماء الدقيق.";
+      } else if (ql.includes('cool') || ql.includes('بارد') || ql.includes('battery') || ql.includes('بطاري')) {
+        enReply = "<strong>Cool Flames & EV Battery Safety (FLEX-2 PSI-107 & CFI-G PSI-143):</strong> NASA discovered invisible 600-Kelvin Cool Flames that burn after visible flames go out and trigger sudden vapor explosions. Narrow 3-millimeter gaps inside Electric Vehicle batteries trap air without buoyancy just like space.";
+        arReply = "اكتشفت تجربة FLEX-2 ظاهرة اللهب البارد غير المرئي عند 600 كلفن والذي يسبب إعادة الاشتعال المفاجئ. نفس الظاهرة تحدث داخل المسافات الضيقة (3 ملم) بين خلايا بطاريات السيارات الكهربائية.";
+      } else {
+        enReply = "<strong>Material Ranking for Lunar Habitats (SoFIE PSI-136 & Saffire PSI-128):</strong> Avoid untreated Cast Acrylic (PMMA) in 34 Percent Oxygen zones. Use high-limit aramid fibers like Nomex (Minimum Oxygen Limit above 24 Percent) and reflective interior coatings (DARTFire PSI-115).";
+        arReply = "أفضل المواد المرشحة لكبسولة القمر هي ألياف Nomex والأسطح العاكسة للإشعاع الحراري، مع تجنب الأكريليك المكشوف غير المعالج في مناطق الأكسجين المرتفع (34%).";
+      }
+
+      win.innerHTML += `
+        <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm text-slate-800 max-w-2xl space-y-1.5">
+          <div class="font-black text-blue-700">PYRE-SI Evidence Advisor</div>
+          <div>${enReply}</div>
+          <div class="text-blue-950 font-bold pt-1 border-t border-slate-100" dir="rtl">${arReply}</div>
+        </div>
+      `;
+      win.scrollTop = win.scrollHeight;
+    }
+
+    // =========================================================================
+    // 8. EXPORT CSV
+    // =========================================================================
+    function exportDatasetCSV() {
+      const headers = ["ID", "Experiment_Name", "Fuel_Category", "Oxygen_Percent", "Min_Oxygen_Limit_Percent", "Airflow_cm_s", "Target_Environment", "Summary_EN", "Summary_AR"];
+      const rows = PSI_EXPERIMENTS.map(e => [
+        e.id, `"${e.name}"`, e.fuel, e.o2, e.mloc, e.airflow, e.targetEnv, `"${e.summaryEn}"`, `"${e.summaryAr}"`
+      ]);
+      const csv = "\uFEFF" + [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "NASA_PSI_24_Studies_Bilingual.csv";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+
+    window.onload = () => {
+      renderParadoxCanvas();
+      updateChipEngine();
+      renderFinder();
+      initComparisonLab();
+    };
+  </script>
+</body>
+</html>الخيار الثاني // بروتوك
